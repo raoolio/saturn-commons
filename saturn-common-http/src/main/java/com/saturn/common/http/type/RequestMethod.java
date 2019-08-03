@@ -1,4 +1,4 @@
-package com.saturn.common.http;
+package com.saturn.common.http.type;
 
 /**
  * HTTP Request Methods.

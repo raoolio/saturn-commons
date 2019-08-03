@@ -2,8 +2,8 @@ package com.saturn.common.utils.rpn;
 
 
 
-import com.saturn.common.utils.data.ListUtils;
-import com.saturn.common.utils.string.StringUtils;
+import com.saturn.common.utils.ArrayUtils;
+import com.saturn.common.utils.MapUtils;
 import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -24,7 +24,7 @@ public class RpnCalculator
     private static final String OPERATORS="+,-,*,/,<,>,<=,>=,=,!=,AND,OR";
 
     /** Mapa de operadores */
-    private static Map<String,?> operatorMap=ListUtils.array2Map(OPERATORS.split(","), 0);
+    private static Map<String,?> operatorMap=ArrayUtils.array2Map(OPERATORS.split(","), 0);
 
     /** Logger */
     private static Logger log= LogManager.getLogger(RpnCalculator.class);
@@ -210,7 +210,7 @@ public class RpnCalculator
             result= stack.pop();
         }
         catch (Exception e) {
-            log.error("Error ejecutando expresion["+expr+"] "+StringUtils.map2PrettyString(pars), e);
+            log.error("Error ejecutando expresion["+expr+"] "+MapUtils.map2PrettyString(pars), e);
         }
 
         log.trace("EXPR[{}] -> {}",expr,result);

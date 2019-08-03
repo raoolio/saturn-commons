@@ -1,4 +1,4 @@
-package com.saturn.common.http;
+package com.saturn.common.http.dto;
 
 
 /**
@@ -98,27 +98,27 @@ public class HTTPResponse
     }
 
 
-    void setResponseCode(int responseCode) {
+    public void setResponseCode(int responseCode) {
         this.responseCode = responseCode;
     }
 
-    void setResponseMessage(String responseMessage) {
+    public void setResponseMessage(String responseMessage) {
         this.responseMessage = responseMessage;
     }
 
-    void setContent(String content) {
+    public void setContent(String content) {
         this.content = content;
     }
 
-    void setContentType(String contentType) {
+    public void setContentType(String contentType) {
         this.contentType = contentType;
     }
 
-    void setEncoding(String encoding) {
+    public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
 
-    void setLength(int length) {
+    public void setLength(int length) {
         this.length = length;
     }
 

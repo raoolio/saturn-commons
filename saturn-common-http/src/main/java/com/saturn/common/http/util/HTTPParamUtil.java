@@ -1,5 +1,7 @@
-package com.saturn.common.http;
+package com.saturn.common.http.util;
 
+import com.saturn.common.http.type.ContentType;
+import com.saturn.common.http.dto.HTTPRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.UnsupportedEncodingException;
@@ -26,25 +28,10 @@ public class HTTPParamUtil {
      * @param params Parameter map
      * @return
      */
-    static String replaceAndCopy(String src,Map<String,Object> params) {
+    public static String replaceAndCopy(String src,Map<String,Object> params) {
         StringBuilder sb= new StringBuilder();
         replaceAndCopy(sb,src,params,null);
         return sb.toString();
-    }
-
-
-
-    /**
-     * <p>Copies the source string to the destination buffer, replacing any
-     * parameter name with it's corresponding value in the map.<p>
-     * <p>If the parameter exists in the map, it's value is removed from the map.
-     * If it doesn't exist, the parameter name is copied to the destination
-     * buffer unchanged.</p>
-     * @param dst Destination buffer
-     * @param req HTTPRequest instance
-     */
-    static void replaceAndCopy(StringBuilder dst,HTTPRequest req) {
-        replaceAndCopy(dst,req.getUrl(),req.getParams(),req.getContentCharset());
     }
 
 
@@ -59,8 +46,9 @@ public class HTTPParamUtil {
      * @param dst Destination buffer
      * @param src Source string
      * @param params Parameter map
+     * @param charset Charset encoding
      */
-    static void replaceAndCopy(StringBuilder dst,String src,Map<String,Object> params,String charset) {
+    public static void replaceAndCopy(StringBuilder dst,String src,Map<String,Object> params,String charset) {
 
         boolean isKey=false;
         StringBuilder $key= new StringBuilder(25);
@@ -112,32 +100,38 @@ public class HTTPParamUtil {
 
 
     //<editor-fold defaultstate="collapsed" desc=" Parameter encoding methods ">
+
+    
     /**
      * Encode the sendRequest parameters
-     * @param req HTTP sendRequest bean
+     * @param pars Parameter map
+     * @param type Content type
+     * @param charset Charset encoding
      * @return
-     * @throws Exception
+     * @throws java.lang.Exception
      */
-    static StringBuilder encodeParams(HTTPRequest req) throws Exception {
-        return encodeParams(new StringBuilder(req.getParamsLength()*2),req);
+    public static String encodeParams(Map pars, ContentType type,String charset) throws Exception {
+        StringBuilder sb= new StringBuilder();
+        encodeParams(sb,pars,type,charset);
+        return sb.toString();
     }
-
-
+    
+    
 
     /**
      * Encode the sendRequest parameters
      * @param sb Destination StringBuilder for the parameters
-     * @param req HTTP sendRequest bean
+     * @param pars Parameter map
+     * @param type Content type
+     * @param charset Charset encoding
      * @return
      * @throws java.lang.Exception
      */
-    static StringBuilder encodeParams(StringBuilder sb,HTTPRequest req) throws Exception {
-
-        ContentType type=req.getContentType();
+    public static StringBuilder encodeParams(StringBuilder sb,Map pars, ContentType type,String charset) throws Exception {
 
         switch(type) {
-            case APPLICATION_JSON: params2Json(sb,req); break;
-            case APPLICATION_FORM_URLENCODED: params2UrlEncoded(sb,req); break;
+            case APPLICATION_JSON: params2Json(sb,pars); break;
+            case APPLICATION_FORM_URLENCODED: params2UrlEncoded(sb,pars,charset); break;
 //            case MULTIPART_FORM_DATA: pars2FormData(sb,req); break;
 //            case TEXT_PLAIN: pars2Plain(sb,req); break;
             default: throw new Exception("ContentType "+type+" not supported yet.");
@@ -150,11 +144,11 @@ public class HTTPParamUtil {
     /**
      * Encodes the parameters in JSON format
      * @param sb Destination buffer
-     * @param req HTTP sendRequest bean
+     * @param pars Parameter map
      */
-    static void params2Json(StringBuilder sb,HTTPRequest req) throws JsonProcessingException {
+    public static void params2Json(StringBuilder sb,Map pars) throws JsonProcessingException {
         ObjectMapper mapper= new ObjectMapper();
-        sb.append( mapper.writeValueAsString(req.getParams()) );
+        sb.append( mapper.writeValueAsString(pars) );
     }
 
 
@@ -162,11 +156,11 @@ public class HTTPParamUtil {
     /**
      * Encodes the parameters in URL format
      * @param sb Destination buffer
-     * @param req HTTP sendRequest bean
+     * @param pars Parameter map
+     * @param charset Charset encoding
      * @throws UnsupportedEncodingException
      */
-    static void params2UrlEncoded(StringBuilder sb,HTTPRequest req) throws UnsupportedEncodingException {
-        Map<String,Object> pars= req.getParams();
+    public static void params2UrlEncoded(StringBuilder sb,Map pars, String charset) throws UnsupportedEncodingException {
         Iterator<String> keys= pars.keySet().iterator();
         int n=0;
 
@@ -177,9 +171,9 @@ public class HTTPParamUtil {
 
             if (n>0)
                 sb.append('&');
-            sb.append(URLEncoder.encode(id, req.getContentCharset()) );
+            sb.append(URLEncoder.encode(id, charset) );
             sb.append('=');
-            sb.append(URLEncoder.encode(String.valueOf(ob), req.getContentCharset()));
+            sb.append(URLEncoder.encode(String.valueOf(ob), charset));
             n++;
         }
     }

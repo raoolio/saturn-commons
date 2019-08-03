@@ -1,16 +1,20 @@
-package com.saturn.common.http;
-
+package com.saturn.common.http.dto;
 
 
 /**
  * HTTP Header bean
  * @author rdelcid
  */
-class Header
+public class Header
 {
     private String id;
     private String value;
 
+    /**
+     * Constructor
+     * @param id Header ID
+     * @param value Header value
+     */
     public Header(String id, String value) {
         this.id = id;
         this.value = value;

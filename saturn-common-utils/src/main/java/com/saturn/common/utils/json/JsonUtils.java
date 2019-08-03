@@ -1,10 +1,10 @@
 package com.saturn.common.utils.json;
 
 import com.saturn.common.utils.string.StringFunction;
-import com.saturn.common.utils.string.StringUtils;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.saturn.common.utils.PathUtils;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,7 +12,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 
 /**
@@ -20,12 +19,12 @@ import java.util.Map.Entry;
  * libreria de Jackson v2.7.3 o superior.
  * @author rdelcid
  */
-public class JSONUtil {
+public class JsonUtils {
 
     /**
      * Constructor privado (no puede instanciarse)
      */
-    private JSONUtil() {
+    private JsonUtils() {
     }
 
 
@@ -57,7 +56,7 @@ public class JSONUtil {
         final List<String> lst= new LinkedList<String>();
         final StringBuilder sb=new StringBuilder();
 
-        parseJson(jsonArray,ids,new JSONListener(){
+        parseJson(jsonArray,ids,new JsonListener(){
             @Override
             public void objectFound(Map<String,String> object) {
                 Iterator<String> it=object.values().iterator();
@@ -138,7 +137,7 @@ public class JSONUtil {
         if (parent==null && ids==null)
             throw new IllegalArgumentException("Must provide parent or attribute names");
 
-        parseJson(jsonArray,parent,ids,new JSONListener(){
+        parseJson(jsonArray,parent,ids,new JsonListener(){
             @Override
             public void objectFound(Map object) {
                 ob.putAll(object);
@@ -162,7 +161,7 @@ public class JSONUtil {
     public static final List<Map<String,String>> getListAsMap(String jsonArray,String ids) throws IOException {
         final List<Map<String,String>> lst= new LinkedList<Map<String,String>>();
 
-        parseJson(jsonArray,ids,new JSONListener(){
+        parseJson(jsonArray,ids,new JsonListener(){
             @Override
             public void objectFound(Map object) {
                 lst.add(object);
@@ -205,7 +204,7 @@ public class JSONUtil {
         // Join attributes
         String atts= attrId+","+valId;
 
-        parseJson(jsonArray,atts,new JSONListener(){
+        parseJson(jsonArray,atts,new JsonListener(){
             @Override
             public void objectFound(Map<String,String> object) {
                 String id= object.get(attrId);
@@ -227,7 +226,7 @@ public class JSONUtil {
      * @param listener Listener to call for each completed object
      * @throws IOException
      */
-    public static final void parseJson(String jsonArray,String ids,JSONListener listener) throws IOException {
+    public static final void parseJson(String jsonArray,String ids,JsonListener listener) throws IOException {
         parseJson(jsonArray,null,ids,listener,1000);
     }
 
@@ -242,13 +241,13 @@ public class JSONUtil {
      * @param maxObjects Maximum number of objects to parse
      * @throws IOException
      */
-    public static final void parseJson(String jsonArray,String parentId,String ids,JSONListener listener,int maxObjects) throws IOException {
+    public static final void parseJson(String jsonArray,String parentId,String ids,JsonListener listener,int maxObjects) throws IOException {
         JsonFactory f = new JsonFactory();
         JsonParser jp = f.createJsonParser(jsonArray);
 
         // Temporary vars
         Map<LinkedList,String> values= new HashMap<LinkedList,String>();
-        Map<LinkedList,String> parPaths= StringUtils.toPathListMap(parentId,ids, ",");
+        Map<LinkedList,String> parPaths= PathUtils.toPathListMap(parentId,ids, ",");
         LinkedList curPath= new LinkedList();
 
         try {

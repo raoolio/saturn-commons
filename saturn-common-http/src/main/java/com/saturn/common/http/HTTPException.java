@@ -1,5 +1,6 @@
 package com.saturn.common.http;
 
+
 /**
  * HTTP Exception
  * @author rdelcid
@@ -17,7 +18,7 @@ public class HTTPException extends Exception {
     public HTTPException(Throwable cause) {
         super(cause);
     }
-    
-    
-    
+
+
+
 }

@@ -1,7 +1,7 @@
 package com.saturn.common.http;
 
-import com.saturn.common.http.HTTPRequest;
-import com.saturn.common.http.HTTPResponse;
+import com.saturn.common.http.dto.HTTPRequest;
+import com.saturn.common.http.dto.HTTPResponse;
 
 
 /**
@@ -9,13 +9,14 @@ import com.saturn.common.http.HTTPResponse;
  * @author rdelcid
  */
 public interface HTTPClient {
-    
+
+
     /**
-     * Performs the given HTTP request
-     * @param req HTTP request bean
-     * @return 
-     * @throws java.lang.Exception 
+     * Performs the given HTTP send
+     * @param req HTTP send bean
+     * @return
+     * @throws java.lang.Exception
      */
-    public HTTPResponse request(HTTPRequest req) throws Exception;
-    
+    public HTTPResponse send(HTTPRequest req) throws Exception;
+
 }

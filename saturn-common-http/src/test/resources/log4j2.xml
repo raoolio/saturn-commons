@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration>
+
+    <!-- Configuracion -->
+    <Properties>
+        <Property name="LOG_PATTERN">%d{yyyy.MM.dd HH:mm:ss.SSS} [%-10.10t] %-5p %c{1}.%M - %m%n</Property>
+    </Properties>
+
+    <Appenders>
+
+        <!-- Salida Consola -->
+        <Console name="consoleLog" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+    </Appenders>
+
+    <Loggers>
+
+        <root level="INFO" additivity="false">
+            <Appender-ref ref="consoleLog"/>
+        </root>
+        
+        <!-- Legacy debug -->
+        <Logger name="biz.televida.legacy.billing" level="TRACE" additivity="false">
+            <Appender-ref ref="consoleLog"/>
+        </Logger>
+    </Loggers>
+
+</Configuration>

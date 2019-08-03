@@ -1,12 +1,20 @@
-package com.saturn.common.http;
+package com.saturn.common.http.impl;
 
 
+import com.saturn.common.http.HTTPException;
+import com.saturn.common.http.type.ContentType;
+import com.saturn.common.http.dto.Header;
+import com.saturn.common.http.dto.HTTPResponse;
+import com.saturn.common.http.dto.HTTPRequest;
+import com.saturn.common.http.util.HTTPRequestUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
+
 
 
 /**
@@ -18,13 +26,14 @@ public class HTTPClientNative extends HTTPClientBase
 
 
     @Override
-    public HTTPResponse sendRequest(URL link,HTTPRequest req) throws HTTPException {
+    public HTTPResponse sendRequest(HTTPRequest req) throws HTTPException {
 
         HTTPResponse httpResp= new HTTPResponse();
         HttpURLConnection con=null;
         InputStream in=null;
 
         try {
+            URL link= new URL(req.getUrl());
             con= (HttpURLConnection) link.openConnection();
             con.setRequestMethod(req.getMethod().name());
             con.setUseCaches(false);
@@ -39,7 +48,8 @@ public class HTTPClientNative extends HTTPClientBase
             con.setRequestProperty("Accept-Encoding", "gzip");
 
             // Set additional headers ?
-            if (req.hasHeaders()) {
+            List<Header> headers= req.getHeaders();
+            if (headers!=null) {
                 for (Header h:req.getHeaders()) {
                     con.setRequestProperty(h.getId(), h.getValue());
                 }
@@ -47,7 +57,7 @@ public class HTTPClientNative extends HTTPClientBase
             //</editor-fold>
 
             //<editor-fold defaultstate="collapsed" desc=" Set Content ">
-            if (req.hasContent()) {
+            if (HTTPRequestUtils.hasContent(req)) {
                 ContentType contentType= req.getContentType();
                 //                con.setRequestProperty("Content-Type", contentType.getType().concat("; ").concat(req.getContentCharset()));
                 con.setRequestProperty("Content-Type", contentType.getType()+"; charset="+req.getContentCharset());

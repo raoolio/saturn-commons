@@ -1,4 +1,4 @@
-package com.saturn.common.utils.data;
+package com.saturn.common.utils;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;

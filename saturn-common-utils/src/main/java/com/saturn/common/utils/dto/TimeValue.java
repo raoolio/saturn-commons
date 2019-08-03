@@ -1,4 +1,4 @@
-package com.saturn.common.utils.data;
+package com.saturn.common.utils.dto;
 
 import java.util.concurrent.TimeUnit;
 

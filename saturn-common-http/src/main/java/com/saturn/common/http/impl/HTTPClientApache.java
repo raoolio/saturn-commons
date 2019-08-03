@@ -1,7 +1,7 @@
-package com.saturn.common.http;
+package com.saturn.common.http.impl;
 
-import com.saturn.common.http.HTTPRequest;
-import com.saturn.common.http.HTTPResponse;
+import com.saturn.common.http.dto.HTTPRequest;
+import com.saturn.common.http.dto.HTTPResponse;
 import java.io.ByteArrayInputStream;
 import java.net.Socket;
 import java.net.URL;
@@ -38,7 +38,7 @@ public class HTTPClientApache extends HTTPClientBase
 {
 
     @Override
-    public HTTPResponse sendRequest(URL link,HTTPRequest req) throws Exception {
+    public HTTPResponse sendRequest(HTTPRequest req) throws Exception {
 
         HTTPResponse httpResp= new HTTPResponse();
 //        HttpProcessor httpproc = HttpProcessorBuilder.create()
@@ -60,9 +60,9 @@ public class HTTPClientApache extends HTTPClientBase
 //        try {
 //
 //            HttpEntity[] requestBodies = {
-//                    new StringEntity("This is the first test request", ContentType.create("text/plain", Consts.UTF_8)),
-//                    new ByteArrayEntity("This is the second test request".getBytes(Consts.UTF_8),ContentType.APPLICATION_OCTET_STREAM),
-//                    new InputStreamEntity(new ByteArrayInputStream("This is the third test request (will be chunked)".getBytes(Consts.UTF_8)),ContentType.APPLICATION_OCTET_STREAM)
+//                    new StringEntity("This is the first test send", ContentType.create("text/plain", Consts.UTF_8)),
+//                    new ByteArrayEntity("This is the second test send".getBytes(Consts.UTF_8),ContentType.APPLICATION_OCTET_STREAM),
+//                    new InputStreamEntity(new ByteArrayInputStream("This is the third test send (will be chunked)".getBytes(Consts.UTF_8)),ContentType.APPLICATION_OCTET_STREAM)
 //            };
 //
 //            for (int i = 0; i < requestBodies.length; i++) {
@@ -70,14 +70,14 @@ public class HTTPClientApache extends HTTPClientBase
 //                    Socket socket = new Socket(host.getHostName(), host.getPort());
 //                    conn.bind(socket);
 //                }
-//                BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST",
+//                BasicHttpEntityEnclosingRequest send = new BasicHttpEntityEnclosingRequest("POST",
 //                        "/servlets-examples/servlet/RequestInfoExample");
-//                request.setEntity(requestBodies[i]);
-//                System.out.println(">> Request URI: " + request.getRequestLine().getUri());
+//                send.setEntity(requestBodies[i]);
+//                System.out.println(">> Request URI: " + send.getRequestLine().getUri());
 //
-//                // process request!
-//                httpexecutor.preProcess(request, httpproc, coreContext);
-//                HttpResponse response = httpexecutor.execute(request, conn, coreContext);
+//                // process send!
+//                httpexecutor.preProcess(send, httpproc, coreContext);
+//                HttpResponse response = httpexecutor.execute(send, conn, coreContext);
 //                httpexecutor.postProcess(response, httpproc, coreContext);
 //
 //                // Extract Status code & message
