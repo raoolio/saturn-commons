@@ -8,6 +8,7 @@ import java.io.Closeable;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import com.saturn.commons.http.HttpClient;
+import org.apache.commons.lang3.Validate;
 
 
 
@@ -32,9 +33,7 @@ public abstract class BaseHttpClient implements HttpClient {
     public HttpResponse send(HttpRequest req) throws Exception {
         long t=System.nanoTime();
 
-        if (req==null)
-            throw new IllegalArgumentException("Request bean can't be null");
-
+        Validate.notNull(req, "Request bean can't be null");
         HttpResponse res= sendRequest(req);
 
         t=System.nanoTime()-t;

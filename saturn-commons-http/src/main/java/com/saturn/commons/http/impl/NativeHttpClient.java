@@ -27,6 +27,9 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class NativeHttpClient extends BaseHttpClient
 {
+    /** Content buffer size */
+    private static final int BUFFER_SIZE=2048;
+
 
 
     /**
@@ -34,8 +37,8 @@ public class NativeHttpClient extends BaseHttpClient
      * @param con
      * @param res
      */
-    private void fetchHeaders(HttpRequest req,HttpURLConnection con,HttpResponse res) {
-        List headers= Collections.EMPTY_LIST;
+    private List fetchHeaders(HttpRequest req,HttpURLConnection con) {
+        List hl= Collections.EMPTY_LIST;
 
         if (req.isFetchHeaders()) {
             // Retrieve HTTP response headers
@@ -43,17 +46,17 @@ public class NativeHttpClient extends BaseHttpClient
 
             // Has headers?
             if (m!=null && !m.isEmpty()) {
-                headers= new ArrayList(m.size());
+                hl= new ArrayList(m.size());
                 Iterator<String> it= m.keySet().iterator();
                 while (it.hasNext()) {
                     String id= it.next();
                     List<String> values= m.get(id);
-                    headers.add(new HttpHeader(id,values) );
+                    hl.add(new HttpHeader(id,values) );
                 }
             }
         }
 
-        res.setHeaders(headers);
+        return hl;
     }
 
 
@@ -106,24 +109,19 @@ public class NativeHttpClient extends BaseHttpClient
             }
             //</editor-fold>
 
+            // execute request!
             con.connect();
 
             // Fetch response headers?
-            fetchHeaders(req,con,httpResp);
+            httpResp.setHeaders( fetchHeaders(req,con) );
 
             // Retrieve response code & message
             boolean retrieved= fetchResponse(con,httpResp);
             int cntLen=con.getContentLength();
             httpResp.setLength(cntLen);
 
-//            if (LOG.isTraceEnabled())
-//                LOG.trace("HTTP Content-Length: "+cntLen);
-
             if (cntLen!=0) {
                 //<editor-fold defaultstate="collapsed" desc=" Read response content ">
-                //                System.out.println(StringUtils.map2PrettyString(con.getHeaderFields(), "HEADER FIELDS"));
-
-                StringBuilder buff=new StringBuilder(cntLen>0? cntLen : 100);
 
                 // GZip content?
                 String encode= con.getHeaderField("Content-Encoding");
@@ -136,18 +134,18 @@ public class NativeHttpClient extends BaseHttpClient
                     in= con.getErrorStream();
                 }
 
-                byte[] byteArr=new byte[2048];
-                int bytes=-1;
-
                 if (in!=null) {
-                    while ((bytes=in.read(byteArr) )>0) {
+                    StringBuilder bf=new StringBuilder(cntLen>0? cntLen : 100);
+                    byte[] array=new byte[BUFFER_SIZE];
+                    int bytes=-1;
+
+                    while ( (bytes=in.read(array)) > 0 ) {
                         for (int i=0;i<bytes;i++) {
-                            buff.append((char)byteArr[i]);
+                            bf.append((char)array[i]);
                         }
                     }
+                    httpResp.setContent( bf.toString() );
                 }
-
-                httpResp.setContent( buff.toString() );
                 //</editor-fold>
             } else
                 httpResp.setContent("");
