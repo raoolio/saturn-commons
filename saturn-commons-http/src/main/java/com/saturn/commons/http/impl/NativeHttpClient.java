@@ -65,7 +65,7 @@ public class NativeHttpClient extends BaseHttpClient
     @Override
     public HttpResponse sendRequest(HttpRequest req) throws HttpException {
 
-        HttpResponse httpResp= new HttpResponse();
+        HttpResponse res= new HttpResponse();
         HttpURLConnection con=null;
         InputStream in=null;
 
@@ -96,7 +96,6 @@ public class NativeHttpClient extends BaseHttpClient
             //<editor-fold defaultstate="collapsed" desc=" Set Content ">
             if (StringUtils.isNotEmpty(req.getContent())) {
                 ContentType contentType= req.getContentType();
-                //                con.setRequestProperty("Content-Type", contentType.getType().concat("; ").concat(req.getContentCharset()));
                 con.setRequestProperty("Content-Type", contentType.getType()+"; charset="+req.getContentCharset());
                 con.setDoOutput(true);
                 OutputStream os= con.getOutputStream();
@@ -113,22 +112,22 @@ public class NativeHttpClient extends BaseHttpClient
             con.connect();
 
             // Fetch response headers?
-            httpResp.setHeaders( fetchHeaders(req,con) );
+            res.setHeaders( fetchHeaders(req,con) );
 
             // Retrieve response code & message
-            boolean retrieved= fetchResponse(con,httpResp);
+            boolean retrieved= fetchResponse(con,res);
             int cntLen=con.getContentLength();
-            httpResp.setLength(cntLen);
+            res.setLength(cntLen);
 
             if (cntLen!=0) {
                 //<editor-fold defaultstate="collapsed" desc=" Read response content ">
 
                 // GZip content?
                 String encode= con.getHeaderField("Content-Encoding");
-                httpResp.setEncoding(encode);
-                httpResp.setContentType(con.getHeaderField("Content-Type"));
+                res.setEncoding(encode);
+                res.setContentType(con.getHeaderField("Content-Type"));
 
-                if (retrieved && httpResp.isSuccess()) {
+                if (retrieved && res.isSuccess()) {
                     in= "gzip".equalsIgnoreCase(encode) ? new GZIPInputStream(con.getInputStream()) : con.getInputStream();
                 } else {
                     in= con.getErrorStream();
@@ -144,11 +143,11 @@ public class NativeHttpClient extends BaseHttpClient
                             bf.append((char)array[i]);
                         }
                     }
-                    httpResp.setContent( bf.toString() );
+                    res.setContent( bf.toString() );
                 }
                 //</editor-fold>
             } else
-                httpResp.setContent("");
+                res.setContent("");
 
         } catch (Exception ex) {
             // Consume error stream to reuse connection
@@ -161,7 +160,7 @@ public class NativeHttpClient extends BaseHttpClient
             close(in);
         }
 
-        return httpResp;
+        return res;
     }
 
 

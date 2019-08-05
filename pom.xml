@@ -7,9 +7,10 @@
     <packaging>pom</packaging>
     <modules>
         <module>saturn-commons-utils</module>
-        <module>saturn-commons-params</module>
         <module>saturn-commons-http</module>
         <module>saturn-commons-database</module>
+        <module>saturn-commons-property</module>
+        <module>saturn-commons-param</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

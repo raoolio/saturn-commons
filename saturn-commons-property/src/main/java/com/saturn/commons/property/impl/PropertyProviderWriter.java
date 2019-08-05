@@ -1,7 +1,8 @@
-package com.saturn.commons.params;
+package com.saturn.commons.property.impl;
 
 
 import com.saturn.commons.database.ExistsHandler;
+import com.saturn.commons.property.PropertyProviderConfig;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.apache.commons.dbutils.QueryRunner;
@@ -9,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import com.saturn.commons.property.PropertyProvider;
 
 
 
@@ -16,13 +18,13 @@ import org.apache.logging.log4j.LogManager;
  * Parameter cache implementation for any table.
  * @author rdelcid
  */
-abstract class ParamProviderWriter implements ParamProvider {
+abstract class PropertyProviderWriter implements PropertyProvider {
 
     /** Logger */
     protected Logger LOG= LogManager.getLogger(getClass());
 
     /** Configuration */
-    protected ParamProviderConfig config;
+    protected PropertyProviderConfig config;
 
     /** DataSource */
     protected DataSource dataSource;
@@ -39,7 +41,7 @@ abstract class ParamProviderWriter implements ParamProvider {
      * @param config Parameter configuration object
      * @param dataSource Database connection
      */
-    public ParamProviderWriter(ParamProviderConfig config,DataSource dataSource) {
+    public PropertyProviderWriter(PropertyProviderConfig config,DataSource dataSource) {
         this.config= config;
         this.dataSource = dataSource;
         Validate.notBlank(config.getTableName(), "Table name can't be empty");
@@ -58,7 +60,7 @@ abstract class ParamProviderWriter implements ParamProvider {
      * @param conf
      * @return
      */
-    private final void buildSqls(ParamProviderConfig conf) {
+    private final void buildSqls(PropertyProviderConfig conf) {
 
         boolean hasPath= StringUtils.isNotBlank(conf.getPathValue());
         StringBuilder vals= new StringBuilder();

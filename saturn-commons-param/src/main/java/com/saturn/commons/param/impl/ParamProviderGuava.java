@@ -1,10 +1,11 @@
-package com.saturn.commons.params;
+package com.saturn.commons.param.impl;
 
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.CacheLoader.InvalidCacheLoadException;
 import com.google.common.cache.LoadingCache;
+import com.saturn.commons.param.ParamProviderConfig;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.apache.commons.dbutils.QueryRunner;
@@ -17,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
  * Parameter cache implementation for any table.
  * @author rdelcid
  */
-class ParamProviderGuava extends ParamProviderWriter {
+public class ParamProviderGuava extends ParamProviderWriter {
 
     /** Parameter Cache */
     private LoadingCache<String,String> cache;

@@ -1,4 +1,4 @@
-package com.saturn.commons.params;
+package com.saturn.commons.param;
 
 import java.util.concurrent.TimeUnit;
 

@@ -1,6 +1,7 @@
-package com.saturn.commons.params;
+package com.saturn.commons.property.impl;
 
 import com.saturn.commons.database.MapStringHandler;
+import com.saturn.commons.property.PropertyProviderConfig;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.sql.DataSource;
@@ -13,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
  * ParamProvider with key pattern that pre-loads all keys at construction time
  * @author raoolio
  */
-public class ParamProviderPrefix extends ParamProviderWriter {
+public class PropertyProviderPrefix extends PropertyProviderWriter {
 
 
     /** SQL for retrieving all matching parameter values */
@@ -32,7 +33,7 @@ public class ParamProviderPrefix extends ParamProviderWriter {
      * @param config Cache configuration
      * @param dataSource DataSource instance
      */
-    public ParamProviderPrefix(ParamProviderConfig config, DataSource dataSource) {
+    public PropertyProviderPrefix(PropertyProviderConfig config, DataSource dataSource) {
         super(config,dataSource);
         this.sqlGetAll = getSqlGetAll(config);
         loadCache();
@@ -45,7 +46,7 @@ public class ParamProviderPrefix extends ParamProviderWriter {
      * @param conf
      * @return
      */
-    private String getSqlGetAll(ParamProviderConfig conf) {
+    private String getSqlGetAll(PropertyProviderConfig conf) {
         if (conf.getIdPrefix()==null)
             return null;
         else {

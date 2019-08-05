@@ -1,5 +1,7 @@
-package com.saturn.commons.params;
+package com.saturn.commons.param;
 
+import com.saturn.commons.param.impl.ParamProviderPrefix;
+import com.saturn.commons.param.impl.ParamProviderGuava;
 import javax.sql.DataSource;
 import org.apache.commons.lang3.Validate;
 
