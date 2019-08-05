@@ -5,7 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.CacheLoader.InvalidCacheLoadException;
 import com.google.common.cache.LoadingCache;
-import com.saturn.commons.property.PropertyProviderConfig;
+import com.saturn.commons.property.PropertyConfig;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.apache.commons.dbutils.QueryRunner;
@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 public class PropertyProviderGuava extends PropertyProviderWriter {
 
     /** Parameter Cache */
-    private LoadingCache<String,String> cache;
+    private LoadingCache<Key,String> cache;
 
     /** SQL for retrieving one parameter values */
     private String sqlSelect;
@@ -33,7 +33,7 @@ public class PropertyProviderGuava extends PropertyProviderWriter {
      * @param config Parameter configuration object
      * @param dataSource Database connection
      */
-    public PropertyProviderGuava(PropertyProviderConfig config,DataSource dataSource) {
+    public PropertyProviderGuava(PropertyConfig config,DataSource dataSource) {
         super(config,dataSource);
         this.sqlSelect= getFetchSql(config);
         buildCache(config);
@@ -46,15 +46,15 @@ public class PropertyProviderGuava extends PropertyProviderWriter {
      * @param conf
      * @return
      */
-    private String getFetchSql(PropertyProviderConfig conf) {
+    private String getFetchSql(PropertyConfig conf) {
         StringBuilder sql= new StringBuilder()
             .append("SELECT ").append(conf.getValueColumnName())
             .append(" FROM ").append(conf.getTableName())
             .append(" WHERE ");
 
         // Path value present?
-        if (StringUtils.isNotBlank(conf.getPathValue()))
-            sql.append("path='").append(conf.getPathValue()).append("' AND ");
+        if (StringUtils.isNotBlank(conf.getBasePath()))
+            sql.append("path='").append(conf.getBasePath()).append("' AND ");
 
         sql.append(conf.getIdColumnName()).append("=?");
 
@@ -66,17 +66,18 @@ public class PropertyProviderGuava extends PropertyProviderWriter {
 
     /**
      * Creates the parameters cache
+     * @param config
      */
-    protected final void buildCache(PropertyProviderConfig config) {
+    protected final void buildCache(PropertyConfig config) {
         cache= CacheBuilder.newBuilder().
                 maximumSize(config.getMaxSize()).
                 expireAfterWrite(config.getDuration(),config.getDurationUnit()).
-                build(new CacheLoader<String,String>(){
+                build(new CacheLoader<Key,String>(){
                     //<editor-fold defaultstate="collapsed" desc=" Fetch param ">
-    @Override
-            public String load(String id) throws Exception {
-                return fetchValue(id);
-            }
+                    @Override
+                    public String load(Key k) throws Exception {
+                        return fetchValue(k);
+                    }
                     //</editor-fold>
                 });
     }
@@ -85,23 +86,24 @@ public class PropertyProviderGuava extends PropertyProviderWriter {
 
     /**
      * Retrieves the parameter value from the DataSource
-     * @param id GatewayTelcoId
+     * @param k Property key
      * @return Parameter value or NULL if it doesn't exist.
      * @throws SQLException
      */
-    private String fetchValue(String id) throws SQLException {
+    private String fetchValue(Key k) throws SQLException {
         QueryRunner qr=new QueryRunner(dataSource);
-        String value= qr.query(sqlSelect, new ScalarHandler<String>(), id);
-        return value;
+        String v= qr.query(sqlSelect, new ScalarHandler<>(),
+                k.getPath(), k.getId());
+        return v;
     }
 
 
 
     @Override
-    protected String getCacheValue(String id) throws Exception {
+    protected String getCacheValue(Key k) throws Exception {
         String v=null;
         try {
-            v= cache.get(id);
+            v= cache.get(k);
         } catch (InvalidCacheLoadException e) {
         }
         return v;
@@ -109,8 +111,8 @@ public class PropertyProviderGuava extends PropertyProviderWriter {
 
 
     @Override
-    protected void setCacheValue(String id, String value) {
-        cache.put(id, value);
+    protected void setCacheValue(Key k, String v) {
+        cache.put(k, v);
     }
 
 

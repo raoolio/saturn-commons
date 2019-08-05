@@ -1,7 +1,7 @@
 package com.saturn.commons.param.impl;
 
 import com.saturn.commons.database.MapStringHandler;
-import com.saturn.commons.param.ParamProviderConfig;
+import com.saturn.commons.param.ParamConfig;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.sql.DataSource;
@@ -33,7 +33,7 @@ public class ParamProviderPrefix extends ParamProviderWriter {
      * @param config Cache configuration
      * @param dataSource DataSource instance
      */
-    public ParamProviderPrefix(ParamProviderConfig config, DataSource dataSource) {
+    public ParamProviderPrefix(ParamConfig config, DataSource dataSource) {
         super(config,dataSource);
         this.sqlGetAll = getSqlGetAll(config);
         loadCache();
@@ -46,7 +46,7 @@ public class ParamProviderPrefix extends ParamProviderWriter {
      * @param conf
      * @return
      */
-    private String getSqlGetAll(ParamProviderConfig conf) {
+    private String getSqlGetAll(ParamConfig conf) {
         if (conf.getIdPrefix()==null)
             return null;
         else {

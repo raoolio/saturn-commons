@@ -5,7 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.CacheLoader.InvalidCacheLoadException;
 import com.google.common.cache.LoadingCache;
-import com.saturn.commons.param.ParamProviderConfig;
+import com.saturn.commons.param.ParamConfig;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.apache.commons.dbutils.QueryRunner;
@@ -33,7 +33,7 @@ public class ParamProviderGuava extends ParamProviderWriter {
      * @param config Parameter configuration object
      * @param dataSource Database connection
      */
-    public ParamProviderGuava(ParamProviderConfig config,DataSource dataSource) {
+    public ParamProviderGuava(ParamConfig config,DataSource dataSource) {
         super(config,dataSource);
         this.sqlSelect= getFetchSql(config);
         buildCache(config);
@@ -46,7 +46,7 @@ public class ParamProviderGuava extends ParamProviderWriter {
      * @param conf
      * @return
      */
-    private String getFetchSql(ParamProviderConfig conf) {
+    private String getFetchSql(ParamConfig conf) {
         StringBuilder sql= new StringBuilder()
             .append("SELECT ").append(conf.getValueColumnName())
             .append(" FROM ").append(conf.getTableName())
@@ -67,7 +67,7 @@ public class ParamProviderGuava extends ParamProviderWriter {
     /**
      * Creates the parameters cache
      */
-    protected final void buildCache(ParamProviderConfig config) {
+    protected final void buildCache(ParamConfig config) {
         cache= CacheBuilder.newBuilder().
                 maximumSize(config.getMaxSize()).
                 expireAfterWrite(config.getDuration(),config.getDurationUnit()).

@@ -2,7 +2,7 @@ package com.saturn.commons.params.test;
 
 import biz.televida.legacy.testing.DataSourceTest;
 import com.saturn.commons.param.ParamProvider;
-import com.saturn.commons.param.ParamProviderConfig;
+import com.saturn.commons.param.ParamConfig;
 import com.saturn.commons.param.ParamProviderFactory;
 import com.saturn.commons.param.ParamUtil;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +33,7 @@ public class ParamProviderTest extends DataSourceTest {
     @Test
     public void NormalTest() {
 
-        ParamProviderConfig conf= new ParamProviderConfig()
+        ParamConfig conf= new ParamConfig()
                 .setTableName("cdc_configuracion")
                 .setIdColumnName("llave")
                 .setValueColumnName("valor")
@@ -65,7 +65,7 @@ public class ParamProviderTest extends DataSourceTest {
     @Test
     public void PrefixTest() {
 
-        ParamProviderConfig conf= new ParamProviderConfig()
+        ParamConfig conf= new ParamConfig()
                 .setTableName("subscription_config")
                 .setIdColumnName("id")
                 .setValueColumnName("value")
@@ -86,7 +86,7 @@ public class ParamProviderTest extends DataSourceTest {
     @Test
     public void PathTest() {
 
-        ParamProviderConfig conf= new ParamProviderConfig()
+        ParamConfig conf= new ParamConfig()
                 .setTableName("property")
                 .setPathValue("/test-path/")
                 .setIdColumnName("name")
@@ -113,7 +113,7 @@ public class ParamProviderTest extends DataSourceTest {
     @Test
     public void ParentIdTest() {
 
-        ParamProviderConfig conf= new ParamProviderConfig()
+        ParamConfig conf= new ParamConfig()
                 .setTableName("property")
                 .setPathValue("/test-path/")
                 .setIdColumnName("name")

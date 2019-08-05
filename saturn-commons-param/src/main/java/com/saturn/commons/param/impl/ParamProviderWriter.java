@@ -3,7 +3,7 @@ package com.saturn.commons.param.impl;
 
 import com.saturn.commons.database.ExistsHandler;
 import com.saturn.commons.param.ParamProvider;
-import com.saturn.commons.param.ParamProviderConfig;
+import com.saturn.commons.param.ParamConfig;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.apache.commons.dbutils.QueryRunner;
@@ -24,7 +24,7 @@ abstract class ParamProviderWriter implements ParamProvider {
     protected Logger LOG= LogManager.getLogger(getClass());
 
     /** Configuration */
-    protected ParamProviderConfig config;
+    protected ParamConfig config;
 
     /** DataSource */
     protected DataSource dataSource;
@@ -41,7 +41,7 @@ abstract class ParamProviderWriter implements ParamProvider {
      * @param config Parameter configuration object
      * @param dataSource Database connection
      */
-    public ParamProviderWriter(ParamProviderConfig config,DataSource dataSource) {
+    public ParamProviderWriter(ParamConfig config,DataSource dataSource) {
         this.config= config;
         this.dataSource = dataSource;
         Validate.notBlank(config.getTableName(), "Table name can't be empty");
@@ -60,7 +60,7 @@ abstract class ParamProviderWriter implements ParamProvider {
      * @param conf
      * @return
      */
-    private final void buildSqls(ParamProviderConfig conf) {
+    private final void buildSqls(ParamConfig conf) {
 
         boolean hasPath= StringUtils.isNotBlank(conf.getPathValue());
         StringBuilder vals= new StringBuilder();

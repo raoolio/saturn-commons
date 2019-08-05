@@ -1,12 +1,10 @@
 package com.saturn.commons.property.impl;
 
-import com.saturn.commons.database.MapStringHandler;
-import com.saturn.commons.property.PropertyProviderConfig;
+import com.saturn.commons.property.PropertyConfig;
+import com.saturn.commons.property.util.PropertyHandler;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import javax.sql.DataSource;
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.lang3.StringUtils;
 
 
 
@@ -16,12 +14,11 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class PropertyProviderPrefix extends PropertyProviderWriter {
 
-
     /** SQL for retrieving all matching parameter values */
     private String sqlGetAll;
 
     /** Parameter cache */
-    private Map<String,String> cache;
+    private Map<Key,String> cache;
 
     /** Next cache reload time */
     private long nextReload;
@@ -33,7 +30,7 @@ public class PropertyProviderPrefix extends PropertyProviderWriter {
      * @param config Cache configuration
      * @param dataSource DataSource instance
      */
-    public PropertyProviderPrefix(PropertyProviderConfig config, DataSource dataSource) {
+    public PropertyProviderPrefix(PropertyConfig config, DataSource dataSource) {
         super(config,dataSource);
         this.sqlGetAll = getSqlGetAll(config);
         loadCache();
@@ -46,23 +43,18 @@ public class PropertyProviderPrefix extends PropertyProviderWriter {
      * @param conf
      * @return
      */
-    private String getSqlGetAll(PropertyProviderConfig conf) {
-        if (conf.getIdPrefix()==null)
-            return null;
-        else {
-            StringBuilder sql= new StringBuilder()
-                .append("SELECT ").append(conf.getIdColumnName()).append(",").append(conf.getValueColumnName())
-                .append(" FROM ").append(conf.getTableName())
-                .append(" WHERE ");
+    private String getSqlGetAll(PropertyConfig conf) {
+        StringBuilder sql= new StringBuilder()
+            .append("SELECT ").append(conf.getPathColumnName())
+            .append(",").append(conf.getIdColumnName())
+            .append(",").append(conf.getValueColumnName())
+            .append(" FROM ").append(conf.getTableName())
+            .append(" WHERE ");
 
-            // Path value present?
-            if (StringUtils.isNotBlank(conf.getPathValue()))
-                sql.append("path='").append(conf.getPathValue()).append("' AND ");
+        // Add base path
+        sql.append(conf.getPathColumnName()).append(" LIKE '").append(conf.getBasePath()).append("%'");
 
-            sql.append(conf.getIdColumnName()).append(" LIKE '").append(conf.getIdPrefix()).append("%'");
-
-            return sql.toString();
-        }
+        return sql.toString();
     }
 
 
@@ -72,12 +64,11 @@ public class PropertyProviderPrefix extends PropertyProviderWriter {
      * @param conf
      */
     private void loadCache() {
-        Map<String,String> tmpPars= new ConcurrentHashMap<String,String>(config.getMaxSize());
         try {
             QueryRunner qr= new QueryRunner(dataSource);
-            qr.query(sqlGetAll, new MapStringHandler(tmpPars));
-            setCache(tmpPars);
-            LOG.debug("["+tmpPars.size()+"] parameters loaded!");
+            Map<Key,String> m= qr.query(sqlGetAll, new PropertyHandler());
+            setCache(m);
+            LOG.debug("["+m.size()+"] parameters loaded!");
         } catch (Exception ex) {
             LOG.error("Error fetching all parameters", ex);
         }
@@ -87,11 +78,11 @@ public class PropertyProviderPrefix extends PropertyProviderWriter {
 
     /**
      * Replaces the current cache
-     * @param freshMap New reloaded cache
+     * @param map New reloaded cache
      */
-    private void setCache(Map freshMap) {
+    private void setCache(Map map) {
         Map oldMap= cache;
-        cache= freshMap;
+        cache= map;
         nextReload= System.currentTimeMillis()+config.getDurationUnit().toMillis(config.getDuration());
 
         if (oldMap!=null) {
@@ -103,21 +94,21 @@ public class PropertyProviderPrefix extends PropertyProviderWriter {
 
 
     @Override
-    protected String getCacheValue(String id) throws Exception {
+    protected String getCacheValue(Key key) throws Exception {
 
         // Reload the cache?
         if (System.currentTimeMillis() > nextReload) {
             loadCache();
         }
 
-        return cache.get(id);
+        return cache.get(key);
     }
 
 
 
     @Override
-    protected void setCacheValue(String id, String value) {
-        cache.put(id, value);
+    protected void setCacheValue(Key key, String value) {
+        cache.put(key, value);
     }
 
 

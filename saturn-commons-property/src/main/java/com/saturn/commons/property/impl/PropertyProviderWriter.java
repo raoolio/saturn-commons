@@ -2,7 +2,7 @@ package com.saturn.commons.property.impl;
 
 
 import com.saturn.commons.database.ExistsHandler;
-import com.saturn.commons.property.PropertyProviderConfig;
+import com.saturn.commons.property.PropertyConfig;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.apache.commons.dbutils.QueryRunner;
@@ -24,7 +24,7 @@ abstract class PropertyProviderWriter implements PropertyProvider {
     protected Logger LOG= LogManager.getLogger(getClass());
 
     /** Configuration */
-    protected PropertyProviderConfig config;
+    protected PropertyConfig config;
 
     /** DataSource */
     protected DataSource dataSource;
@@ -41,11 +41,11 @@ abstract class PropertyProviderWriter implements PropertyProvider {
      * @param config Parameter configuration object
      * @param dataSource Database connection
      */
-    public PropertyProviderWriter(PropertyProviderConfig config,DataSource dataSource) {
+    public PropertyProviderWriter(PropertyConfig config,DataSource dataSource) {
         this.config= config;
         this.dataSource = dataSource;
         Validate.notBlank(config.getTableName(), "Table name can't be empty");
-        Validate.notBlank(config.getIdColumnName(), "ID column name can't be empty");
+        Validate.notBlank(config.getIdColumnName(), "Id column name can't be empty");
         Validate.notBlank(config.getValueColumnName(), "Value column name can't be empty");
         Validate.isTrue(config.getMaxSize()>0, "Cache size must be greater than 0");
         Validate.isTrue(config.getDuration()>0, "Cache duration value must be greater than 0");
@@ -60,60 +60,50 @@ abstract class PropertyProviderWriter implements PropertyProvider {
      * @param conf
      * @return
      */
-    private final void buildSqls(PropertyProviderConfig conf) {
+    private final void buildSqls(PropertyConfig conf) {
 
-        boolean hasPath= StringUtils.isNotBlank(conf.getPathValue());
+        boolean hasPath= StringUtils.isNotBlank(conf.getBasePath());
         StringBuilder vals= new StringBuilder();
 
-        // Prepare UPDATE
+        //<editor-fold defaultstate="collapsed" desc=" Build Update ">
+
         StringBuilder sql= new StringBuilder()
-            .append("UPDATE ").append(conf.getTableName())
-            .append(" SET ").append(conf.getValueColumnName()).append("=?")
-            .append(" WHERE ");
+                .append("UPDATE ").append(conf.getTableName())
+                .append(" SET ").append(conf.getValueColumnName()).append("=?")
+                .append(" WHERE ");
 
-        if (hasPath)
-            sql.append("path='").append(conf.getPathValue()).append("' AND ");
-
+        sql.append(conf.getPathColumnName()).append("=? AND ");
         sql.append(conf.getIdColumnName()).append("=?");
         sqlUpdate= sql.toString();
 
-        // Prepare INSERT
+        //</editor-fold>
+
+        //<editor-fold defaultstate="collapsed" desc=" Build Insert ">
+
         // NOTE: fields in reverse order for compatibility with UPDATE statement
         sql.delete(0, sql.length())
-           .append("INSERT INTO ").append(conf.getTableName()).append("(");
-
-        if (hasPath) {
-            sql.append("path,");
-            vals.append("'").append(conf.getPathValue()).append("',");
-        }
+                .append("INSERT INTO ").append(conf.getTableName()).append("(");
 
         sql.append(conf.getValueColumnName())
-           .append(",")
-           .append(conf.getIdColumnName());
+           .append(",").append(conf.getPathColumnName())
+           .append(",").append(conf.getIdColumnName());
+        vals.append("?,?,?");
 
-        vals.append("?,?");
-
-        // Add description field?
-        if (conf.getTableName().contains("subscription_config")) {
-            sql.append(",description");
-            vals.append(",'Code generated value'");
-        }
-
-        sql.append(") VALUES(").append(vals).append(")").toString();
+        sql.append(") VALUES(").append(vals).append(")");
         sqlInsert= sql.toString();
 
-        // Prepare EXISTS
+        //</editor-fold>
+
+        //<editor-fold defaultstate="collapsed" desc=" Build Exists ">
+
         sql.delete(0, sql.length())
-            .append("SELECT ").append(conf.getIdColumnName())
-            .append(" FROM ").append(conf.getTableName())
-            .append(" WHERE ");
+                .append("SELECT ").append(conf.getIdColumnName())
+                .append(" FROM ").append(conf.getTableName())
+                .append(" WHERE ").append(conf.getPathColumnName()).append("=?")
+                .append(" AND ").append(conf.getIdColumnName()).append("=?");
+        sqlExists= sql.toString();
 
-        if (hasPath)
-            sql.append("path='").append(conf.getPathValue()).append("' AND ");
-
-        sqlExists= sql.append(conf.getIdColumnName()).append("=?")
-            .toString()
-        ;
+        //</editor-fold>
 
     }
 
@@ -121,19 +111,20 @@ abstract class PropertyProviderWriter implements PropertyProvider {
 
     /**
      * Retrieve a value from the cache
-     * @param id Parameter id
+     * @param key Parameter key
      * @return
      */
-    protected abstract String getCacheValue(String id) throws Exception;
+    protected abstract String getCacheValue(Key key) throws Exception;
 
 
     /**
      * Updates a value in the cache
+     * @param path Property path
      * @param id Parameter ID
      * @param value New value
      * @return
      */
-    protected abstract void setCacheValue(String id,String value);
+    protected abstract void setCacheValue(Key key,String value);
 
 
 
@@ -154,8 +145,32 @@ abstract class PropertyProviderWriter implements PropertyProvider {
      * @return Associated value or defaultValue if it doesn't exist.
      */
     @Override
-    public String getValue(String id) {
-        return getValue(id,null);
+    public String getValue(String path,String id) {
+        return getValue(path,id,null);
+    }
+
+
+
+    /**
+     * Returns property path. The path is formed by:
+     * basePath + suffix
+     * @param suffix Path suffix
+     * @return
+     */
+    private String getPath(String suffix) {
+
+        if (suffix==null)
+            return config.getBasePath();
+        else {
+            StringBuilder p= new StringBuilder(config.getBasePath());
+
+            char l= p.charAt(p.length()-1);
+            if (l!='/')
+                p.append('/');
+
+            p.append(suffix).append('/');
+            return p.toString();
+        }
     }
 
 
@@ -168,12 +183,15 @@ abstract class PropertyProviderWriter implements PropertyProvider {
      * @return
      */
     @Override
-    public String getValue(String id, String defaultValue) {
+    public String getValue(String path,String id, String defaultValue) {
         String v=null;
+        String p= getPath(path);
+
+        Key k= new Key(p,id);
         try {
-            v= getCacheValue(id);
+            v= getCacheValue(k);
         } catch (Exception e) {
-            LOG.warn("ID["+id+"] -> "+e.getCause().toString());
+            LOG.warn("ID["+k+"] -> "+e.getCause().toString());
         }
 
         return v!=null? v : defaultValue;
@@ -183,17 +201,18 @@ abstract class PropertyProviderWriter implements PropertyProvider {
 
     /**
      * Stores the given key-value pair in the cache
-     * @param id Parameter ID
-     * @param value Parameter value
+     * @param path Property path
+     * @param id Property id
+     * @param value Property value
      * @return
      */
     @Override
-    public boolean setValue(String id, String value) {
-
+    public boolean setValue(String path,String id, String value) {
         boolean done=false;
-        if (id!=null && value!=null) {
-            setCacheValue(id, value);
-            done= updateOrInsert(id,value);
+        if (path!=null && id!=null && value!=null) {
+            Key key= new Key(path,id);
+            setCacheValue(key, value);
+            done= updateOrInsert(key,value);
         }
         return done;
     }
@@ -206,17 +225,21 @@ abstract class PropertyProviderWriter implements PropertyProvider {
      * @return Parameter value or NULL if it doesn't exist.
      * @throws SQLException
      */
-    private boolean updateOrInsert(String id,String value) {
+    private boolean updateOrInsert(Key key,String value) {
         boolean done=false;
         try {
             QueryRunner qr=new QueryRunner(dataSource);
-            boolean exists= qr.query(sqlExists, new ExistsHandler(), id);
 
-            done= qr.update(exists? sqlUpdate : sqlInsert,
-                    value,id) > 0;
+            boolean exists= qr.query(sqlExists, new ExistsHandler(),
+                    key.getPath(),
+                    key.getId());
+
+            String sql=exists? sqlUpdate : sqlInsert;
+
+            done= qr.update(sql, value, key.getPath(), key.getId()) > 0;
 
         } catch(Exception ex) {
-            LOG.error("Error storing parameter: ["+id+"="+value+"]", ex);
+            LOG.error("Error storing parameter: ["+key+"="+value+"]", ex);
         }
         return done;
     }

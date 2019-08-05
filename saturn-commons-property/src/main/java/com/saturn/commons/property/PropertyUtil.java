@@ -26,10 +26,10 @@ public class PropertyUtil {
 
     /**
      * Constructor
-     * @param parProv Parameter provider
+     * @param propProv Property provider
      */
-    public PropertyUtil(PropertyProvider parProv) {
-        this.paramProvider = parProv;
+    public PropertyUtil(PropertyProvider propProv) {
+        this.paramProvider = propProv;
     }
 
 
@@ -46,43 +46,45 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as String
+     * @param path
      * @param id Parameter ID
      * @return Parameter value or <b>NULL</b> if it doesn't exist
      */
-    public String getString(String id) {
-        return getString(id,null);
+    public String getString(String path,String id) {
+        return getString(path,id,null);
     }
 
 
 
     /**
      * Returns the parameter value as String
-     * @param id Parameter ID
+     * @param path Property path
+     * @param id Property id
      * @param defValue Default value
      * @return Parameter value or <b>defValue</b> if it doesn't exist
      */
-    public String getString(String id,String defValue) {
+    public String getString(String path,String id,String defValue) {
         String v= defValue;
-        int c=0;
+        int c=5;
         do {
             // Fetch value...
-            v= paramProvider.getValue(id, DEFAULT);
+            v= paramProvider.getValue(path,id,DEFAULT);
 
             // Value found? -> quit!
             if (!DEFAULT.equals(v)) {
                 break;
             } else {
-                // id contains dot "." ?
-                int p= id.lastIndexOf(".");
+                // Path contains slash "/" ?
+                int p= path.lastIndexOf("/",path.length()-2);
                 if (p>0) {
-                    // get parent ID
-                    id= id.substring(0, p);
+                    // get parent path...
+                    path= path.substring(0, p+1);
                 } else {
                     break;
                 }
             }
 
-        } while (++c<2);
+        } while (--c>=0);
 
         return v.equals(DEFAULT)? defValue: v;
     }
@@ -91,23 +93,25 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as Integer
-     * @param id Parameter ID
+     * @param path Property path
+     * @param id Property id
      * @return Parameter value or <b>NULL</b> if it doesn't exist
      */
-    public Integer getInt(String id) {
-        return getInt(id,null);
+    public Integer getInt(String path,String id) {
+        return getInt(path,id,null);
     }
 
 
 
     /**
      * Returns the parameter value as Integer
-     * @param id Parameter ID
+     * @param path Property path
+     * @param id Property id
      * @param defValue Default value
      * @return Parameter value or <b>defValue</b> if it doesn't exist
      */
-    public Integer getInt(String id,String defValue) {
-        String val= getString(id,defValue);
+    public Integer getInt(String path,String id,String defValue) {
+        String val= getString(path,id,defValue);
         return Integer.valueOf(val);
     }
 
@@ -115,22 +119,24 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as Long
-     * @param id Parameter ID
+     * @param path Property path
+     * @param id Property id
      * @return Parameter value or <b>NULL</b> if it doesn't exist
      */
-     public Long getLong(String id) {
-        return getLong(id,null);
+     public Long getLong(String path,String id) {
+        return getLong(path,id,null);
     }
 
 
 
     /**
      * Returns the parameter value as Long
-     * @param id Parameter ID
+     * @param path Property path
+     * @param id Property id
      * @param defValue Default value
      * @return Parameter value or <b>defValue</b> if it doesn't exist
      */
-    public Long getLong(String id,String defValue) {
+    public Long getLong(String path,String id,String defValue) {
         String val= getString(id,defValue);
         return Long.valueOf(val);
     }
@@ -139,23 +145,25 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as Float
-     * @param id Parameter ID
+     * @param path Property path
+     * @param id Property id
      * @return Parameter value or <b>NULL</b> if it doesn't exist
      */
-    public Float getFloat(String id) {
-        return getFloat(id,null);
+    public Float getFloat(String path,String id) {
+        return getFloat(path,id,null);
     }
 
 
 
     /**
      * Returns the parameter value as Float
-     * @param id Parameter ID
+     * @param path Property path
+     * @param id Property id
      * @param defValue Default value
      * @return Parameter value or <b>defValue</b> if it doesn't exist
      */
-    public Float getFloat(String id,String defValue) {
-        String val= getString(id,defValue);
+    public Float getFloat(String path,String id,String defValue) {
+        String val= getString(path,id,defValue);
         return Float.valueOf(val);
     }
 
@@ -163,23 +171,25 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as Double
-     * @param id Parameter ID
+     * @param path Property path
+     * @param id Property id
      * @return Parameter value or <b>NULL</b> if it doesn't exist
      */
-    public Double getDouble(String id) {
-        return getDouble(id,null);
+    public Double getDouble(String path,String id) {
+        return getDouble(path,id,null);
     }
 
 
 
     /**
      * Returns the parameter value as Double
-     * @param id Parameter ID
+     * @param path Property path
+     * @param id Property id
      * @param defValue Default value
      * @return Parameter value or <b>defValue</b> if it doesn't exist
      */
-    public Double getDouble(String id,String defValue) {
-        String val= getString(id,defValue);
+    public Double getDouble(String path,String id,String defValue) {
+        String val= getString(path,id,defValue);
         return Double.valueOf(val);
     }
 
@@ -187,23 +197,25 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as Boolean
-     * @param id Parameter ID
+     * @param path Property path
+     * @param id Property id
      * @return Parameter value or <b>NULL</b> if it doesn't exist
      */
-    public Boolean getBoolean(String id) {
-        return getBoolean(id,null);
+    public Boolean getBoolean(String path,String id) {
+        return getBoolean(path,id,null);
     }
 
 
 
     /**
      * Returns the parameter value as Boolean
-     * @param id Parameter ID
+     * @param path Property path
+     * @param id Property id
      * @param defValue Default value
      * @return Parameter value or <b>defValue</b> if it doesn't exist
      */
-    public Boolean getBoolean(String id,String defValue) {
-        String val= getString(id,defValue);
+    public Boolean getBoolean(String path,String id,String defValue) {
+        String val= getString(path,id,defValue);
         return Boolean.valueOf(val);
     }
 
@@ -211,23 +223,25 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as TimeUnit
-     * @param id Parameter ID
+     * @param path Property path
+     * @param id Property id
      * @return Parameter value or <b>NULL</b> if it doesn't exist
      */
-    public TimeUnit getTimeUnit(String id) {
-        return getTimeUnit(id,null);
+    public TimeUnit getTimeUnit(String path,String id) {
+        return getTimeUnit(path,id,null);
     }
 
 
 
     /**
      * Returns the parameter value as TimeUnit
-     * @param id Parameter ID
+     * @param path Property path
+     * @param id Property id
      * @param defValue Default value
      * @return Parameter value or <b>defValue</b> if it doesn't exist
      */
-    public TimeUnit getTimeUnit(String id,String defValue) {
-        String val= getString(id,defValue);
+    public TimeUnit getTimeUnit(String path,String id,String defValue) {
+        String val= getString(path,id,defValue);
         return TimeUnit.valueOf(val);
     }
 
@@ -235,12 +249,13 @@ public class PropertyUtil {
 
     /**
      * Persists the given key-value pair
-     * @param id Parameter ID
-     * @param value Parameter value
+     * @param path Property path
+     * @param id Property id
+     * @param value Property value
      * @return Returns <b>true</b> if the operation succeeded.
      */
-    public boolean setValue(String id,String value) {
-        return paramProvider.setValue(id, value);
+    public boolean setValue(String path,String id,String value) {
+        return paramProvider.setValue(path,id, value);
     }
 
 

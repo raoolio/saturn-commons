@@ -7,7 +7,7 @@ import org.apache.commons.lang3.Validate;
 
 
 /**
- * Param provider factory
+ * PropertyProvider factory
  * @author raoolio
  */
 public class PropertyProviderFactory {
@@ -24,10 +24,10 @@ public class PropertyProviderFactory {
      * @param dataSource Data source instance
      * @return
      */
-    public static PropertyProvider getParamProvider(PropertyProviderConfig config,DataSource dataSource) {
+    public static PropertyProvider getPropertyProvider(PropertyConfig config,DataSource dataSource) {
         Validate.notNull(config, "Configuration can't be null");
-        return config.getIdPrefix()==null ? new PropertyProviderGuava(config,dataSource) :
-            new PropertyProviderPrefix(config,dataSource);
+//        return config.getIdPrefix()==null ? new PropertyProviderGuava(config,dataSource) :
+        return new PropertyProviderPrefix(config,dataSource);
     }
 
 

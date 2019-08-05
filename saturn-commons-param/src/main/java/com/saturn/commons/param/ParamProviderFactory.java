@@ -24,7 +24,7 @@ public class ParamProviderFactory {
      * @param dataSource Data source instance
      * @return
      */
-    public static ParamProvider getParamProvider(ParamProviderConfig config,DataSource dataSource) {
+    public static ParamProvider getParamProvider(ParamConfig config,DataSource dataSource) {
         Validate.notNull(config, "Configuration can't be null");
         return config.getIdPrefix()==null ? new ParamProviderGuava(config,dataSource) :
             new ParamProviderPrefix(config,dataSource);

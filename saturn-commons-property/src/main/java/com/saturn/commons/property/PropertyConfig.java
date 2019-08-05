@@ -9,22 +9,22 @@ import java.util.concurrent.TimeUnit;
  *
  * @author raoolio
  */
-public class PropertyProviderConfig {
+public class PropertyConfig {
 
     /** Table name for retrieving parameters */
-    private String tableName;
+    private String tableName= "property";
+
+    /** Path column name */
+    private String pathColumnName= "path";
 
     /** Parameter ID column name */
-    private String idColumnName;
+    private String idColumnName="name";
 
     /** Parameter value column name */
-    private String valueColumnName;
+    private String valueColumnName="value";
 
     /** Path column name (used for table property) */
-    private String pathValue;
-
-    /** ID Pattern for pre loading all keys */
-    private String idPrefix;
+    private String basePath;
 
     /** Cache duration time before reloading */
     private long duration;
@@ -41,7 +41,7 @@ public class PropertyProviderConfig {
      * ParamProvider constructor
      * @return
      */
-    public PropertyProviderConfig ParamProviderConfig() {
+    public PropertyConfig PropertyConfig() {
         return this;
     }
 
@@ -51,9 +51,18 @@ public class PropertyProviderConfig {
      * @param tableName Table name
      * @return
      */
-    public PropertyProviderConfig setTableName(String tableName) {
+    public PropertyConfig setTableName(String tableName) {
         this.tableName = tableName;
         return this;
+    }
+
+
+    /**
+     * Set the table's path column name
+     * @param pathColumnName
+     */
+    public void setPathColumnName(String pathColumnName) {
+        this.pathColumnName = pathColumnName;
     }
 
 
@@ -62,7 +71,7 @@ public class PropertyProviderConfig {
      * @param idColumnName Key column name
      * @return
      */
-    public PropertyProviderConfig setIdColumnName(String idColumnName) {
+    public PropertyConfig setIdColumnName(String idColumnName) {
         this.idColumnName = idColumnName;
         return this;
     }
@@ -73,19 +82,19 @@ public class PropertyProviderConfig {
      * @param valueColumnName Value column name
      * @return
      */
-    public PropertyProviderConfig setValueColumnName(String valueColumnName) {
+    public PropertyConfig setValueColumnName(String valueColumnName) {
         this.valueColumnName = valueColumnName;
         return this;
     }
 
 
     /**
-     * Sets the PATH value for retrieving values
-     * @param pathColumnName
+     * Sets the base path for retrieving property values
+     * @param path Base property path
      * @return
      */
-    public PropertyProviderConfig setPathValue(String pathColumnName) {
-        this.pathValue = pathColumnName;
+    public PropertyConfig setBasePath(String path) {
+        this.basePath = path;
         return this;
     }
 
@@ -97,7 +106,7 @@ public class PropertyProviderConfig {
      * @see setDurationUnit
      * @return
      */
-    public PropertyProviderConfig setDuration(long duration,TimeUnit unit) {
+    public PropertyConfig setDuration(long duration,TimeUnit unit) {
         this.duration = duration;
         this.durationUnit= unit;
         return this;
@@ -110,20 +119,8 @@ public class PropertyProviderConfig {
      * @param maxSize
      * @return
      */
-    public PropertyProviderConfig setMaxSize(int maxSize) {
+    public PropertyConfig setMaxSize(int maxSize) {
         this.maxSize = maxSize;
-        return this;
-    }
-
-
-
-    /**
-     * Sets the key parameters
-     * @param idPattern
-     * @return
-     */
-    public PropertyProviderConfig setIdPrefix(String idPattern) {
-        this.idPrefix = idPattern;
         return this;
     }
 
@@ -131,6 +128,10 @@ public class PropertyProviderConfig {
 
     public String getTableName() {
         return tableName;
+    }
+
+    public String getPathColumnName() {
+        return pathColumnName;
     }
 
     public String getIdColumnName() {
@@ -141,8 +142,8 @@ public class PropertyProviderConfig {
         return valueColumnName;
     }
 
-    public String getPathValue() {
-        return pathValue;
+    public String getBasePath() {
+        return basePath;
     }
 
     public long getDuration() {
@@ -157,14 +158,10 @@ public class PropertyProviderConfig {
         return maxSize;
     }
 
-    public String getIdPrefix() {
-        return idPrefix;
-    }
-
 
     @Override
     public String toString() {
-        return "ParamProviderConfig{" + "tableName=" + tableName + ", idColumnName=" + idColumnName + "["+idPrefix+"], valueColumnName=" + valueColumnName + '}';
+        return "PropertyConfig{" + "tableName=" + tableName + ", idColumnName=" + idColumnName +", valueColumnName=" + valueColumnName + '}';
     }
 
 }

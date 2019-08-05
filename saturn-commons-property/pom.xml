@@ -43,6 +43,19 @@
             <version>2.11.2</version>
             <type>jar</type>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/junit/junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>biz.televida.legacy</groupId>
+            <artifactId>televida-testing-utils</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <name>saturn-commons-property</name>
 </project>

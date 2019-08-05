@@ -4,12 +4,12 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * ParamProvider configuration parameters for a Guava Loading Cache object.
+ * Param configuration parameters for a Guava Loading Cache object.
  * Each entry is composed of a key/value pair
  *
  * @author raoolio
  */
-public class ParamProviderConfig {
+public class ParamConfig {
 
     /** Table name for retrieving parameters */
     private String tableName;
@@ -41,7 +41,7 @@ public class ParamProviderConfig {
      * ParamProvider constructor
      * @return
      */
-    public ParamProviderConfig ParamProviderConfig() {
+    public ParamConfig ParamConfig() {
         return this;
     }
 
@@ -51,7 +51,7 @@ public class ParamProviderConfig {
      * @param tableName Table name
      * @return
      */
-    public ParamProviderConfig setTableName(String tableName) {
+    public ParamConfig setTableName(String tableName) {
         this.tableName = tableName;
         return this;
     }
@@ -62,7 +62,7 @@ public class ParamProviderConfig {
      * @param idColumnName Key column name
      * @return
      */
-    public ParamProviderConfig setIdColumnName(String idColumnName) {
+    public ParamConfig setIdColumnName(String idColumnName) {
         this.idColumnName = idColumnName;
         return this;
     }
@@ -73,7 +73,7 @@ public class ParamProviderConfig {
      * @param valueColumnName Value column name
      * @return
      */
-    public ParamProviderConfig setValueColumnName(String valueColumnName) {
+    public ParamConfig setValueColumnName(String valueColumnName) {
         this.valueColumnName = valueColumnName;
         return this;
     }
@@ -84,7 +84,7 @@ public class ParamProviderConfig {
      * @param pathColumnName
      * @return
      */
-    public ParamProviderConfig setPathValue(String pathColumnName) {
+    public ParamConfig setPathValue(String pathColumnName) {
         this.pathValue = pathColumnName;
         return this;
     }
@@ -97,7 +97,7 @@ public class ParamProviderConfig {
      * @see setDurationUnit
      * @return
      */
-    public ParamProviderConfig setDuration(long duration,TimeUnit unit) {
+    public ParamConfig setDuration(long duration,TimeUnit unit) {
         this.duration = duration;
         this.durationUnit= unit;
         return this;
@@ -110,7 +110,7 @@ public class ParamProviderConfig {
      * @param maxSize
      * @return
      */
-    public ParamProviderConfig setMaxSize(int maxSize) {
+    public ParamConfig setMaxSize(int maxSize) {
         this.maxSize = maxSize;
         return this;
     }
@@ -122,7 +122,7 @@ public class ParamProviderConfig {
      * @param idPattern
      * @return
      */
-    public ParamProviderConfig setIdPrefix(String idPattern) {
+    public ParamConfig setIdPrefix(String idPattern) {
         this.idPrefix = idPattern;
         return this;
     }
@@ -164,7 +164,7 @@ public class ParamProviderConfig {
 
     @Override
     public String toString() {
-        return "ParamProviderConfig{" + "tableName=" + tableName + ", idColumnName=" + idColumnName + "["+idPrefix+"], valueColumnName=" + valueColumnName + '}';
+        return "ParamConfig{" + "tableName=" + tableName + ", idColumnName=" + idColumnName + "["+idPrefix+"], valueColumnName=" + valueColumnName + '}';
     }
 
 }
