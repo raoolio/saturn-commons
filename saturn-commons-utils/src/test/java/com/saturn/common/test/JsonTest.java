@@ -1,6 +1,6 @@
 package com.saturn.common.test;
 
-import com.saturn.common.utils.json.JsonUtils;
+import com.saturn.commons.utils.json.JsonUtils;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;

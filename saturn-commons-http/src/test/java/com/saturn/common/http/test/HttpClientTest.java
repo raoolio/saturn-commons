@@ -1,16 +1,16 @@
 package com.saturn.common.http.test;
 
-import com.saturn.common.http.HttpClientFactory;
-import com.saturn.common.http.dto.HttpRequest;
-import com.saturn.common.http.dto.HttpRequestBuilder;
-import com.saturn.common.http.dto.HttpResponse;
-import com.saturn.common.http.type.ContentType;
-import com.saturn.common.http.type.RequestMethod;
+import com.saturn.commons.http.HttpClientFactory;
+import com.saturn.commons.http.dto.HttpRequest;
+import com.saturn.commons.http.dto.HttpRequestBuilder;
+import com.saturn.commons.http.dto.HttpResponse;
+import com.saturn.commons.http.type.ContentType;
+import com.saturn.commons.http.type.RequestMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
-import com.saturn.common.http.HttpClient;
+import com.saturn.commons.http.HttpClient;
 
 
 /**
