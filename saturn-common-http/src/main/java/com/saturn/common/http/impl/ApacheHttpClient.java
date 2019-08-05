@@ -1,7 +1,7 @@
 package com.saturn.common.http.impl;
 
-import com.saturn.common.http.dto.HTTPRequest;
-import com.saturn.common.http.dto.HTTPResponse;
+import com.saturn.common.http.dto.HttpRequest;
+import com.saturn.common.http.dto.HttpResponse;
 import java.io.ByteArrayInputStream;
 import java.net.Socket;
 import java.net.URL;
@@ -34,13 +34,13 @@ import java.net.URL;
  * Apache HTTP Client implementation
  * @author rdelcid
  */
-public class HTTPClientApache extends HTTPClientBase
+public class ApacheHttpClient extends BaseHttpClient
 {
 
     @Override
-    public HTTPResponse sendRequest(HTTPRequest req) throws Exception {
+    public HttpResponse sendRequest(HttpRequest req) throws Exception {
 
-        HTTPResponse httpResp= new HTTPResponse();
+        HttpResponse httpResp= new HttpResponse();
 //        HttpProcessor httpproc = HttpProcessorBuilder.create()
 //            .add(new RequestContent())
 //            .add(new RequestTargetHost())

@@ -1,5 +1,6 @@
 package com.saturn.common.utils;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,9 +14,9 @@ public class ArrayUtils extends BufferUtils {
 
     private ArrayUtils() {
     }
-    
-    
-    
+
+
+
     /**
      * Convierte el arreglo dado a su representacion en String.
      * @param arry Arreglo de datos
@@ -41,7 +42,7 @@ public class ArrayUtils extends BufferUtils {
 
 
 
-    
+
 
 
 
@@ -83,6 +84,23 @@ public class ArrayUtils extends BufferUtils {
         return m;
     }
 
+
+
+    /**
+     * Convert given array to list
+     * @param <T> Element Type
+     * @param array Array
+     * @return
+     */
+    public static <T> List<T> array2List(T[] array) {
+        List<T> l= new ArrayList(array.length);
+
+        for (T ob: array) {
+            l.add(ob);
+        }
+
+        return l;
+    }
 
 
 }

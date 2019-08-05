@@ -2,7 +2,7 @@ package com.saturn.common.http.dto;
 
 import com.saturn.common.http.type.ContentType;
 import com.saturn.common.http.type.RequestMethod;
-import com.saturn.common.http.util.HTTPParamUtil;
+import com.saturn.common.http.util.HttpParamUtil;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -14,9 +14,9 @@ import org.apache.commons.lang3.Validate;
 
 
 /**
- * HTTPRequest Builder helper
+ * HttpRequest Builder helper
  */
-public class HTTPRequestBuilder {
+public class HttpRequestBuilder {
 
     /** HTTP request method */
     private RequestMethod method;
@@ -36,10 +36,10 @@ public class HTTPRequestBuilder {
     /** TCP request timeout */
     private int timeout;
 
-    /** Header list */
-    private List<Header> headers;
+    /** HttpHeader list */
+    private List<HttpHeader> headers;
 
-    /** Header list */
+    /** HttpHeader list */
     private Map<String,Object> params;
 
     /** Parameters name's total length */
@@ -48,12 +48,15 @@ public class HTTPRequestBuilder {
     /** Send unmatched parameters in request? */
     private boolean sendAllParams;
 
+    /** Fetch HTTP Response Headers? */
+    private boolean fetchHeaders;
+
 
 
     /**
      * Constructor
      */
-    public HTTPRequestBuilder() {
+    public HttpRequestBuilder() {
         this.headers= Collections.EMPTY_LIST;
         this.params= Collections.EMPTY_MAP;
         this.sendAllParams= true;
@@ -66,7 +69,7 @@ public class HTTPRequestBuilder {
      * @param url Destination URL
      * @return
      */
-    public HTTPRequestBuilder setUrl(String url) {
+    public HttpRequestBuilder setUrl(String url) {
         this.url = url;
         return this;
     }
@@ -77,7 +80,7 @@ public class HTTPRequestBuilder {
      * @param method
      * @return
      */
-    public HTTPRequestBuilder setMethod(RequestMethod method) {
+    public HttpRequestBuilder setMethod(RequestMethod method) {
         this.method = method;
         return this;
     }
@@ -88,7 +91,7 @@ public class HTTPRequestBuilder {
      * @param content
      * @return
      */
-    public HTTPRequestBuilder setContent(String content) {
+    public HttpRequestBuilder setContent(String content) {
         this.content = content;
         return this;
     }
@@ -99,7 +102,7 @@ public class HTTPRequestBuilder {
      * @param contentType
      * @return
      */
-    public HTTPRequestBuilder setContentType(ContentType contentType) {
+    public HttpRequestBuilder setContentType(ContentType contentType) {
         this.contentType = contentType;
         return this;
     }
@@ -110,7 +113,7 @@ public class HTTPRequestBuilder {
      * @param contentCharset
      * @return
      */
-    public HTTPRequestBuilder setContentCharset(String contentCharset) {
+    public HttpRequestBuilder setContentCharset(String contentCharset) {
         this.contentCharset = contentCharset;
         return this;
     }
@@ -122,7 +125,7 @@ public class HTTPRequestBuilder {
      * @param timeout Timeout in seconds
      * @return
      */
-    public HTTPRequestBuilder setTimeout(int timeout) {
+    public HttpRequestBuilder setTimeout(int timeout) {
         this.timeout = timeout;
         return this;
     }
@@ -134,8 +137,20 @@ public class HTTPRequestBuilder {
      * @param sendAllParams
      * @return
      */
-    public HTTPRequestBuilder setSendAllParams(boolean sendAllParams) {
+    public HttpRequestBuilder setSendAllParams(boolean sendAllParams) {
         this.sendAllParams = sendAllParams;
+        return this;
+    }
+
+
+
+    /**
+     * Fetch HTTP response headers ?
+     * @param fetchHeaders
+     * @return
+     */
+    public HttpRequestBuilder setFetchHeaders(boolean fetchHeaders) {
+        this.fetchHeaders = fetchHeaders;
         return this;
     }
 
@@ -147,7 +162,7 @@ public class HTTPRequestBuilder {
      * @param pass Password
      * @return
      */
-    public HTTPRequestBuilder setBasicCredentials(String user,String pass) {
+    public HttpRequestBuilder setBasicCredentials(String user,String pass) {
         String auth= (user+":"+pass);
         String base64$= DatatypeConverter.printBase64Binary(auth.getBytes());
         setBasicAuth("Basic ".concat(base64$));
@@ -161,7 +176,7 @@ public class HTTPRequestBuilder {
      * @param basicAuth Authentication string to set
      * @return
      */
-    public HTTPRequestBuilder setBasicAuth(String basicAuth) {
+    public HttpRequestBuilder setBasicAuth(String basicAuth) {
         addHeader("Authorization",basicAuth);
         return this;
     }
@@ -170,16 +185,16 @@ public class HTTPRequestBuilder {
 
     /**
      * Adds the given header parameter to the request
-     * @param id Header ID
-     * @param value Header value
+     * @param id HttpHeader ID
+     * @param value HttpHeader value
      * @return
      */
-    public HTTPRequestBuilder addHeader(String id,String value) {
+    public HttpRequestBuilder addHeader(String id,String ... value) {
         // Lazy initialization...
         if (Collections.EMPTY_LIST.equals(headers))
             headers= new LinkedList();
 
-        headers.add(new Header(id,value));
+        headers.add(new HttpHeader(id,value));
         return this;
     }
 
@@ -191,7 +206,7 @@ public class HTTPRequestBuilder {
      * @param value Parameter value
      * @return
      */
-    public HTTPRequestBuilder addParam(String id,Object value) {
+    public HttpRequestBuilder addParam(String id,Object value) {
         // Lazy initialization...
         if (Collections.EMPTY_MAP.equals(params))
             params= new LinkedHashMap();
@@ -208,7 +223,7 @@ public class HTTPRequestBuilder {
      * @param pars List of parameters
      * @return
      */
-    public HTTPRequestBuilder addParamAll(Map pars) {
+    public HttpRequestBuilder addParamAll(Map pars) {
         Iterator it= pars.keySet().iterator();
         while (it.hasNext()) {
             Object id= it.next();
@@ -234,7 +249,7 @@ public class HTTPRequestBuilder {
             // URL contains '{params}' ?
             if (url.indexOf('{')>0) {
                 // Replace param values!
-                HTTPParamUtil.replaceAndCopy($url,url,params,contentCharset);
+                HttpParamUtil.replaceAndCopy($url,url,params,contentCharset);
             } else {
                 $url.append(url);
             }
@@ -252,7 +267,7 @@ public class HTTPRequestBuilder {
                     $url.append('?');
 
                 // Encode remaining params as GET
-                HTTPParamUtil.params2UrlEncoded($url,params,contentCharset);
+                HttpParamUtil.params2UrlEncoded($url,params,contentCharset);
             }
             return $url.toString();
         } else
@@ -274,12 +289,12 @@ public class HTTPRequestBuilder {
             if (content!=null && contentType!=null && content.indexOf('{')>0) {
 
                 // Replace content's variables with provided params
-                return HTTPParamUtil.replaceAndCopy(content,params);
+                return HttpParamUtil.replaceAndCopy(content,params);
             }
             else {
                 // Encode all parameters as content
                 StringBuilder sb= new StringBuilder(paramsLength*2);
-                return HTTPParamUtil.encodeParams(sb,params,contentType,contentCharset).toString();
+                return HttpParamUtil.encodeParams(sb,params,contentType,contentCharset).toString();
             }
         } else
             return content;
@@ -291,7 +306,7 @@ public class HTTPRequestBuilder {
      * Prepare the content
      * @return
      */
-    public HTTPRequest build() throws Exception {
+    public HttpRequest build() throws Exception {
 
         // Validate input parameters
         Validate.notBlank(url, "Invalid request URL");
@@ -304,8 +319,8 @@ public class HTTPRequestBuilder {
             contentCharset= contentType!=null? contentType.getCharset() : "UTF-8";
         }
 
-        // Create HTTPRequest bean
-        HTTPRequest req= new HTTPRequest();
+        // Create HttpRequest bean
+        HttpRequest req= new HttpRequest();
         req.setMethod(method);
         req.setUrl(buildURL());
         req.setHeaders(headers);
@@ -313,6 +328,7 @@ public class HTTPRequestBuilder {
         req.setContentType(contentType);
         req.setContentCharset(contentCharset);
         req.setTimeout(timeout);
+        req.setFetchHeaders(fetchHeaders);
 
         return req;
     }

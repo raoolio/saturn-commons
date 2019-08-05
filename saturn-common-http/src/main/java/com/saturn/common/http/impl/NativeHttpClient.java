@@ -1,17 +1,21 @@
 package com.saturn.common.http.impl;
 
 
-import com.saturn.common.http.HTTPException;
+import com.saturn.common.http.HttpException;
 import com.saturn.common.http.type.ContentType;
-import com.saturn.common.http.dto.Header;
-import com.saturn.common.http.dto.HTTPResponse;
-import com.saturn.common.http.dto.HTTPRequest;
+import com.saturn.common.http.dto.HttpHeader;
+import com.saturn.common.http.dto.HttpResponse;
+import com.saturn.common.http.dto.HttpRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,14 +25,44 @@ import org.apache.commons.lang3.StringUtils;
  * Java URLConnection based HTTP Client implementation
  * @author rdelcid
  */
-public class HTTPClientNative extends HTTPClientBase
+public class NativeHttpClient extends BaseHttpClient
 {
 
 
-    @Override
-    public HTTPResponse sendRequest(HTTPRequest req) throws HTTPException {
+    /**
+     * Retrieve response headers
+     * @param con
+     * @param res
+     */
+    private void fetchHeaders(HttpRequest req,HttpURLConnection con,HttpResponse res) {
+        List headers= Collections.EMPTY_LIST;
 
-        HTTPResponse httpResp= new HTTPResponse();
+        if (req.isFetchHeaders()) {
+            // Retrieve HTTP response headers
+            Map<String,List<String>> m= con.getHeaderFields();
+
+            // Has headers?
+            if (m!=null && !m.isEmpty()) {
+                headers= new ArrayList(m.size());
+                Iterator<String> it= m.keySet().iterator();
+                while (it.hasNext()) {
+                    String id= it.next();
+                    List<String> values= m.get(id);
+                    headers.add(new HttpHeader(id,values) );
+                }
+            }
+        }
+
+        res.setHeaders(headers);
+    }
+
+
+
+
+    @Override
+    public HttpResponse sendRequest(HttpRequest req) throws HttpException {
+
+        HttpResponse httpResp= new HttpResponse();
         HttpURLConnection con=null;
         InputStream in=null;
 
@@ -48,10 +82,10 @@ public class HTTPClientNative extends HTTPClientBase
             con.setRequestProperty("Accept-Encoding", "gzip");
 
             // Set additional headers ?
-            List<Header> headers= req.getHeaders();
-            if (headers!=null) {
-                for (Header h:req.getHeaders()) {
-                    con.setRequestProperty(h.getId(), h.getValue());
+            List<HttpHeader> reqHeaders= req.getHeaders();
+            if (!reqHeaders.isEmpty()) {
+                for (HttpHeader h: reqHeaders) {
+                    con.setRequestProperty(h.getId(), h.getValues().toString());
                 }
             }
             //</editor-fold>
@@ -73,6 +107,9 @@ public class HTTPClientNative extends HTTPClientBase
             //</editor-fold>
 
             con.connect();
+
+            // Fetch response headers?
+            fetchHeaders(req,con,httpResp);
 
             // Retrieve response code & message
             boolean retrieved= fetchResponse(con,httpResp);
@@ -121,7 +158,7 @@ public class HTTPClientNative extends HTTPClientBase
                 InputStream es= con.getErrorStream();
                 close(es);
             }
-            throw new HTTPException(ex);
+            throw new HttpException(ex);
         } finally {
             close(in);
         }
@@ -137,11 +174,11 @@ public class HTTPClientNative extends HTTPClientBase
      * @param httpResp Response bean
      * @return <b>True</b> if response retrieved, false otherwise.
      */
-    private boolean fetchResponse(HttpURLConnection con,HTTPResponse httpResp) {
+    private boolean fetchResponse(HttpURLConnection con,HttpResponse httpResp) {
         boolean done=false;
         try {
-            httpResp.setResponseCode(con.getResponseCode());
-            httpResp.setResponseMessage(con.getResponseMessage());
+            httpResp.setCode(con.getResponseCode());
+            httpResp.setMessage(con.getResponseMessage());
             done=true;
         } catch (IOException e) {
             LOG.warn("Error reading HTTP response code, parsing from Exception [{}]",e);
@@ -151,7 +188,7 @@ public class HTTPClientNative extends HTTPClientBase
             if (ci>0) {
                 ci+=6;
                 int ce= error.indexOf(" ", ci);
-                httpResp.setResponseCode(Integer.parseInt( error.substring(ci,ce) ));
+                httpResp.setCode(Integer.parseInt( error.substring(ci,ce) ));
             }
         }
         return done;

@@ -9,7 +9,7 @@ import java.util.List;
  * HTTP Request Bean
  * @author rdelcid
  */
-public class HTTPRequest
+public class HttpRequest
 {
     /** HTTP request method */
     private RequestMethod method;
@@ -29,15 +29,18 @@ public class HTTPRequest
     /** TCP request timeout */
     private int timeout;
 
-    /** Header list */
-    private List<Header> headers;
+    /** HttpHeader list */
+    private List<HttpHeader> headers;
+
+    /** Fetch HTTP response headers? */
+    private boolean fetchHeaders;
 
 
 
     /**
      * Constructor
      */
-    public HTTPRequest() {
+    public HttpRequest() {
     }
 
 
@@ -65,8 +68,12 @@ public class HTTPRequest
         return method;
     }
 
-    public List<Header> getHeaders() {
+    public List<HttpHeader> getHeaders() {
         return headers;
+    }
+
+    public boolean isFetchHeaders() {
+        return fetchHeaders;
     }
 
     void setUrl(String url) {
@@ -93,8 +100,12 @@ public class HTTPRequest
         this.timeout = timeout;
     }
 
-    void setHeaders(List<Header> headers) {
+    void setHeaders(List<HttpHeader> headers) {
         this.headers = headers;
+    }
+
+    public void setFetchHeaders(boolean fetchHeaders) {
+        this.fetchHeaders = fetchHeaders;
     }
 
 

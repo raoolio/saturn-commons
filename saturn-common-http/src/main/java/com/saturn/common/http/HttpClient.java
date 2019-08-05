@@ -1,14 +1,14 @@
 package com.saturn.common.http;
 
-import com.saturn.common.http.dto.HTTPRequest;
-import com.saturn.common.http.dto.HTTPResponse;
+import com.saturn.common.http.dto.HttpRequest;
+import com.saturn.common.http.dto.HttpResponse;
 
 
 /**
  * HTTP Client interface
  * @author rdelcid
  */
-public interface HTTPClient {
+public interface HttpClient {
 
 
     /**
@@ -17,6 +17,6 @@ public interface HTTPClient {
      * @return
      * @throws java.lang.Exception
      */
-    public HTTPResponse send(HTTPRequest req) throws Exception;
+    public HttpResponse send(HttpRequest req) throws Exception;
 
 }

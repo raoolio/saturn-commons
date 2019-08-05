@@ -1,13 +1,13 @@
 package com.saturn.common.http.impl;
 
 
-import com.saturn.common.http.HTTPClient;
-import com.saturn.common.http.dto.HTTPResponse;
-import com.saturn.common.http.dto.HTTPRequest;
+import com.saturn.common.http.dto.HttpResponse;
+import com.saturn.common.http.dto.HttpRequest;
 import com.saturn.common.utils.TimeUtils;
 import java.io.Closeable;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import com.saturn.common.http.HttpClient;
 
 
 
@@ -15,10 +15,10 @@ import org.apache.logging.log4j.LogManager;
  * HTTP Client helper methods
  * @author rdelcid
  */
-public abstract class HTTPClientBase implements HTTPClient {
+public abstract class BaseHttpClient implements HttpClient {
 
     /** Logger */
-    protected static Logger LOG=LogManager.getLogger(HTTPClient.class);
+    protected static Logger LOG=LogManager.getLogger(HttpClient.class);
 
 
 
@@ -29,13 +29,13 @@ public abstract class HTTPClientBase implements HTTPClient {
      * @throws Exception
      */
     @Override
-    public HTTPResponse send(HTTPRequest req) throws Exception {
+    public HttpResponse send(HttpRequest req) throws Exception {
         long t=System.nanoTime();
 
         if (req==null)
             throw new IllegalArgumentException("Request bean can't be null");
 
-        HTTPResponse res= sendRequest(req);
+        HttpResponse res= sendRequest(req);
 
         t=System.nanoTime()-t;
         LOG.info("{}[{}] HEADERS[{}] CONT[{}] -> RESP[{}] in {}",req.getMethod(),req.getUrl(),req.getHeaders(),req.getContent(),res,TimeUtils.nanoToString(t));
@@ -51,7 +51,7 @@ public abstract class HTTPClientBase implements HTTPClient {
      * @return
      * @throws Exception
      */
-    public abstract HTTPResponse sendRequest(HTTPRequest req) throws Exception;
+    public abstract HttpResponse sendRequest(HttpRequest req) throws Exception;
 
 
 

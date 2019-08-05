@@ -1,25 +1,25 @@
 package com.saturn.common.http.test;
 
-import com.saturn.common.http.HTTPClient;
-import com.saturn.common.http.HTTPClientFactory;
-import com.saturn.common.http.dto.HTTPRequest;
-import com.saturn.common.http.dto.HTTPRequestBuilder;
-import com.saturn.common.http.dto.HTTPResponse;
+import com.saturn.common.http.HttpClientFactory;
+import com.saturn.common.http.dto.HttpRequest;
+import com.saturn.common.http.dto.HttpRequestBuilder;
+import com.saturn.common.http.dto.HttpResponse;
 import com.saturn.common.http.type.ContentType;
 import com.saturn.common.http.type.RequestMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
+import com.saturn.common.http.HttpClient;
 
 
 /**
  * HTTP Client test
  */
-public class HTTPClientTest {
+public class HttpClientTest {
     
     /** Logger */
-    private static Logger LOG= LogManager.getLogger(HTTPClientTest.class);
+    private static Logger LOG= LogManager.getLogger(HttpClientTest.class);
 
     /** Endpoint ECHO service */
     private static final String GET_URL="https://postman-echo.com/?source=echo-collection-app-onboarding";
@@ -31,15 +31,15 @@ public class HTTPClientTest {
     @Test
     public void runGetTest() throws Exception {
 
-        HTTPRequest req= new HTTPRequestBuilder()
+        HttpRequest req= new HttpRequestBuilder()
                 .setMethod(RequestMethod.GET)
                 .setContentType(ContentType.APPLICATION_JSON)
                 .setUrl(GET_URL)
                 .addParam("par1", "val1")
                 .build();
 
-        HTTPClient client= HTTPClientFactory.getHTTPClient();
-        HTTPResponse res=client.send(req);
+        HttpClient client= HttpClientFactory.getHTTPClient();
+        HttpResponse res=client.send(req);
         Assert.assertTrue("HTTP GET Request failed!",res.isSuccess());
     }
 
@@ -47,15 +47,15 @@ public class HTTPClientTest {
     @Test
     public void runPostTest() throws Exception {
 
-        HTTPRequest req= new HTTPRequestBuilder()
+        HttpRequest req= new HttpRequestBuilder()
                 .setMethod(RequestMethod.POST)
                 .setContentType(ContentType.APPLICATION_JSON)
                 .setUrl(POST_URL)
                 .addParam("par1", "val1")
                 .build();
 
-        HTTPClient client= HTTPClientFactory.getHTTPClient();
-        HTTPResponse res=client.send(req);
+        HttpClient client= HttpClientFactory.getHTTPClient();
+        HttpResponse res=client.send(req);
         Assert.assertTrue("HTTP POST Request failed!",res.isSuccess());
     }
     

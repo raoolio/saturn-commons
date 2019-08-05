@@ -1,7 +1,7 @@
 package com.saturn.common.http.util;
 
 import com.saturn.common.http.type.ContentType;
-import com.saturn.common.http.dto.HTTPRequest;
+import com.saturn.common.http.dto.HttpRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.UnsupportedEncodingException;
@@ -14,7 +14,7 @@ import java.util.Map;
  * Param replacement methods
  * @author raoolio
  */
-public class HTTPParamUtil {
+public class HttpParamUtil {
 
 
     /**
@@ -179,11 +179,11 @@ public class HTTPParamUtil {
     }
 
     // TODO: Implement FormData param encoding
-    static void pars2FormData(StringBuilder sb,HTTPRequest req) {
+    static void pars2FormData(StringBuilder sb,HttpRequest req) {
     }
 
     // TODO: Implement PlainText param encoding
-    static void pars2Plain(StringBuilder sb,HTTPRequest req) {
+    static void pars2Plain(StringBuilder sb,HttpRequest req) {
     }
 
     //</editor-fold>

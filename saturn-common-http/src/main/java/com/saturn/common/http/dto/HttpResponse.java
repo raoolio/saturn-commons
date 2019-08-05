@@ -1,16 +1,18 @@
 package com.saturn.common.http.dto;
 
+import java.util.List;
+
 
 /**
  * HTTP Response Bean
  */
-public class HTTPResponse
+public class HttpResponse
 {
     /** HTTP response code */
-    private int responseCode;
+    private int code;
 
     /** HTTP respone message */
-    private String responseMessage;
+    private String message;
 
     /** Content type */
     private String contentType;
@@ -24,13 +26,17 @@ public class HTTPResponse
     /** Content length */
     private int length;
 
+    /** Response Headers */
+    private List<HttpHeader> headers;
+
+
 
     /**
      * Returns the HTTP response code
      * @return
      */
-    public int getResponseCode() {
-        return responseCode;
+    public int getCode() {
+        return code;
     }
 
 
@@ -38,8 +44,8 @@ public class HTTPResponse
      * Returns the HTTP response message
      * @return
      */
-    public String getResponseMessage() {
-        return responseMessage;
+    public String getMessage() {
+        return message;
     }
 
 
@@ -90,22 +96,44 @@ public class HTTPResponse
 
     /**
      * Is HTTP response code between 200 and 299
-     *
      * @return
      */
     public boolean isSuccess() {
-        return responseCode >= 200 && responseCode < 300;
+        return code >= 200 && code < 300;
     }
 
 
-    public void setResponseCode(int responseCode) {
-        this.responseCode = responseCode;
+    /**
+     * Returns response headers
+     * @return
+     */
+    public List<HttpHeader> getHeaders() {
+        return headers;
     }
 
-    public void setResponseMessage(String responseMessage) {
-        this.responseMessage = responseMessage;
+
+    /**
+     * Sets the HTTP response code
+     * @param code
+     */
+    public void setCode(int code) {
+        this.code = code;
     }
 
+
+    /**
+     * Sets the HTTP response message
+     * @param message
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+
+    /**
+     * Sets response content
+     * @param content
+     */
     public void setContent(String content) {
         this.content = content;
     }
@@ -122,10 +150,14 @@ public class HTTPResponse
         this.length = length;
     }
 
+    public void setHeaders(List<HttpHeader> headers) {
+        this.headers = headers;
+    }
+
 
     @Override
     public String toString() {
-        return "HTTP[" + responseCode + "," + responseMessage + "] TYPE["+ contentType +"] LENGHT["+length+"] CONTENT["+content+"] ENCODING["+encoding+']';
+        return "HTTP[" + code + "," + message + "] TYPE["+ contentType +"] LENGHT["+length+"] CONTENT["+content+"] ENCODING["+encoding+']';
     }
 
 }
