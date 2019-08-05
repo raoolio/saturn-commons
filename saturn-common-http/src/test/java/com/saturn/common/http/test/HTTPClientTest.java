@@ -9,6 +9,7 @@ import com.saturn.common.http.type.ContentType;
 import com.saturn.common.http.type.RequestMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.Assert;
 import org.junit.Test;
 
 
@@ -39,6 +40,7 @@ public class HTTPClientTest {
 
         HTTPClient client= HTTPClientFactory.getHTTPClient();
         HTTPResponse res=client.send(req);
+        Assert.assertTrue("HTTP GET Request failed!",res.isSuccess());
     }
 
     
@@ -54,6 +56,7 @@ public class HTTPClientTest {
 
         HTTPClient client= HTTPClientFactory.getHTTPClient();
         HTTPResponse res=client.send(req);
+        Assert.assertTrue("HTTP POST Request failed!",res.isSuccess());
     }
     
     

@@ -6,7 +6,6 @@ import com.saturn.common.http.type.ContentType;
 import com.saturn.common.http.dto.Header;
 import com.saturn.common.http.dto.HTTPResponse;
 import com.saturn.common.http.dto.HTTPRequest;
-import com.saturn.common.http.util.HTTPRequestUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,6 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
+import org.apache.commons.lang3.StringUtils;
 
 
 
@@ -57,7 +57,7 @@ public class HTTPClientNative extends HTTPClientBase
             //</editor-fold>
 
             //<editor-fold defaultstate="collapsed" desc=" Set Content ">
-            if (HTTPRequestUtils.hasContent(req)) {
+            if (StringUtils.isNotEmpty(req.getContent())) {
                 ContentType contentType= req.getContentType();
                 //                con.setRequestProperty("Content-Type", contentType.getType().concat("; ").concat(req.getContentCharset()));
                 con.setRequestProperty("Content-Type", contentType.getType()+"; charset="+req.getContentCharset());

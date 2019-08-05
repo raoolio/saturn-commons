@@ -3,7 +3,6 @@ package com.saturn.common.http.dto;
 import com.saturn.common.http.type.ContentType;
 import com.saturn.common.http.type.RequestMethod;
 import com.saturn.common.http.util.HTTPParamUtil;
-import com.saturn.common.http.util.HTTPRequestUtils;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -267,16 +266,21 @@ public class HTTPRequestBuilder {
      * @return
      */
     private String buildContent() throws Exception {
+
         // Build content!
         if (sendAllParams && method==RequestMethod.POST && !params.isEmpty()) {
 
             // Already has content?
             if (content!=null && contentType!=null && content.indexOf('{')>0) {
+
                 // Replace content's variables with provided params
                 return HTTPParamUtil.replaceAndCopy(content,params);
             }
-            else
-                return HTTPParamUtil.encodeParams(params,contentType,contentCharset).toString();
+            else {
+                // Encode all parameters as content
+                StringBuilder sb= new StringBuilder(paramsLength*2);
+                return HTTPParamUtil.encodeParams(sb,params,contentType,contentCharset).toString();
+            }
         } else
             return content;
     }
