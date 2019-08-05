@@ -2,3 +2,7 @@
 /saturn-common-utils/target/
 /saturn-common-http/target/
 /saturn-common-params/target/
+/saturn-commons-utils/target/
+/saturn-commons-params/target/
+/saturn-commons-http/target/
+/saturn-commons-database/target/

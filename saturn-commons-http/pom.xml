@@ -3,26 +3,28 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.saturn</groupId>
-        <artifactId>saturn-common</artifactId>
+        <artifactId>saturn-commons</artifactId>
         <version>1.0</version>
     </parent>
-    <artifactId>saturn-common-utils</artifactId>
+    <artifactId>saturn-commons-http</artifactId>
     <packaging>jar</packaging>
-    <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
-    <name>saturn-common-utils</name>
     <dependencies>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.11.2</version>
+            <groupId>com.saturn</groupId>
+            <artifactId>saturn-commons-utils</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
+            <artifactId>jackson-databind</artifactId>
             <version>2.9.9</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.9</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -33,4 +35,9 @@
             <type>jar</type>
         </dependency>
     </dependencies>
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+    <name>saturn-commons-http</name>
 </project>

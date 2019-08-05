@@ -1,5 +1,6 @@
 package com.saturn.common.params;
 
+
 /**
  * Application parameter provider
  * @author raoolio
@@ -28,7 +29,7 @@ public interface ParamProvider {
      * Associates the given value with the id
      * @param id Parameter id
      * @param value Value
-     * @return 
+     * @return
      */
     public boolean setValue(String id,String value);
 

@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.saturn</groupId>
-        <artifactId>saturn-common</artifactId>
+        <artifactId>saturn-commons</artifactId>
         <version>1.0</version>
     </parent>
-    <artifactId>saturn-common-database</artifactId>
+    <artifactId>saturn-commons-database</artifactId>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
@@ -20,4 +20,5 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
+    <name>saturn-commons-database</name>
 </project>
