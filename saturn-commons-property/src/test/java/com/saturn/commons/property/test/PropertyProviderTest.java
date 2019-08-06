@@ -68,23 +68,52 @@ public class PropertyProviderTest extends DataSourceTest {
                 .setMaxSize(100)
                 .setDuration(1, TimeUnit.MINUTES);
 
-        PropertyProvider parProv= PropertyProviderFactory.getPropertyProvider(conf, dataSource);
-        PropertyUtil parUtil= new PropertyUtil(parProv);
+        PropertyProvider propProv= PropertyProviderFactory.getPropertyProvider(conf, dataSource);
+        PropertyUtil props= new PropertyUtil(propProv);
 
-        String parentVal= RandomStringUtils.randomAscii(10);
-        String childId= "TEST."+RandomStringUtils.randomAlphabetic(5)+"."+RandomStringUtils.randomAlphabetic(5);
-        String parentId= childId.substring(0, childId.lastIndexOf("."));
+        // Generate random Ids and paths
+        String propId= "TEST."+RandomStringUtils.randomAlphabetic(5)+"."+RandomStringUtils.randomAlphabetic(5);
+        String path1= RandomStringUtils.randomAlphabetic(5);
+        String path2= path1+ "/" + RandomStringUtils.randomAlphabetic(5);
 
-        // Get childId and validate parent value!
-        parUtil.setValue(null,parentId, parentVal);
-        String pval= parUtil.getString(null,childId);
-        Assert.assertEquals("Parent value retrieval failed", parentVal, pval);
+        /******************
+         * Set root value
+         ******************/
+        String rootVal= RandomStringUtils.randomAscii(10);
+        props.setValue(null,propId, rootVal);
 
-        // Set value child and get value child!
-        String childVal= RandomStringUtils.randomAscii(10);
-        parUtil.setValue(null,childId, childVal);
-        String cval= parUtil.getString(null,childId);
-        Assert.assertEquals("Child value retrieval failed", childVal, cval);
+        // Ask for child value, expect root value
+        String val= props.getString(path1,propId);
+        Assert.assertEquals("[ROOT] Child value retrieval failed", rootVal, val);
+
+        // Ask for grandChild value, expect root value
+        val= props.getString(path2,propId);
+        Assert.assertEquals("[ROOT] Grandchild value retrieval failed", rootVal, val);
+
+        /******************
+         * Set Path1 value
+         ******************/
+        String val1= RandomStringUtils.randomAscii(10);
+        props.setValue(path1, propId, val1);
+
+        // Ask for child value, expect val1
+        val= props.getString(path1,propId);
+        Assert.assertEquals("[PATH1] Child value retrieval failed", val1, val);
+
+        // Ask for grandChild value, expect val1
+        val= props.getString(path2,propId);
+        Assert.assertEquals("[PATH1] Grandchild value retrieval failed", val1, val);
+
+        /******************
+         * Set Path2 value
+         ******************/
+        String val2= RandomStringUtils.randomAscii(10);
+        props.setValue(path2, propId, val2);
+
+        // Ask for grandChild value, expect val2
+        val= props.getString(path2,propId);
+        Assert.assertEquals("[PATH2] Grandchild value retrieval failed", val2, val);
+
     }
 
 

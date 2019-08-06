@@ -9,11 +9,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class PropertyUtil {
 
-    /** Default String */
-    private static final String DEFAULT="DFLTVAL";
 
     /** Parameter provider */
-    private PropertyProvider paramProvider;
+    private PropertyProvider propertyProvider;
 
 
     /**
@@ -29,17 +27,28 @@ public class PropertyUtil {
      * @param propProv Property provider
      */
     public PropertyUtil(PropertyProvider propProv) {
-        this.paramProvider = propProv;
+        this.propertyProvider = propProv;
     }
 
 
 
     /**
      * Set parameter provider
-     * @param paramProvider
+     * @param propertyProvider
      */
-    public final void setParamProvider(PropertyProvider paramProvider) {
-        this.paramProvider = paramProvider;
+    public final void setPropertyProvider(PropertyProvider propertyProvider) {
+        this.propertyProvider = propertyProvider;
+    }
+
+
+
+    /**
+     * Returns the parameter value as String
+     * @param id Parameter ID
+     * @return Parameter value or <b>NULL</b> if it doesn't exist
+     */
+    public String getString(String id) {
+        return getString(null,id,null);
     }
 
 
@@ -64,29 +73,7 @@ public class PropertyUtil {
      * @return Parameter value or <b>defValue</b> if it doesn't exist
      */
     public String getString(String path,String id,String defValue) {
-        String v= defValue;
-        int c=5;
-        do {
-            // Fetch value...
-            v= paramProvider.getValue(path,id,DEFAULT);
-
-            // Value found? -> quit!
-            if (!DEFAULT.equals(v)) {
-                break;
-            } else {
-                // Path contains slash "/" ?
-                int p= path.lastIndexOf("/",path.length()-2);
-                if (p>0) {
-                    // get parent path...
-                    path= path.substring(0, p+1);
-                } else {
-                    break;
-                }
-            }
-
-        } while (--c>=0);
-
-        return v.equals(DEFAULT)? defValue: v;
+        return propertyProvider.getValue(path,id,defValue);
     }
 
 
@@ -255,7 +242,7 @@ public class PropertyUtil {
      * @return Returns <b>true</b> if the operation succeeded.
      */
     public boolean setValue(String path,String id,String value) {
-        return paramProvider.setValue(path,id, value);
+        return propertyProvider.setValue(path,id,value);
     }
 
 

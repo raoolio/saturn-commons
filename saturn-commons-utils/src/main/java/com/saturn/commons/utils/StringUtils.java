@@ -201,4 +201,36 @@ public class StringUtils
     }
 
 
+
+    /**
+     * Returns the left side, from the string split using given character
+     * @param s Source string
+     * @param c Splitting char
+     * @return
+     */
+    public static String getParent(String s,char c) {
+        String parent="";
+
+        int pos= s.lastIndexOf(c, s.length()-2);
+
+        if (pos>0) {
+            // get parent path...
+            parent= s.substring(0, pos+1);
+        }
+
+        return parent;
+    }
+
+
+
+    /**
+     * Append the given char if it's missing
+     * @param s StringBuilder instance
+     * @param c
+     */
+    public static void appendIfMissing(StringBuilder s,char c) {
+        if (s.charAt(s.length()-1) != c)
+            s.append(c);
+    }
+
 }

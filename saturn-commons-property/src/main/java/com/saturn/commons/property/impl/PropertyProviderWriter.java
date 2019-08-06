@@ -6,11 +6,11 @@ import com.saturn.commons.property.PropertyConfig;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import com.saturn.commons.property.PropertyProvider;
+import com.saturn.commons.utils.StringUtils;
 
 
 
@@ -21,7 +21,10 @@ import com.saturn.commons.property.PropertyProvider;
 abstract class PropertyProviderWriter implements PropertyProvider {
 
     /** Logger */
-    protected Logger LOG= LogManager.getLogger(getClass());
+    protected static Logger LOG= LogManager.getLogger(PropertyProviderWriter.class);
+
+    /** Default String */
+    private static final String DEFAULT="DEFVAL";
 
     /** Configuration */
     protected PropertyConfig config;
@@ -62,7 +65,7 @@ abstract class PropertyProviderWriter implements PropertyProvider {
      */
     private final void buildSqls(PropertyConfig conf) {
 
-        boolean hasPath= StringUtils.isNotBlank(conf.getBasePath());
+        boolean hasPath= org.apache.commons.lang3.StringUtils.isNotBlank(conf.getBasePath());
         StringBuilder vals= new StringBuilder();
 
         //<editor-fold defaultstate="collapsed" desc=" Build Update ">
@@ -163,12 +166,9 @@ abstract class PropertyProviderWriter implements PropertyProvider {
             return config.getBasePath();
         else {
             StringBuilder p= new StringBuilder(config.getBasePath());
-
-            char l= p.charAt(p.length()-1);
-            if (l!='/')
-                p.append('/');
-
-            p.append(suffix).append('/');
+            StringUtils.appendIfMissing(p, '/');
+            p.append(suffix);
+            StringUtils.appendIfMissing(p, '/');
             return p.toString();
         }
     }
@@ -176,41 +176,74 @@ abstract class PropertyProviderWriter implements PropertyProvider {
 
 
     /**
-     * Returns the value associated with the given id. Returns the default value
-     * if not found
-     * @param id Parameter ID
-     * @param defaultValue Default parameter value
+     * Returns the corresponding key value
+     * @param k Key instance
+     * @param d Default value
      * @return
      */
-    @Override
-    public String getValue(String path,String id, String defaultValue) {
+    private String getValue(Key k,String d) {
         String v=null;
-        String p= getPath(path);
-
-        Key k= new Key(p,id);
         try {
             v= getCacheValue(k);
         } catch (Exception e) {
             LOG.warn("ID["+k+"] -> "+e.getCause().toString());
         }
 
-        return v!=null? v : defaultValue;
+        return v!=null? v : d;
+    }
+
+
+
+    /**
+     * Returns the value associated with the given id. Returns the default value
+     * if not found
+     * @param pathSuffix Path suffix
+     * @param id Parameter ID
+     * @param defaultValue Default parameter value
+     * @return
+     */
+    @Override
+    public String getValue(String pathSuffix,String id, String defaultValue) {
+        String v=null;
+        String path= getPath(pathSuffix);
+
+        int c=5;
+        do {
+            // Fetch value...
+            Key k= new Key(path,id);
+            v= getValue(k,DEFAULT);
+
+            // Value found? -> quit!
+            if (!DEFAULT.equals(v)) {
+                break;
+            } else {
+                // Get path parent
+                path= com.saturn.commons.utils.StringUtils.getParent(path, '/');
+
+                if (path.length()==0) {
+                    break;
+                }
+            }
+
+        } while (--c>=0);
+
+        return v.equals(DEFAULT)? defaultValue: v;
     }
 
 
 
     /**
      * Stores the given key-value pair in the cache
-     * @param path Property path
+     * @param pathSuffix Path suffix
      * @param id Property id
      * @param value Property value
      * @return
      */
     @Override
-    public boolean setValue(String path,String id, String value) {
+    public boolean setValue(String pathSuffix,String id, String value) {
         boolean done=false;
-        if (path!=null && id!=null && value!=null) {
-            Key key= new Key(path,id);
+        if (id!=null && value!=null) {
+            Key key= new Key(getPath(pathSuffix),id);
             setCacheValue(key, value);
             done= updateOrInsert(key,value);
         }
