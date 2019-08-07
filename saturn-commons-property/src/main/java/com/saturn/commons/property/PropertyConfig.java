@@ -35,6 +35,9 @@ public class PropertyConfig {
     /** Max cache size */
     private int maxSize;
 
+    /** Recursive path search retries  */
+    private int searchRetries=3;
+
 
 
     /**
@@ -126,6 +129,18 @@ public class PropertyConfig {
 
 
 
+    /**
+     * Sets the number of recursive search retries for a given entry
+     * @param searchRetries Number of retries
+     * @return
+     */
+    public PropertyConfig setSearchRetries(int searchRetries) {
+        this.searchRetries = searchRetries;
+        return this;
+    }
+
+
+
     public String getTableName() {
         return tableName;
     }
@@ -156,6 +171,10 @@ public class PropertyConfig {
 
     public int getMaxSize() {
         return maxSize;
+    }
+
+    public int getSearchRetries() {
+        return searchRetries;
     }
 
 

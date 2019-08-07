@@ -23,9 +23,6 @@ abstract class PropertyProviderWriter implements PropertyProvider {
     /** Logger */
     protected static Logger LOG= LogManager.getLogger(PropertyProviderWriter.class);
 
-    /** Default String */
-    private static final String DEFAULT="DEFVAL";
-
     /** Configuration */
     protected PropertyConfig config;
 
@@ -181,7 +178,7 @@ abstract class PropertyProviderWriter implements PropertyProvider {
      * @param d Default value
      * @return
      */
-    private String getValue(Key k,String d) {
+    private String getValue(Key k) {
         String v=null;
         try {
             v= getCacheValue(k);
@@ -189,7 +186,7 @@ abstract class PropertyProviderWriter implements PropertyProvider {
             LOG.warn("ID["+k+"] -> "+e.getCause().toString());
         }
 
-        return v!=null? v : d;
+        return v;
     }
 
 
@@ -207,16 +204,12 @@ abstract class PropertyProviderWriter implements PropertyProvider {
         String v=null;
         String path= getPath(pathSuffix);
 
-        int c=5;
-        do {
-            // Fetch value...
-            Key k= new Key(path,id);
-            v= getValue(k,DEFAULT);
+        // Get max retries
+        int n=config.getSearchRetries();
+        int c=n;
 
-            // Value found? -> quit!
-            if (!DEFAULT.equals(v)) {
-                break;
-            } else {
+        do {
+            if (c < n) {
                 // Get path parent
                 path= com.saturn.commons.utils.StringUtils.getParent(path, '/');
 
@@ -225,9 +218,13 @@ abstract class PropertyProviderWriter implements PropertyProvider {
                 }
             }
 
-        } while (--c>=0);
+            // Fetch value...
+            Key k= new Key(path,id);
+            v= getValue(k);
 
-        return v.equals(DEFAULT)? defaultValue: v;
+        } while (v==null && --c>=0);
+
+        return v==null? defaultValue: v;
     }
 
 
