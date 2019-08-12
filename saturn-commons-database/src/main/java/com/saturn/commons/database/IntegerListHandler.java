@@ -4,35 +4,29 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.dbutils.ResultSetHandler;
 
 
 /**
  * ResultSet Handler for retrieving a list of Integers
  * @author rdelcid
  */
-public class IntegerListHandler implements ResultSetHandler<List<Integer>>
+public class IntegerListHandler extends BaseHandler<List<Integer>>
 {
-    /** Column to retrieve */
-    private int column;
-
-
 
     /**
-     * Retrieves the first column
+     * Constructor that retrieves data from first column
      */
     public IntegerListHandler() {
-        this(1);
+        super(1);
     }
-
-
-
+    
+    
     /**
      * Retrieves the given column number
      * @param column
      */
     public IntegerListHandler(int column) {
-        this.column = column;
+        super(column);
     }
 
 

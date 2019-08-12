@@ -8,6 +8,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
+import org.apache.commons.lang3.CharUtils;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -51,7 +53,9 @@ public class HttpParamUtil {
     public static void replaceAndCopy(StringBuilder dst,String src,Map<String,Object> params,String charset) {
 
         boolean isKey=false;
+        boolean isSize=false;
         StringBuilder $key= new StringBuilder(25);
+        StringBuilder $size= new StringBuilder(3);
 
         // Loop through source chars
         for (int p=0; p<src.length(); p++) {
@@ -67,18 +71,52 @@ public class HttpParamUtil {
                     }
                     break;
 
+                case ':':
+                    if (isKey) {
+                        isSize=true;
+                    } else
+                        dst.append(':');
+                    break;
+
                 case '}':
                     if (isKey) {
                         isKey=false;
                         String key= $key.toString();
                         $key.delete(0, $key.length());
                         Object val= params.remove(key);
+
+                        // Value found?
                         if (val!=null) {
+
+                            //<editor-fold defaultstate="collapsed" desc=" Get size? ">
+                            // Value size & cut direction
+                            int size=0;     // default is full length
+                            char dir='R';   // default is Right
+
+                            if (isSize) {
+                                isSize=false;
+
+                                // Get direction char (Left,Right)
+                                char dc= $size.charAt(0);
+                                if (!CharUtils.isAsciiNumeric(dc)) {
+                                    dir= dc;
+                                    $size.deleteCharAt(0);
+                                }
+
+                                size= Integer.valueOf($size.toString());
+                                $size.delete(0, $size.length());
+                            }
+                            //</editor-fold>
+
+                            String $val= String.valueOf(val);
+                            if (size>0)
+                                $val= dir=='L'? StringUtils.left($val, size) : StringUtils.right($val, size);
+
                             if (charset==null) {
-                                dst.append(String.valueOf(val));
+                                dst.append($val);
                             } else {
                                 try {
-                                    String encPar=URLEncoder.encode(String.valueOf(val), charset);
+                                    String encPar=URLEncoder.encode($val, charset);
                                     dst.append(encPar);
                                 } catch (Exception e) {
                                     dst.append('{').append(key).append('}');
@@ -87,11 +125,12 @@ public class HttpParamUtil {
                         }
                         else
                             dst.append('{').append(key).append('}');
-                        break;
-                    }
+                    } else
+                        dst.append('}');
+                    break;
 
                 default:
-                    StringBuilder buf= isKey? $key : dst;
+                    StringBuilder buf= isKey? (isSize? $size : $key) : dst;
                     buf.append(c);
             }
         }
@@ -101,7 +140,7 @@ public class HttpParamUtil {
 
     //<editor-fold defaultstate="collapsed" desc=" Parameter encoding methods ">
 
-    
+
     /**
      * Encode the sendRequest parameters
      * @param pars Parameter map
@@ -115,8 +154,8 @@ public class HttpParamUtil {
         encodeParams(sb,pars,type,charset);
         return sb.toString();
     }
-    
-    
+
+
 
     /**
      * Encode the sendRequest parameters
@@ -148,7 +187,8 @@ public class HttpParamUtil {
      */
     public static void params2Json(StringBuilder sb,Map pars) throws JsonProcessingException {
         ObjectMapper mapper= new ObjectMapper();
-        sb.append( mapper.writeValueAsString(pars) );
+        String json= mapper.writeValueAsString(pars);
+        sb.append( json );
     }
 
 

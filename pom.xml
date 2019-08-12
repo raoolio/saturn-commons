@@ -11,6 +11,7 @@
         <module>saturn-commons-database</module>
         <module>saturn-commons-property</module>
         <module>saturn-commons-param</module>
+        <module>saturn-commons-catalog</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

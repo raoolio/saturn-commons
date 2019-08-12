@@ -2,22 +2,20 @@ package com.saturn.commons.database;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.apache.commons.dbutils.ResultSetHandler;
+
 
 /**
  * LongHandler
  * @author raoolio
  */
-public class LongHandler implements ResultSetHandler<Long> {
-
-    private int column;
-
+public class LongHandler extends BaseHandler<Long> {
     
+
     /**
-     * Retrieves a long from the first column
+     * Constructor that retrieves data from first column
      */
     public LongHandler() {
-        this(1);
+        super(1);
     }
 
     
@@ -26,11 +24,11 @@ public class LongHandler implements ResultSetHandler<Long> {
      * @param column Number of column
      */
     public LongHandler(int column) {
-        this.column = column;
+        super(column);
     }
-    
-    
-    
+
+
+
     @Override
     public Long handle(ResultSet rs) throws SQLException {
         long res=0;
@@ -38,5 +36,5 @@ public class LongHandler implements ResultSetHandler<Long> {
             res= rs.getLong(column);
         return res;
     }
-    
+
 }

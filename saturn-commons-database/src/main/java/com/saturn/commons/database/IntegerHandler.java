@@ -2,24 +2,20 @@ package com.saturn.commons.database;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.apache.commons.dbutils.ResultSetHandler;
 
 
 /**
  * Integer number parser
  * @author raoolio
  */
-public class IntegerHandler implements ResultSetHandler<Integer> {
-
-    /** Column to retrieve */
-    private int column;
+public class IntegerHandler extends BaseHandler<Integer> {
 
 
     /**
-     * Constructor with column 1
+     * Constructor that retrieves data from first column
      */
     public IntegerHandler() {
-        this(1);
+        super(1);
     }
 
 
@@ -28,7 +24,7 @@ public class IntegerHandler implements ResultSetHandler<Integer> {
      * @param column Number of column
      */
     public IntegerHandler(int column) {
-        this.column = column;
+        super(column);
     }
 
 

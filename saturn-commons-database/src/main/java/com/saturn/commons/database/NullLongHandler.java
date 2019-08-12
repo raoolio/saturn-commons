@@ -2,36 +2,31 @@ package com.saturn.commons.database;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.apache.commons.dbutils.ResultSetHandler;
 
 
 /**
  * Long Handler that returns NULL if no result found
  */
-public class NullLongHandler implements ResultSetHandler<Long> {
+public class NullLongHandler extends BaseHandler<Long> {
 
-    /** Column to retrieve */
-    private int column;
 
-    
     /**
-     * Constructor
+     * Constructor that retrieves data from first column
      */
     public NullLongHandler() {
-        this(1);
+        super(1);
     }
 
-    
+
     /**
      * Constructor
      * @param column Column number to retrieve
      */
     public NullLongHandler(int column) {
-        this.column = column;
+        super(column);
     }
-    
-    
-    
+
+
     @Override
     public Long handle(ResultSet rs) throws SQLException {
         Long res=null;
@@ -39,5 +34,5 @@ public class NullLongHandler implements ResultSetHandler<Long> {
             res= rs.getLong(column);
         return res;
     }
-    
+
 }

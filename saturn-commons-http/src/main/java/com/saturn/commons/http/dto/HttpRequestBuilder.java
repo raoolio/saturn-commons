@@ -286,7 +286,7 @@ public class HttpRequestBuilder {
         if (sendAllParams && method==RequestMethod.POST && !params.isEmpty()) {
 
             // Already has content?
-            if (content!=null && contentType!=null && content.indexOf('{')>0) {
+            if (content!=null && content.indexOf('{')>0) {
 
                 // Replace content's variables with provided params
                 return HttpParamUtil.replaceAndCopy(content,params);

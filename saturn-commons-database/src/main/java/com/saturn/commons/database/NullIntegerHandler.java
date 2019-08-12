@@ -2,23 +2,19 @@ package com.saturn.commons.database;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.apache.commons.dbutils.ResultSetHandler;
 
 
 /**
  * Integer Handler that returns NULL if not result found
  */
-public class NullIntegerHandler implements ResultSetHandler<Integer> {
-
-    /** Column to retrieve */
-    private int column;
+public class NullIntegerHandler extends BaseHandler<Integer> {
 
 
     /**
-     * Constructor with column 1
+     * Constructor that retrieves data from first column
      */
     public NullIntegerHandler() {
-        this(1);
+        super(1);
     }
 
 
@@ -27,8 +23,9 @@ public class NullIntegerHandler implements ResultSetHandler<Integer> {
      * @param column Column number to retrieve
      */
     public NullIntegerHandler(int column) {
-        this.column = column;
+        super(column);
     }
+
 
 
     @Override
