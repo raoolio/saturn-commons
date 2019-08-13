@@ -1,7 +1,7 @@
 package com.saturn.commons.http.util;
 
-import com.saturn.commons.http.type.ContentType;
-import com.saturn.commons.http.dto.HttpRequest;
+import com.saturn.commons.http.HttpContentType;
+import com.saturn.commons.http.HttpRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.UnsupportedEncodingException;
@@ -149,7 +149,7 @@ public class HttpParamUtil {
      * @return
      * @throws java.lang.Exception
      */
-    public static String encodeParams(Map pars, ContentType type,String charset) throws Exception {
+    public static String encodeParams(Map pars, HttpContentType type,String charset) throws Exception {
         StringBuilder sb= new StringBuilder();
         encodeParams(sb,pars,type,charset);
         return sb.toString();
@@ -166,7 +166,7 @@ public class HttpParamUtil {
      * @return
      * @throws java.lang.Exception
      */
-    public static StringBuilder encodeParams(StringBuilder sb,Map pars, ContentType type,String charset) throws Exception {
+    public static StringBuilder encodeParams(StringBuilder sb,Map pars, HttpContentType type,String charset) throws Exception {
 
         switch(type) {
             case APPLICATION_JSON: params2Json(sb,pars); break;

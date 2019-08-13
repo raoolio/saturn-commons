@@ -1,21 +1,12 @@
-package com.saturn.commons.http.type;
+package com.saturn.commons.http;
 
 /**
  * HTTP Request Methods.
  * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
  * @author rdelcid
  */
-public enum RequestMethod
+public enum HttpRequestMethod
 {
-    /**
-     * <p>The <b>OPTIONS</b> method represents a request for information about the
-     * communication options available on the request/response chain identified
-     * by the Request-URI.</p> <p>This method allows the client to determine
-     * the options and/or requirements associated with a resource, or the
-     * capabilities of a server, without implying a resource action or
-     * initiating a resource retrieval</p>
-     */
-    OPTIONS,
 
     /**
      * <p>The <b>GET</b> method means retrieve whatever information (in the form
@@ -26,6 +17,7 @@ public enum RequestMethod
      * output of the process</p>
      */
     GET,
+
 
     /**
      * <p>The <b>HEAD</b> method is identical to GET except that the server MUST NOT
@@ -38,6 +30,7 @@ public enum RequestMethod
      * recent modification</p>
      */
     HEAD,
+
 
     /**
      * <p>The <b>POST</b> method is used to request that the origin server accept
@@ -62,6 +55,7 @@ public enum RequestMethod
      */
     POST,
 
+
     /**
      * <p>The <b>PUT</b> method requests that the enclosed entity be stored under
      * the supplied Request-URI. If the Request-URI refers to an already existing
@@ -84,6 +78,7 @@ public enum RequestMethod
      */
     PUT,
 
+
     /**
      * <p>The <b>DELETE</b> method requests that the origin server delete the
      * resource identified by the Request-URI. This method MAY be overridden by
@@ -101,6 +96,26 @@ public enum RequestMethod
      */
     DELETE,
 
+
+    /**
+     * <p> The <b>CONNECT</b> method is reserved for use with a proxy that can
+     * dynamically switch to being a tunnel, for example a SSL tunneling.
+     * </p>
+     */
+    CONNECT,
+
+
+    /**
+     * <p>The <b>OPTIONS</b> method represents a request for information about the
+     * communication options available on the request/response chain identified
+     * by the Request-URI.</p> <p>This method allows the client to determine
+     * the options and/or requirements associated with a resource, or the
+     * capabilities of a server, without implying a resource action or
+     * initiating a resource retrieval</p>
+     */
+    OPTIONS,
+
+
     /**
      * <p>The <b>TRACE</b> method is used to invoke a remote, application-layer
      * loop-back of the request message. The final recipient of the request
@@ -110,6 +125,16 @@ public enum RequestMethod
      * gateway to receive a Max-Forwards value of zero (0) in the request.
      * A TRACE request MUST NOT include an entity.</p>
      */
-    TRACE
+    TRACE,
+
+
+    /**
+     * <p>The <b>PATCH</b> method applies partial modifications to a resource.</p>
+     * <p>The HTTP PUT method only allows complete replacement of a document.
+     * Unlike PUT, PATCH is not idempotent, meaning successive identical patch
+     * requests may have different effects. However, it is possible to issue
+     * PATCH requests in such a way as to be idempotent.</p>
+     */
+    PATCH
 
 }

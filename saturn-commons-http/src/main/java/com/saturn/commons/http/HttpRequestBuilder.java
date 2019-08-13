@@ -1,7 +1,7 @@
-package com.saturn.commons.http.dto;
+package com.saturn.commons.http;
 
-import com.saturn.commons.http.type.ContentType;
-import com.saturn.commons.http.type.RequestMethod;
+import com.saturn.commons.http.impl.DefaultHttpHeader;
+import com.saturn.commons.http.impl.DefaultHttpRequest;
 import com.saturn.commons.http.util.HttpParamUtil;
 import java.util.Collections;
 import java.util.Iterator;
@@ -19,7 +19,7 @@ import org.apache.commons.lang3.Validate;
 public class HttpRequestBuilder {
 
     /** HTTP request method */
-    private RequestMethod method;
+    private HttpRequestMethod method;
 
     /** Destination URL */
     private String url;
@@ -28,7 +28,7 @@ public class HttpRequestBuilder {
     private String content;
 
     /** Content type */
-    private ContentType contentType;
+    private HttpContentType contentType;
 
     /** Content charset */
     private String contentCharset;
@@ -80,7 +80,7 @@ public class HttpRequestBuilder {
      * @param method
      * @return
      */
-    public HttpRequestBuilder setMethod(RequestMethod method) {
+    public HttpRequestBuilder setMethod(HttpRequestMethod method) {
         this.method = method;
         return this;
     }
@@ -102,7 +102,7 @@ public class HttpRequestBuilder {
      * @param contentType
      * @return
      */
-    public HttpRequestBuilder setContentType(ContentType contentType) {
+    public HttpRequestBuilder setContentType(HttpContentType contentType) {
         this.contentType = contentType;
         return this;
     }
@@ -194,7 +194,7 @@ public class HttpRequestBuilder {
         if (Collections.EMPTY_LIST.equals(headers))
             headers= new LinkedList();
 
-        headers.add(new HttpHeader(id,value));
+        headers.add(new DefaultHttpHeader(id,value));
         return this;
     }
 
@@ -255,7 +255,7 @@ public class HttpRequestBuilder {
             }
 
             // Add params to URL ?
-            if (sendAllParams && method==RequestMethod.GET && !params.isEmpty()) {
+            if (sendAllParams && method==HttpRequestMethod.GET && !params.isEmpty()) {
                 int p=$url.indexOf("?");
                 // url contains '?' char?
                 if (p>0) {
@@ -283,7 +283,7 @@ public class HttpRequestBuilder {
     private String buildContent() throws Exception {
 
         // Build content!
-        if (sendAllParams && method==RequestMethod.POST && !params.isEmpty()) {
+        if (sendAllParams && method==HttpRequestMethod.POST && !params.isEmpty()) {
 
             // Already has content?
             if (content!=null && content.indexOf('{')>0) {
@@ -311,7 +311,7 @@ public class HttpRequestBuilder {
         // Validate input parameters
         Validate.notBlank(url, "Invalid request URL");
         Validate.notNull(method,"Invalid request method");
-        if (method==RequestMethod.POST)
+        if (method==HttpRequestMethod.POST)
             Validate.notNull(contentType,"ContentType can't be null when method is POST");
 
         // Content Charset...
@@ -320,7 +320,7 @@ public class HttpRequestBuilder {
         }
 
         // Create HttpRequest bean
-        HttpRequest req= new HttpRequest();
+        DefaultHttpRequest req= new DefaultHttpRequest();
         req.setMethod(method);
         req.setUrl(buildURL());
         req.setHeaders(headers);

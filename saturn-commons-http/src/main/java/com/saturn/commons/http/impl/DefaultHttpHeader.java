@@ -1,5 +1,6 @@
-package com.saturn.commons.http.dto;
+package com.saturn.commons.http.impl;
 
+import com.saturn.commons.http.HttpHeader;
 import com.saturn.commons.utils.ArrayUtils;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import java.util.List;
  * HTTP HttpHeader bean
  * @author rdelcid
  */
-public class HttpHeader
+public class DefaultHttpHeader implements HttpHeader
 {
     /** Paramter ID */
     private String id;
@@ -23,7 +24,7 @@ public class HttpHeader
      * @param id Header ID
      * @param value Header value
      */
-    public HttpHeader(String id, String ... value) {
+    public DefaultHttpHeader(String id, String ... value) {
         this.id = id;
         this.values = ArrayUtils.array2List(value);
     }
@@ -35,7 +36,7 @@ public class HttpHeader
      * @param id Parameter ID
      * @param values Parameter values
      */
-    public HttpHeader(String id, List<String> values) {
+    public DefaultHttpHeader(String id, List<String> values) {
         this.id = id;
         this.values = values;
     }

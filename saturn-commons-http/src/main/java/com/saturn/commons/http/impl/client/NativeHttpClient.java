@@ -1,11 +1,13 @@
-package com.saturn.commons.http.impl;
+package com.saturn.commons.http.impl.client;
 
 
 import com.saturn.commons.http.HttpException;
-import com.saturn.commons.http.type.ContentType;
-import com.saturn.commons.http.dto.HttpHeader;
-import com.saturn.commons.http.dto.HttpResponse;
-import com.saturn.commons.http.dto.HttpRequest;
+import com.saturn.commons.http.HttpContentType;
+import com.saturn.commons.http.HttpHeader;
+import com.saturn.commons.http.HttpResponse;
+import com.saturn.commons.http.HttpRequest;
+import com.saturn.commons.http.impl.DefaultHttpHeader;
+import com.saturn.commons.http.impl.DefaultHttpResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -51,7 +53,7 @@ public class NativeHttpClient extends BaseHttpClient
                 while (it.hasNext()) {
                     String id= it.next();
                     List<String> values= m.get(id);
-                    hl.add(new HttpHeader(id,values) );
+                    hl.add(new DefaultHttpHeader(id,values) );
                 }
             }
         }
@@ -65,7 +67,7 @@ public class NativeHttpClient extends BaseHttpClient
     @Override
     public HttpResponse sendRequest(HttpRequest req) throws HttpException {
 
-        HttpResponse res= new HttpResponse();
+        DefaultHttpResponse res= new DefaultHttpResponse();
         HttpURLConnection con=null;
         InputStream in=null;
 
@@ -95,7 +97,7 @@ public class NativeHttpClient extends BaseHttpClient
 
             //<editor-fold defaultstate="collapsed" desc=" Set Content ">
             if (StringUtils.isNotEmpty(req.getContent())) {
-                ContentType contentType= req.getContentType();
+                HttpContentType contentType= req.getContentType();
                 con.setRequestProperty("Content-Type", contentType.getType()+"; charset="+req.getContentCharset());
                 con.setDoOutput(true);
                 OutputStream os= con.getOutputStream();
@@ -171,10 +173,10 @@ public class NativeHttpClient extends BaseHttpClient
      * @param httpResp Response bean
      * @return <b>True</b> if response retrieved, false otherwise.
      */
-    private boolean fetchResponse(HttpURLConnection con,HttpResponse httpResp) {
+    private boolean fetchResponse(HttpURLConnection con,DefaultHttpResponse httpResp) {
         boolean done=false;
         try {
-            httpResp.setCode(con.getResponseCode());
+            httpResp.setStatus(con.getResponseCode());
             httpResp.setMessage(con.getResponseMessage());
             done=true;
         } catch (IOException e) {
@@ -185,7 +187,7 @@ public class NativeHttpClient extends BaseHttpClient
             if (ci>0) {
                 ci+=6;
                 int ce= error.indexOf(" ", ci);
-                httpResp.setCode(Integer.parseInt( error.substring(ci,ce) ));
+                httpResp.setStatus(Integer.parseInt( error.substring(ci,ce) ));
             }
         }
         return done;

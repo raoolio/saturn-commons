@@ -1,10 +1,10 @@
-package com.saturn.commons.http.type;
+package com.saturn.commons.http;
 
 /**
  * HTTP payload content types
  * @author rdelcid
  */
-public enum ContentType {
+public enum HttpContentType {
 
     /**
      * <p>The <b>application/x-www-form-urlencoded</b> format is a simple way
@@ -67,7 +67,7 @@ public enum ContentType {
      * Constructor
      * @param type
      */
-    ContentType(String type,String charset) {
+    HttpContentType(String type,String charset) {
         this.type=type;
         this.charset=charset;
     }
@@ -95,13 +95,13 @@ public enum ContentType {
 
     /**
      * Returns the corresponding enum type
-     * @param str ContentType string
+     * @param str HttpContentType string
      * @return
      */
-    public static ContentType parseContentType(String str) {
-        ContentType type=null;
+    public static HttpContentType parseContentType(String str) {
+        HttpContentType type=null;
 
-        for (ContentType ct: ContentType.values()) {
+        for (HttpContentType ct: HttpContentType.values()) {
             if (ct.getType().contains(str)) {
                 type= ct;
                 break;

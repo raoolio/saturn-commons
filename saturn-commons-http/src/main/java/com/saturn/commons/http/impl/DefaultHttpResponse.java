@@ -1,15 +1,17 @@
-package com.saturn.commons.http.dto;
+package com.saturn.commons.http.impl;
 
+import com.saturn.commons.http.HttpHeader;
+import com.saturn.commons.http.HttpResponse;
 import java.util.List;
 
 
 /**
  * HTTP Response Bean
  */
-public class HttpResponse
+public class DefaultHttpResponse implements HttpResponse
 {
-    /** HTTP response code */
-    private int code;
+    /** HTTP response status */
+    private int status;
 
     /** HTTP respone message */
     private String message;
@@ -32,11 +34,11 @@ public class HttpResponse
 
 
     /**
-     * Returns the HTTP response code
+     * Returns the HTTP response status
      * @return
      */
-    public int getCode() {
-        return code;
+    public int getStatus() {
+        return status;
     }
 
 
@@ -80,7 +82,7 @@ public class HttpResponse
      * Returns the content encoding
      * @return
      */
-    public String getEncoding() {
+    public String getContentEncoding() {
         return encoding;
     }
 
@@ -95,11 +97,11 @@ public class HttpResponse
 
 
     /**
-     * Is HTTP response code between 200 and 299
+     * Is HTTP response status between 200 and 299
      * @return
      */
     public boolean isSuccess() {
-        return code >= 200 && code < 300;
+        return status >= 200 && status < 300;
     }
 
 
@@ -113,11 +115,11 @@ public class HttpResponse
 
 
     /**
-     * Sets the HTTP response code
-     * @param code
+     * Sets the HTTP response status
+     * @param status
      */
-    public void setCode(int code) {
-        this.code = code;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
 
@@ -157,7 +159,7 @@ public class HttpResponse
 
     @Override
     public String toString() {
-        return "HTTP[" + code + "," + message + "] TYPE["+ contentType +"] LENGHT["+length+"] CONTENT["+content+"] ENCODING["+encoding+']';
+        return "HTTP[" + status + "," + message + "] TYPE["+ contentType +"] LENGHT["+length+"] CONTENT["+content+"] ENCODING["+encoding+']';
     }
 
 }

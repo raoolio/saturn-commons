@@ -1,6 +1,6 @@
 package com.saturn.commons.http;
 
-import com.saturn.commons.http.impl.NativeHttpClient;
+import com.saturn.commons.http.impl.client.NativeHttpClient;
 
 
 /**

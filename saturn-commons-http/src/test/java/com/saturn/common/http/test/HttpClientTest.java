@@ -1,11 +1,11 @@
 package com.saturn.common.http.test;
 
 import com.saturn.commons.http.HttpClientFactory;
-import com.saturn.commons.http.dto.HttpRequest;
-import com.saturn.commons.http.dto.HttpRequestBuilder;
-import com.saturn.commons.http.dto.HttpResponse;
-import com.saturn.commons.http.type.ContentType;
-import com.saturn.commons.http.type.RequestMethod;
+import com.saturn.commons.http.HttpRequest;
+import com.saturn.commons.http.HttpRequestBuilder;
+import com.saturn.commons.http.HttpResponse;
+import com.saturn.commons.http.HttpContentType;
+import com.saturn.commons.http.HttpRequestMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
@@ -32,8 +32,8 @@ public class HttpClientTest {
     public void runGetTest() throws Exception {
 
         HttpRequest req= new HttpRequestBuilder()
-                .setMethod(RequestMethod.GET)
-                .setContentType(ContentType.APPLICATION_JSON)
+                .setMethod(HttpRequestMethod.GET)
+                .setContentType(HttpContentType.APPLICATION_JSON)
                 .setUrl(GET_URL)
                 .addParam("par1", "val1")
                 .build();
@@ -48,8 +48,8 @@ public class HttpClientTest {
     public void runPostTest() throws Exception {
 
         HttpRequest req= new HttpRequestBuilder()
-                .setMethod(RequestMethod.POST)
-                .setContentType(ContentType.APPLICATION_JSON)
+                .setMethod(HttpRequestMethod.POST)
+                .setContentType(HttpContentType.APPLICATION_JSON)
                 .setUrl(POST_URL)
                 .addParam("par1", "val1")
                 .build();

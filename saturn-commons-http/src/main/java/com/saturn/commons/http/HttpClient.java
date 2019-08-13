@@ -1,8 +1,5 @@
 package com.saturn.commons.http;
 
-import com.saturn.commons.http.dto.HttpRequest;
-import com.saturn.commons.http.dto.HttpResponse;
-
 
 /**
  * HTTP Client interface

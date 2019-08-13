@@ -1,8 +1,8 @@
-package com.saturn.commons.http.impl;
+package com.saturn.commons.http.impl.client;
 
 
-import com.saturn.commons.http.dto.HttpResponse;
-import com.saturn.commons.http.dto.HttpRequest;
+import com.saturn.commons.http.HttpResponse;
+import com.saturn.commons.http.HttpRequest;
 import com.saturn.commons.utils.TimeUtils;
 import java.io.Closeable;
 import org.apache.logging.log4j.Logger;

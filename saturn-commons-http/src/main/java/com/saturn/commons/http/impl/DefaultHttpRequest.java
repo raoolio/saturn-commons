@@ -1,7 +1,8 @@
-package com.saturn.commons.http.dto;
+package com.saturn.commons.http.impl;
 
-import com.saturn.commons.http.type.ContentType;
-import com.saturn.commons.http.type.RequestMethod;
+import com.saturn.commons.http.*;
+import com.saturn.commons.http.HttpContentType;
+import com.saturn.commons.http.HttpRequestMethod;
 import java.util.List;
 
 
@@ -9,10 +10,10 @@ import java.util.List;
  * HTTP Request Bean
  * @author rdelcid
  */
-public class HttpRequest
+public class DefaultHttpRequest implements HttpRequest
 {
     /** HTTP request method */
-    private RequestMethod method;
+    private HttpRequestMethod method;
 
     /** Destination URL */
     private String url;
@@ -21,7 +22,7 @@ public class HttpRequest
     private String content;
 
     /** Content type */
-    private ContentType contentType;
+    private HttpContentType contentType;
 
     /** Content charset */
     private String contentCharset;
@@ -40,7 +41,7 @@ public class HttpRequest
     /**
      * Constructor
      */
-    public HttpRequest() {
+    public DefaultHttpRequest() {
     }
 
 
@@ -52,7 +53,7 @@ public class HttpRequest
         return content;
     }
 
-    public ContentType getContentType() {
+    public HttpContentType getContentType() {
         return contentType;
     }
 
@@ -64,7 +65,7 @@ public class HttpRequest
         return timeout;
     }
 
-    public RequestMethod getMethod() {
+    public HttpRequestMethod getMethod() {
         return method;
     }
 
@@ -76,31 +77,31 @@ public class HttpRequest
         return fetchHeaders;
     }
 
-    void setUrl(String url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
-    void setMethod(RequestMethod method) {
+    public void setMethod(HttpRequestMethod method) {
         this.method = method;
     }
 
-    void setContent(String content) {
+    public void setContent(String content) {
         this.content = content;
     }
 
-    void setContentType(ContentType contentType) {
+    public void setContentType(HttpContentType contentType) {
         this.contentType = contentType;
     }
 
-    void setContentCharset(String contentCharset) {
+    public void setContentCharset(String contentCharset) {
         this.contentCharset = contentCharset;
     }
 
-    void setTimeout(int timeout) {
+    public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
 
-    void setHeaders(List<HttpHeader> headers) {
+    public void setHeaders(List<HttpHeader> headers) {
         this.headers = headers;
     }
 
