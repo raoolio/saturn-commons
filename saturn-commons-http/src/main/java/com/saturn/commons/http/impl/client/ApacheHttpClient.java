@@ -173,9 +173,6 @@ public class ApacheHttpClient extends BaseHttpClient {
             resp.setContentType(getHeaderValue(respCont.getContentType()));
             resp.setContentEncoding(getHeaderValue(respCont.getContentEncoding()));
 
-            httpResp.getAllHeaders();
-
-
         } finally {
             // Return connection
             if (poolEntry!=null) {
