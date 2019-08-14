@@ -47,7 +47,7 @@ public abstract class HttpClientTest {
     public void runGetTest() throws Exception {
 
         HttpRequest req= new HttpRequestBuilder()
-                .setMethod(HttpRequestMethod.GET)
+                .setRequestMethod(HttpRequestMethod.GET)
                 .setContentType(HttpContentType.APPLICATION_JSON)
                 .setUrl(GET_URL)
                 .addParam("par1", "val1")
@@ -63,7 +63,7 @@ public abstract class HttpClientTest {
     public void runPostTest() throws Exception {
 
         HttpRequest req= new HttpRequestBuilder()
-                .setMethod(HttpRequestMethod.POST)
+                .setRequestMethod(HttpRequestMethod.POST)
                 .setContentType(HttpContentType.APPLICATION_JSON)
                 .setUrl(POST_URL)
                 .addParam("par1", "val1")

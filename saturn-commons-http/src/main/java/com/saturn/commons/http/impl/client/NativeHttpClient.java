@@ -8,6 +8,7 @@ import com.saturn.commons.http.HttpRequest;
 import com.saturn.commons.http.HttpResponse;
 import com.saturn.commons.http.impl.DefaultHttpHeader;
 import com.saturn.commons.http.impl.DefaultHttpResponse;
+import com.saturn.commons.http.util.HttpHeaderUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -118,7 +119,7 @@ public class NativeHttpClient extends BaseHttpClient
             List<HttpHeader> reqHeaders= req.getHeaders();
             if (!reqHeaders.isEmpty()) {
                 for (HttpHeader h: reqHeaders) {
-                    con.setRequestProperty(h.getId(), h.getValues().toString());
+                    con.setRequestProperty(h.getId(), HttpHeaderUtil.valuesToString(h));
                 }
             }
             //</editor-fold>

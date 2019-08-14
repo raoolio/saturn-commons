@@ -1,9 +1,11 @@
 package com.saturn.commons.http.impl.client;
 
+import com.saturn.commons.http.HttpHeader;
 import com.saturn.commons.http.HttpRequest;
 import com.saturn.commons.http.HttpResponse;
 import com.saturn.commons.http.impl.DefaultHttpHeader;
 import com.saturn.commons.http.impl.DefaultHttpResponse;
+import com.saturn.commons.http.util.HttpHeaderUtil;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -129,21 +131,27 @@ public class ApacheHttpClient extends BaseHttpClient {
             int pathPos = req.getUrl().indexOf('/', 8);
             String path= req.getUrl().substring(pathPos);
 
-            BasicHttpRequest request;
+            BasicHttpRequest httpReq;
 
             // Set content ?
             if (StringUtils.isEmpty(req.getContent())) {
-                request = new BasicHttpRequest(req.getMethod().name(), path);
+                httpReq = new BasicHttpRequest(req.getMethod().name(), path);
             } else {
                 BasicHttpEntityEnclosingRequest enReq = new BasicHttpEntityEnclosingRequest(req.getMethod().name(), path);
                 StringEntity strContent= new StringEntity(req.getContent(), ContentType.create(req.getContentType().getType(), req.getContentCharset()));
                 enReq.setEntity(strContent);
-                request= enReq;
+                httpReq= enReq;
+            }
+
+            // Add Headers?
+            List<HttpHeader> headers=req.getHeaders();
+            for (HttpHeader h: headers) {
+                httpReq.addHeader(h.getId(), HttpHeaderUtil.valuesToString(h));
             }
 
             // Execute request!
-            executor.preProcess(request, httpProc, coreContext);
-            org.apache.http.HttpResponse httpResp = executor.execute(request, conn, coreContext);
+            executor.preProcess(httpReq, httpProc, coreContext);
+            org.apache.http.HttpResponse httpResp = executor.execute(httpReq, conn, coreContext);
             executor.postProcess(httpResp, httpProc, coreContext);
 
             // Reuse connection?

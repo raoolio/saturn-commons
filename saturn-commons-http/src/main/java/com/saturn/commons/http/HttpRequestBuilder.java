@@ -80,7 +80,7 @@ public class HttpRequestBuilder {
      * @param method
      * @return
      */
-    public HttpRequestBuilder setMethod(HttpRequestMethod method) {
+    public HttpRequestBuilder setRequestMethod(HttpRequestMethod method) {
         this.method = method;
         return this;
     }
@@ -191,7 +191,7 @@ public class HttpRequestBuilder {
      */
     public HttpRequestBuilder addHeader(String id,String ... value) {
         // Lazy initialization...
-        if (Collections.EMPTY_LIST.equals(headers))
+        if (headers==Collections.EMPTY_LIST)
             headers= new LinkedList();
 
         headers.add(new DefaultHttpHeader(id,value));
@@ -208,7 +208,7 @@ public class HttpRequestBuilder {
      */
     public HttpRequestBuilder addParam(String id,Object value) {
         // Lazy initialization...
-        if (Collections.EMPTY_MAP.equals(params))
+        if (params==Collections.EMPTY_MAP)
             params= new LinkedHashMap();
 
         params.put(id,value);
