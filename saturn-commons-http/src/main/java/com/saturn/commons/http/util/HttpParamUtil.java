@@ -1,9 +1,9 @@
 package com.saturn.commons.http.util;
 
-import com.saturn.commons.http.HttpContentType;
-import com.saturn.commons.http.HttpRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.saturn.commons.http.HttpContentType;
+import com.saturn.commons.http.HttpRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Iterator;

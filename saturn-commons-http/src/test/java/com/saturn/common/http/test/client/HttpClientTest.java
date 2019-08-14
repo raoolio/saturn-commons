@@ -1,4 +1,4 @@
-package com.saturn.common.http.test;
+package com.saturn.common.http.test.client;
 
 import com.saturn.commons.http.HttpClientFactory;
 import com.saturn.commons.http.HttpRequest;
@@ -11,23 +11,38 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import com.saturn.commons.http.HttpClient;
+import com.saturn.commons.http.HttpClientType;
 
 
 /**
  * HTTP Client test
  */
-public class HttpClientTest {
-    
+public abstract class HttpClientTest {
+
     /** Logger */
     private static Logger LOG= LogManager.getLogger(HttpClientTest.class);
 
     /** Endpoint ECHO service */
-    private static final String GET_URL="https://postman-echo.com/?source=echo-collection-app-onboarding";
-    
+    private static final String GET_URL="https://postman-echo.com/get";
+
     /** Endpoint ECHO service */
     private static final String POST_URL="https://postman-echo.com/post";
-    
-    
+
+    /** HttpClientType */
+    private HttpClientType clientType;
+
+
+
+    /**
+     * Constructor
+     * @param clientType
+     */
+    public HttpClientTest(HttpClientType clientType) {
+        this.clientType = clientType;
+    }
+
+
+
     @Test
     public void runGetTest() throws Exception {
 
@@ -38,12 +53,12 @@ public class HttpClientTest {
                 .addParam("par1", "val1")
                 .build();
 
-        HttpClient client= HttpClientFactory.getHTTPClient();
+        HttpClient client= HttpClientFactory.getHTTPClient(clientType);
         HttpResponse res=client.send(req);
-        Assert.assertTrue("HTTP GET Request failed!",res.isSuccess());
+        Assert.assertTrue("["+clientType+"] GET Request failed!",res.isSuccess());
     }
 
-    
+
     @Test
     public void runPostTest() throws Exception {
 
@@ -54,10 +69,10 @@ public class HttpClientTest {
                 .addParam("par1", "val1")
                 .build();
 
-        HttpClient client= HttpClientFactory.getHTTPClient();
+        HttpClient client= HttpClientFactory.getHTTPClient(clientType);
         HttpResponse res=client.send(req);
-        Assert.assertTrue("HTTP POST Request failed!",res.isSuccess());
+        Assert.assertTrue("["+clientType+"] POST Request failed!",res.isSuccess());
     }
-    
-    
+
+
 }

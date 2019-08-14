@@ -1,8 +1,6 @@
 package com.saturn.commons.http.impl;
 
 import com.saturn.commons.http.*;
-import com.saturn.commons.http.HttpContentType;
-import com.saturn.commons.http.HttpRequestMethod;
 import java.util.List;
 
 

@@ -2,6 +2,7 @@ package com.saturn.commons.http.impl;
 
 import com.saturn.commons.http.HttpHeader;
 import com.saturn.commons.utils.ArrayUtils;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -55,14 +56,23 @@ public class DefaultHttpHeader implements HttpHeader
         return id;
     }
 
+
+    @Override
+    public String getFirstValue() {
+        return values.get(0);
+    }
+
+
     public List<String> getValues() {
         return values;
     }
+
 
     @Override
     public String toString() {
         return id+"="+values;
     }
+
 
 
 }

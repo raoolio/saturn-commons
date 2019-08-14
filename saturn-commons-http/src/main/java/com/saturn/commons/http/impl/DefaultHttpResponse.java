@@ -16,17 +16,17 @@ public class DefaultHttpResponse implements HttpResponse
     /** HTTP respone message */
     private String message;
 
-    /** Content type */
-    private String contentType;
-
     /** HTTP content */
     private String content;
 
-    /** Content encoding */
-    private String encoding;
+    /** Content type */
+    private String contentType;
 
-    /** Content length */
-    private int length;
+    /** Content Encoding */
+    private String contentEncoding;
+
+    /** Content Length */
+    private int contentLength;
 
     /** Response Headers */
     private List<HttpHeader> headers;
@@ -37,6 +37,7 @@ public class DefaultHttpResponse implements HttpResponse
      * Returns the HTTP response status
      * @return
      */
+    @Override
     public int getStatus() {
         return status;
     }
@@ -46,6 +47,7 @@ public class DefaultHttpResponse implements HttpResponse
      * Returns the HTTP response message
      * @return
      */
+    @Override
     public String getMessage() {
         return message;
     }
@@ -55,6 +57,7 @@ public class DefaultHttpResponse implements HttpResponse
      * Returns the response content if any, <b>NULL</b> otherwise.
      * @return
      */
+    @Override
     public String getContent() {
         return content;
     }
@@ -64,6 +67,7 @@ public class DefaultHttpResponse implements HttpResponse
      * Tells whether this response object has a content payload.
      * @return
      */
+    @Override
     public boolean hasContent() {
         return content!=null && content.length()>0;
     }
@@ -73,26 +77,29 @@ public class DefaultHttpResponse implements HttpResponse
      * Returns the content's type
      * @return
      */
+    @Override
     public String getContentType() {
         return contentType;
     }
 
 
     /**
-     * Returns the content encoding
+     * Returns the content contentEncoding
      * @return
      */
+    @Override
     public String getContentEncoding() {
-        return encoding;
+        return contentEncoding;
     }
 
 
     /**
-     * Returns the content length
+     * Returns the content contentLength
      * @return
      */
-    public int getLength() {
-        return length;
+    @Override
+    public int getContentLength() {
+        return contentLength;
     }
 
 
@@ -100,6 +107,7 @@ public class DefaultHttpResponse implements HttpResponse
      * Is HTTP response status between 200 and 299
      * @return
      */
+    @Override
     public boolean isSuccess() {
         return status >= 200 && status < 300;
     }
@@ -109,6 +117,7 @@ public class DefaultHttpResponse implements HttpResponse
      * Returns response headers
      * @return
      */
+    @Override
     public List<HttpHeader> getHeaders() {
         return headers;
     }
@@ -144,12 +153,12 @@ public class DefaultHttpResponse implements HttpResponse
         this.contentType = contentType;
     }
 
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
+    public void setContentEncoding(String contentEncoding) {
+        this.contentEncoding = contentEncoding;
     }
 
-    public void setLength(int length) {
-        this.length = length;
+    public void setContentLength(int contentLength) {
+        this.contentLength = contentLength;
     }
 
     public void setHeaders(List<HttpHeader> headers) {
@@ -159,7 +168,7 @@ public class DefaultHttpResponse implements HttpResponse
 
     @Override
     public String toString() {
-        return "HTTP[" + status + "," + message + "] TYPE["+ contentType +"] LENGHT["+length+"] CONTENT["+content+"] ENCODING["+encoding+']';
+        return "HTTP[" + status + "," + message + "] TYPE["+ contentType +"] LENGHT["+contentLength+"] CONTENT["+content+"] ENCODING["+contentEncoding+']';
     }
 
 }

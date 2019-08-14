@@ -1,13 +1,13 @@
 package com.saturn.commons.http.impl.client;
 
-import com.saturn.commons.http.HttpResponse;
+import com.saturn.commons.http.HttpClient;
 import com.saturn.commons.http.HttpRequest;
+import com.saturn.commons.http.HttpResponse;
 import com.saturn.commons.utils.TimeUtils;
 import java.io.Closeable;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import com.saturn.commons.http.HttpClient;
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**
@@ -17,7 +17,10 @@ import org.apache.commons.lang3.Validate;
 public abstract class BaseHttpClient implements HttpClient {
 
     /** Logger */
-    protected static Logger LOG=LogManager.getLogger(HttpClient.class);
+    protected static final Logger LOG=LogManager.getLogger(HttpClient.class);
+
+    /** Default User-Agent string */
+    protected static final String USER_AGENT_PREFIX="saturn-commons-http-1.1";
 
 
 
@@ -31,7 +34,7 @@ public abstract class BaseHttpClient implements HttpClient {
     public HttpResponse send(HttpRequest req) throws Exception {
         long t=System.nanoTime();
 
-        Validate.notNull(req, "Request bean can't be null");
+        Validate.notNull(req, "Request can't be null");
         HttpResponse res= sendRequest(req);
 
         t=System.nanoTime()-t;

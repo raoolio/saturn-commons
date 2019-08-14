@@ -18,6 +18,13 @@ public interface HttpHeader
 
 
     /**
+     * Returns the first value
+     * @return
+     */
+    public String getFirstValue();
+
+
+    /**
      * Returns the Header values
      * @return
      */

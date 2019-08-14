@@ -2,21 +2,28 @@ package com.saturn.commons.http.impl.client;
 
 import com.saturn.commons.http.HttpRequest;
 import com.saturn.commons.http.HttpResponse;
+import com.saturn.commons.http.impl.DefaultHttpHeader;
 import com.saturn.commons.http.impl.DefaultHttpResponse;
-import java.io.ByteArrayInputStream;
-import java.net.Socket;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Future;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.ConnectionReuseStrategy;
-import org.apache.http.Consts;
+import org.apache.http.Header;
+import org.apache.http.HttpClientConnection;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.StatusLine;
-import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.DefaultBHttpClientConnection;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.http.impl.pool.BasicConnFactory;
+import org.apache.http.impl.pool.BasicConnPool;
+import org.apache.http.impl.pool.BasicPoolEntry;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
+import org.apache.http.message.BasicHttpRequest;
 import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.HttpProcessorBuilder;
@@ -29,75 +36,146 @@ import org.apache.http.protocol.RequestUserAgent;
 import org.apache.http.util.EntityUtils;
 
 
+
 /**
  * Apache HTTP Client implementation
- * @author rdelcid
  */
-public class ApacheHttpClient extends BaseHttpClient
-{
+public class ApacheHttpClient extends BaseHttpClient {
+
+    /** Connection pool */
+    private static final BasicConnPool pool;
+
+    // Init connection pool
+    static {
+        pool= new BasicConnPool(new BasicConnFactory());
+        pool.setDefaultMaxPerRoute(2);
+        pool.setMaxTotal(20);
+        pool.setValidateAfterInactivity(60);
+    }
+
+
+
+    /**
+     * Retrieve response headers
+     * @param con
+     * @param res
+     */
+    private List fetchHeaders(HttpRequest req, org.apache.http.HttpResponse httpResp) {
+        List hl= Collections.EMPTY_LIST;
+
+        if (req.isFetchHeaders()) {
+            // Retrieve HTTP response headers
+            Header[] headers= httpResp.getAllHeaders();
+
+            // Has headers?
+            if (headers!=null && headers.length>0) {
+                hl= new ArrayList(headers.length);
+
+                for (Header h: headers) {
+                    hl.add(new DefaultHttpHeader(h.getName(),h.getValue()) );
+                }
+            }
+        }
+
+        return hl;
+    }
+
+
+    /**
+     * Retrieves the given header's value
+     * @param h Header instance
+     * @return
+     */
+    private String getHeaderValue(Header h) {
+        return h==null? null : h.getValue();
+    }
+
+
 
     @Override
     public HttpResponse sendRequest(HttpRequest req) throws Exception {
 
-        DefaultHttpResponse httpResp= new DefaultHttpResponse();
-        
-        HttpProcessor httpproc = HttpProcessorBuilder.create()
-            .add(new RequestContent())
-            .add(new RequestTargetHost())
-            .add(new RequestConnControl())
-            .add(new RequestUserAgent("Test/1.1"))
-            .add(new RequestExpectContinue()).build();
+        DefaultHttpResponse resp = new DefaultHttpResponse();
 
-        HttpRequestExecutor httpexecutor = new HttpRequestExecutor();
+        // Prepare Apache HttpRequest...
+        HttpProcessor httpProc = HttpProcessorBuilder.create()
+                .add(new RequestContent())
+                .add(new RequestTargetHost())
+                .add(new RequestConnControl())
+                .add(new RequestUserAgent(USER_AGENT_PREFIX+" Apache HttpComponents"))
+                .add(new RequestExpectContinue(true)).build();
 
-        HttpCoreContext coreContext = HttpCoreContext.create();
-        HttpHost host = new HttpHost("localhost", 8080);
-        coreContext.setTargetHost(host);
+        HttpRequestExecutor executor = new HttpRequestExecutor();
 
-        DefaultBHttpClientConnection conn = new DefaultBHttpClientConnection(8 * 1024);
         ConnectionReuseStrategy connStrategy = DefaultConnectionReuseStrategy.INSTANCE;
+        BasicPoolEntry poolEntry=null;
+        boolean reuse = false;
 
         try {
+            // Get URL
+            URL url = new URL(req.getUrl());
+            HttpHost host = new HttpHost(url.getHost(), url.getPort());
 
-            HttpEntity[] requestBodies = {
-                    new StringEntity("This is the first test send", ContentType.create("text/plain", Consts.UTF_8)),
-                    new ByteArrayEntity("This is the second test send".getBytes(Consts.UTF_8),ContentType.APPLICATION_OCTET_STREAM),
-                    new InputStreamEntity(new ByteArrayInputStream("This is the third test send (will be chunked)".getBytes(Consts.UTF_8)),ContentType.APPLICATION_OCTET_STREAM)
-            };
+            // Get connection from pool...
+            Future<BasicPoolEntry> future = pool.lease(host, null);
+            poolEntry = future.get();
+            HttpClientConnection conn = poolEntry.getConnection();
+            HttpCoreContext coreContext = HttpCoreContext.create();
+            coreContext.setTargetHost(host);
 
-            for (int i = 0; i < requestBodies.length; i++) {
-                if (!conn.isOpen()) {
-                    Socket socket = new Socket(host.getHostName(), host.getPort());
-                    conn.bind(socket);
-                }
-                BasicHttpEntityEnclosingRequest send = new BasicHttpEntityEnclosingRequest("POST",
-                        "/servlets-examples/servlet/RequestInfoExample");
-                send.setEntity(requestBodies[i]);
-                System.out.println(">> Request URI: " + send.getRequestLine().getUri());
+            /**
+             * Retrieve path http[s]://<domain>:<port>/<path>
+             */
+            int pathPos = req.getUrl().indexOf('/', 8);
+            String path= req.getUrl().substring(pathPos);
 
-                // process send!
-                httpexecutor.preProcess(send, httpproc, coreContext);
-                org.apache.http.HttpResponse response = httpexecutor.execute(send, conn, coreContext);
-                httpexecutor.postProcess(response, httpproc, coreContext);
+            BasicHttpRequest request;
 
-                // Extract Status code & message
-                StatusLine sl=response.getStatusLine();
-                httpResp.setStatus(sl.getStatusCode());
-                httpResp.setMessage(sl.getReasonPhrase());
-
-                String content= EntityUtils.toString(response.getEntity());
-
-                if (!connStrategy.keepAlive(response, coreContext)) {
-                    conn.close();
-                } else {
-                    System.out.println("Connection kept alive...");
-                }
+            // Set content ?
+            if (StringUtils.isEmpty(req.getContent())) {
+                request = new BasicHttpRequest(req.getMethod().name(), path);
+            } else {
+                BasicHttpEntityEnclosingRequest enReq = new BasicHttpEntityEnclosingRequest(req.getMethod().name(), path);
+                StringEntity strContent= new StringEntity(req.getContent(), ContentType.create(req.getContentType().getType(), req.getContentCharset()));
+                enReq.setEntity(strContent);
+                request= enReq;
             }
+
+            // Execute request!
+            executor.preProcess(request, httpProc, coreContext);
+            org.apache.http.HttpResponse httpResp = executor.execute(request, conn, coreContext);
+            executor.postProcess(httpResp, httpProc, coreContext);
+
+            // Reuse connection?
+            reuse = connStrategy.keepAlive(httpResp, coreContext);
+
+            // Extract headers?
+            resp.setHeaders(fetchHeaders(req,httpResp));
+
+            // Extract Status code & message
+            StatusLine sl = httpResp.getStatusLine();
+            resp.setStatus(sl.getStatusCode());
+            resp.setMessage(sl.getReasonPhrase());
+
+            // Extract Content
+            HttpEntity respCont=httpResp.getEntity();
+            String content = EntityUtils.toString(respCont);
+            resp.setContent(content);
+            resp.setContentLength(content==null? 0 : content.length());
+            resp.setContentType(getHeaderValue(respCont.getContentType()));
+            resp.setContentEncoding(getHeaderValue(respCont.getContentEncoding()));
+
+            httpResp.getAllHeaders();
+
+
         } finally {
-            conn.close();
+            // Return connection
+            if (poolEntry!=null) {
+                pool.release(poolEntry, reuse);
+            }
         }
 
-        return httpResp;
+        return resp;
     }
 
 }

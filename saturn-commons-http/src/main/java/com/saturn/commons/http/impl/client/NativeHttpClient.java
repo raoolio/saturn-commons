@@ -1,11 +1,11 @@
 package com.saturn.commons.http.impl.client;
 
 
-import com.saturn.commons.http.HttpException;
 import com.saturn.commons.http.HttpContentType;
+import com.saturn.commons.http.HttpException;
 import com.saturn.commons.http.HttpHeader;
-import com.saturn.commons.http.HttpResponse;
 import com.saturn.commons.http.HttpRequest;
+import com.saturn.commons.http.HttpResponse;
 import com.saturn.commons.http.impl.DefaultHttpHeader;
 import com.saturn.commons.http.impl.DefaultHttpResponse;
 import java.io.IOException;
@@ -111,7 +111,7 @@ public class NativeHttpClient extends BaseHttpClient
             con.setReadTimeout(milis);
 
             //<editor-fold defaultstate="collapsed" desc=" Set Headers ">
-            con.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101 Firefox/59.0");
+            con.setRequestProperty("User-Agent", USER_AGENT_PREFIX+" Native URLConnection");
             con.setRequestProperty("Accept-Encoding", "gzip");
 
             // Set additional headers ?
@@ -147,14 +147,14 @@ public class NativeHttpClient extends BaseHttpClient
             // Retrieve response code & message
             boolean retrieved= fetchResponse(con,res);
             int cntLen=con.getContentLength();
-            res.setLength(cntLen);
+            res.setContentLength(cntLen);
 
             if (cntLen!=0) {
                 //<editor-fold defaultstate="collapsed" desc=" Read response content ">
 
                 // GZip content?
                 String encode= con.getHeaderField("Content-Encoding");
-                res.setEncoding(encode);
+                res.setContentEncoding(encode);
                 res.setContentType(con.getHeaderField("Content-Type"));
 
                 if (retrieved && res.isSuccess()) {

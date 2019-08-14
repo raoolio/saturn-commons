@@ -1,5 +1,6 @@
 package com.saturn.commons.http;
 
+import com.saturn.commons.http.impl.client.ApacheHttpClient;
 import com.saturn.commons.http.impl.client.NativeHttpClient;
 
 
@@ -18,12 +19,25 @@ public class HttpClientFactory {
 
 
     /**
-     * Returns HttpClient instance
+     * Returns a native HttpClient instance
      * @return
      */
     public static final HttpClient getHTTPClient() {
-        return new NativeHttpClient();
+        return getHTTPClient(HttpClientType.NATIVE);
     }
+
+
+
+    /**
+     * Returns HttpClient instance
+     * @param type HttpClientType value
+     * @return
+     */
+    public static final HttpClient getHTTPClient(HttpClientType type) {
+        return type==HttpClientType.NATIVE? new NativeHttpClient() : new ApacheHttpClient();
+    }
+
+
 
 
 }

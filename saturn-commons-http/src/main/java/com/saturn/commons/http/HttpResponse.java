@@ -63,7 +63,7 @@ public interface HttpResponse
      * Returns the content length
      * @return
      */
-    public int getLength();
+    public int getContentLength();
 
 
     /**
