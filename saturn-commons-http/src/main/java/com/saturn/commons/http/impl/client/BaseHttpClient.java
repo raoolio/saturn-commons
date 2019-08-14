@@ -1,6 +1,5 @@
 package com.saturn.commons.http.impl.client;
 
-
 import com.saturn.commons.http.HttpResponse;
 import com.saturn.commons.http.HttpRequest;
 import com.saturn.commons.utils.TimeUtils;
@@ -9,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import com.saturn.commons.http.HttpClient;
 import org.apache.commons.lang3.Validate;
-
 
 
 /**

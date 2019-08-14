@@ -35,6 +35,34 @@ public class NativeHttpClient extends BaseHttpClient
 
 
     /**
+     * Tries to fetch the HTTP response code
+     * @param con HTTP connection object
+     * @param httpResp Response bean
+     * @return <b>True</b> if response retrieved, false otherwise.
+     */
+    private boolean fetchResponse(HttpURLConnection con,DefaultHttpResponse httpResp) {
+        boolean done=false;
+        try {
+            httpResp.setStatus(con.getResponseCode());
+            httpResp.setMessage(con.getResponseMessage());
+            done=true;
+        } catch (IOException e) {
+            LOG.warn("Error reading HTTP response code, parsing from Exception [{}]",e);
+            String error=e.getMessage();
+            int ci=error.indexOf("code: ");
+
+            if (ci>0) {
+                ci+=6;
+                int ce= error.indexOf(" ", ci);
+                httpResp.setStatus(Integer.parseInt( error.substring(ci,ce) ));
+            }
+        }
+        return done;
+    }
+
+
+
+    /**
      * Retrieve response headers
      * @param con
      * @param res
@@ -166,30 +194,4 @@ public class NativeHttpClient extends BaseHttpClient
     }
 
 
-
-    /**
-     * Tries to fetch the HTTP response code
-     * @param con HTTP connection object
-     * @param httpResp Response bean
-     * @return <b>True</b> if response retrieved, false otherwise.
-     */
-    private boolean fetchResponse(HttpURLConnection con,DefaultHttpResponse httpResp) {
-        boolean done=false;
-        try {
-            httpResp.setStatus(con.getResponseCode());
-            httpResp.setMessage(con.getResponseMessage());
-            done=true;
-        } catch (IOException e) {
-            LOG.warn("Error reading HTTP response code, parsing from Exception [{}]",e);
-            String error=e.getMessage();
-            int ci=error.indexOf("code: ");
-
-            if (ci>0) {
-                ci+=6;
-                int ce= error.indexOf(" ", ci);
-                httpResp.setStatus(Integer.parseInt( error.substring(ci,ce) ));
-            }
-        }
-        return done;
-    }
 }

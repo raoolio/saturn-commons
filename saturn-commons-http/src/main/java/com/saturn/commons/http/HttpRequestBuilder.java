@@ -305,6 +305,7 @@ public class HttpRequestBuilder {
     /**
      * Prepare the content
      * @return
+     * @throws Exception
      */
     public HttpRequest build() throws Exception {
 
@@ -332,10 +333,6 @@ public class HttpRequestBuilder {
 
         return req;
     }
-
-
-
-
 
 
 }
