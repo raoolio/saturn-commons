@@ -33,7 +33,7 @@ public class HttpRequestBuilder {
     /** Content charset */
     private String contentCharset;
 
-    /** TCP request timeout */
+    /** TCP request timeout (seconds) */
     private int timeout;
 
     /** HttpHeader list */

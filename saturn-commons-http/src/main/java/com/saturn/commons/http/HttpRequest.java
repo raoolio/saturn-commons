@@ -46,7 +46,7 @@ public interface HttpRequest
 
 
     /**
-     * Returns the timeout
+     * Returns the request timeout (seconds)
      * @return
      */
     public int getTimeout();

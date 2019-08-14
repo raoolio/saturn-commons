@@ -125,6 +125,8 @@ public class ApacheHttpClient extends BaseHttpClient {
             HttpCoreContext coreContext = HttpCoreContext.create();
             coreContext.setTargetHost(host);
 
+            conn.setSocketTimeout(1000*req.getTimeout());
+
             /**
              * Retrieve path http[s]://<domain>:<port>/<path>
              */
