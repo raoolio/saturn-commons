@@ -85,6 +85,7 @@ CONTENT: { "client":"26VRI86ECD", "id":"10" }
 `HttpRequestBuilder` Explained
 -----------------------------
 This fluent builder allows you to perform any type of request, you can use the following methods:
+
 |Method     |Description    |
 |---        |---            |
 |`setUrl`|Sets the request's URL endpoint (with parameter placeholder support)|
@@ -106,6 +107,7 @@ This fluent builder allows you to perform any type of request, you can use the f
 `HttpClientFactory` Explained
 --------------------------
 The HttpClientFactory returns a `HttpClient` instance that can be used to perform the actual HTTP request.
+
 |Method |Parameter  |Description |
 |---    |---        |---         |
 |`getHttpClient`|None|With no parameters returns a HttpClient instance that runs with native Java UrlConnection. |
@@ -116,6 +118,7 @@ The HttpClientFactory returns a `HttpClient` instance that can be used to perfor
 `HttpResponse` Explained
 --------------------------
 The HttpClientResponse object allows you to obtain everything you need from the request result.
+
 |Method     |Description    |
 |---        |---            |
 |`isSuccess`|Indicates if the request was successful (status code between 200 and 299).|
