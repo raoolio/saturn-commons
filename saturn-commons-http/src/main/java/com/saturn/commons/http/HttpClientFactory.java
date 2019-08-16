@@ -22,8 +22,8 @@ public class HttpClientFactory {
      * Returns a native HttpClient instance
      * @return
      */
-    public static final HttpClient getHTTPClient() {
-        return getHTTPClient(HttpClientType.NATIVE);
+    public static final HttpClient getHttpClient() {
+        return getHttpClient(HttpClientType.NATIVE);
     }
 
 
@@ -33,7 +33,7 @@ public class HttpClientFactory {
      * @param type HttpClientType value
      * @return
      */
-    public static final HttpClient getHTTPClient(HttpClientType type) {
+    public static final HttpClient getHttpClient(HttpClientType type) {
         return type==HttpClientType.NATIVE? new NativeHttpClient() : new ApacheHttpClient();
     }
 

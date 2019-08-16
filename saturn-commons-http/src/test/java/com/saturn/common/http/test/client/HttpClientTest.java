@@ -53,7 +53,7 @@ public abstract class HttpClientTest {
                 .addParam("par1", "val1")
                 .build();
 
-        HttpClient client= HttpClientFactory.getHTTPClient(clientType);
+        HttpClient client= HttpClientFactory.getHttpClient(clientType);
         HttpResponse res=client.send(req);
         Assert.assertTrue("["+clientType+"] GET Request failed!",res.isSuccess());
     }
@@ -69,7 +69,7 @@ public abstract class HttpClientTest {
                 .addParam("par1", "val1")
                 .build();
 
-        HttpClient client= HttpClientFactory.getHTTPClient(clientType);
+        HttpClient client= HttpClientFactory.getHttpClient(clientType);
         HttpResponse res=client.send(req);
         Assert.assertTrue("["+clientType+"] POST Request failed!",res.isSuccess());
     }
