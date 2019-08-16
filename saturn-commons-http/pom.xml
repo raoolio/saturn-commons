@@ -47,4 +47,11 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     <name>saturn-commons-http</name>
+    <distributionManagement>
+        <repository>
+            <id>archiva.internal</id>
+            <name>Televida - BR Repository</name>
+            <url>http://devops.televida.biz:18081/repository/internal/</url>
+        </repository>
+    </distributionManagement>
 </project>

@@ -104,7 +104,7 @@ public class ApacheHttpClient extends BaseHttpClient {
                 .add(new RequestContent())
                 .add(new RequestTargetHost())
                 .add(new RequestConnControl())
-                .add(new RequestUserAgent(USER_AGENT_PREFIX+" Apache HttpComponents"))
+                .add(new RequestUserAgent(USER_AGENT_PREFIX+" Apache Core"))
                 .add(new RequestExpectContinue(true)).build();
 
         HttpRequestExecutor executor = new HttpRequestExecutor();

@@ -58,4 +58,11 @@
         </dependency>
     </dependencies>
     <name>saturn-commons-param</name>
+    <distributionManagement>
+        <repository>
+            <id>archiva.internal</id>
+            <name>Televida - BR Repository</name>
+            <url>http://devops.televida.biz:18081/repository/internal/</url>
+        </repository>
+    </distributionManagement>
 </project>
