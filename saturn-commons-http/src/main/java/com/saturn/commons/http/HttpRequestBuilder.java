@@ -3,13 +3,13 @@ package com.saturn.commons.http;
 import com.saturn.commons.http.impl.DefaultHttpHeader;
 import com.saturn.commons.http.impl.DefaultHttpRequest;
 import com.saturn.commons.http.util.HttpParamUtil;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.lang3.Validate;
 
 
@@ -164,7 +164,7 @@ public class HttpRequestBuilder {
      */
     public HttpRequestBuilder setBasicCredentials(String user,String pass) {
         String auth= (user+":"+pass);
-        String base64$= DatatypeConverter.printBase64Binary(auth.getBytes());
+        String base64$= Base64.getEncoder().encodeToString(auth.getBytes());
         setBasicAuth("Basic ".concat(base64$));
         return this;
     }

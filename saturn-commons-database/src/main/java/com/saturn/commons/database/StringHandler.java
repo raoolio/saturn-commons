@@ -39,8 +39,7 @@ public class StringHandler extends BaseHandler<String>
 
 
     @Override
-    public String handle(ResultSet rs) throws SQLException
-    {
+    public String handle(ResultSet rs) throws SQLException {
         String res=defaultValue;
 
         if (rs.next())

@@ -2,11 +2,11 @@ Saturn Commons Http
 =====================
 This module provides a way to perform HTTP requests using easy to learn approach. Why another library for performing HTTP requests you ask? well this implementation offers features not found on other libraries:
 
-- One interface supports Java's native `UrlConnection` or `Apache Http Core library`.
-- Fluent `HttpRequestBuilder` to build requests easy.
+- One interface supports Java's native `UrlConnection` or `Apache Http Core`.
+- Fluent `HttpRequestBuilder` to build requests easily.
 - Supports the request methods: `GET, POST, PUT, DELETE, HEAD, CONNECT, OPTIONS, TRACE, PATH`.
-- Supports parameter replacement in URL and content.
-- Can automatically build the request content using provided parameters in **JSON** and **URL-Encoded** formats.
+- Supports parameter placeholder replacement in the URL and in the request's content.
+- Can automatically build the request content using provided parameters in **JSON** or **URL-Encoded** formats.
 - By default supports pooled TCP connections.
 
 Let's dive into some examples to get you started:
@@ -20,10 +20,10 @@ Here is a simple HTTP Get example:
         .setUrl("http://yourendpoint.com/path")
         .setRequestMethod(HttpRequestMethod.GET)
         .build();
-        
+
     // Perform the actual request (by default uses Java native UrlConnection)
     HttpResponse res= HttpClientFactory.getHttpClient().send(req);
-    
+
     // Validate the response
     if (res.isSuccess()) {
         // do something...
@@ -40,10 +40,10 @@ Here is a simple HTTP Get example that has some parameter placeholders in the UR
         .addParam("client","26VRI86ECD")
         .addParam("id","10")
         .build();
-        
+
     // Perform the actual request (by default uses Java native UrlConnection)
     HttpResponse res= HttpClientFactory.getHttpClient().send(req);
-    
+
     // Validate the response
     if (res.isSuccess()) {
         // do something...
@@ -66,10 +66,10 @@ Here is a simple HTTP POST that builds a JSON content from the given parameters:
         .addParam("client","26VRI86ECD")
         .addParam("id","10")
         .build();
-        
-    // Perform the actual request    
+
+    // Perform the actual request
     HttpResponse res= HttpClientFactory.getHttpClient().send(req);
-    
+
     // Validate the response
     if (res.isSuccess()) {
         // do something...
