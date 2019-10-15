@@ -3,7 +3,7 @@ package com.saturn.commons.http;
 
 /**
  * HTTP Request Methods.
- * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
+ * @link "https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html"
  * @author rdelcid
  */
 public enum HttpRequestMethod
