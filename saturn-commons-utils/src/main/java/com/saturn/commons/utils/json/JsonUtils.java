@@ -382,15 +382,14 @@ public class JsonUtils {
 
     /**
      * Obtiene el valor correspondiente al atributo dado del objeto JSON.
-     * @param jsonOb Objeto en formato JSON
+     * @param $json Objeto en formato JSON
      * @param attrId Id del atributo a recuperar
      * @return Valor del atributo si existe, NULL en caso contrario.
      * @throws IOException
      */
-    public static final String getIdValue(String jsonOb,String attrId) throws IOException {
-        String value=null;
+    public static final String getIdValue(String $json,String attrId) throws IOException {
         JsonFactory f = new JsonFactory();
-        JsonParser jp = f.createJsonParser(jsonOb);
+        JsonParser jp = f.createParser($json);
 
         try {
             JsonToken token=null;
@@ -407,8 +406,7 @@ public class JsonUtils {
 
                     // Extraemos valor de atributo
                     if (attrId.equals(attName)) {
-                        value= jp.getText();
-                        break;
+                        return jp.getText();
                     }
                 }
             }
@@ -417,7 +415,27 @@ public class JsonUtils {
             jp=null;
         }
 
-        return value;
+        return null;
+    }
+
+
+
+    /**
+     * Obtiene el primer valor correspondiente a la lista de atributos dada
+     * del objeto JSON.
+     * @param $json Objeto en formato JSON
+     * @param attrs Lista de atributos
+     * @return Valor del atributo si existe, NULL en caso contrario.
+     * @throws IOException
+     */
+    public static final String getFirstIdValue(String $json,String... attrs) throws IOException {
+
+        for (String attId: attrs) {
+            String val= getIdValue($json,attId);
+            if (val!=null)
+                return val;
+        }
+        return null;
     }
 
 }

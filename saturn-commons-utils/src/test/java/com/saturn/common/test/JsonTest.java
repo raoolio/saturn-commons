@@ -19,7 +19,7 @@ public class JsonTest {
     /** Sample JSON object */
     private static final String JSON_OBJECT1= "{ \"response\": { \"id\": \"00454541\", \"name\":\"Example object\" } }";
     private static final String JSON_OBJECT2= "{ \"id\": \"00454541\", \"name\":\"Example object\" }";
-
+    private static final String JSON_OBJECT3= "{ \"id1\":\"001\", \"id2\": \"002\" }";
 
 
     @Test
@@ -86,7 +86,21 @@ public class JsonTest {
     public void getIdValue() throws IOException {
         String val= JsonUtils.getIdValue(JSON_OBJECT1,"id");
         Assert.assertEquals("Invalid attribute value", "00454541", val);
-        
+    }
+
+
+
+    @Test
+    public void getMultiIdValue() throws IOException {
+
+        // Multiple ID test 1
+        String val= JsonUtils.getFirstIdValue(JSON_OBJECT3,"id2","id1");
+        Assert.assertEquals("Invalid attribute value", "002", val);
+
+        // Multiple ID test 2
+        val= JsonUtils.getFirstIdValue(JSON_OBJECT3,"id3","id1","id2");
+        Assert.assertEquals("Invalid attribute value", "001", val);
+
     }
 
 

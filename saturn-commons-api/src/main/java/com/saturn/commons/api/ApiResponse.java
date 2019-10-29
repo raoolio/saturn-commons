@@ -49,6 +49,16 @@ public class ApiResponse {
         return content;
     }
 
+
+    /**
+     * Tells if the request was successful, HTTP status between 200 and 299
+     * @return
+     */
+    public boolean isSuccess() {
+        return status>=200 && status<300;
+    }
+
+
     @Override
     public String toString() {
         return "ApiResponse: STATUS[" + status + "] CONTENT[" + content + ']';

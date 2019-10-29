@@ -60,7 +60,7 @@ abstract class PropertyProviderWriter implements PropertyProvider {
      * @param conf
      * @return
      */
-    private final void buildSqls(PropertyConfig conf) {
+    private void buildSqls(PropertyConfig conf) {
 
         boolean hasPath= org.apache.commons.lang3.StringUtils.isNotBlank(conf.getBasePath());
         StringBuilder vals= new StringBuilder();
