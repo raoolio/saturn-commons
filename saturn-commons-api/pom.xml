@@ -8,7 +8,15 @@
     </parent>
     <artifactId>saturn-commons-api</artifactId>
     <packaging>jar</packaging>
-    
+    <version>1.1</version>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.9</version>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
     <distributionManagement>
         <repository>
             <id>archiva.internal</id>
@@ -16,5 +24,5 @@
             <url>http://devops.televida.biz:18081/repository/internal/</url>
         </repository>
     </distributionManagement>
-    
+
 </project>
