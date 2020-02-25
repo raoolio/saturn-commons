@@ -30,7 +30,7 @@ public class PropertyProviderGuava extends PropertyProviderWriter {
 
     /**
      * Constructor
-     * @param config Parameter configuration object
+     * @param config Property configuration instance
      * @param dataSource Database connection
      */
     public PropertyProviderGuava(PropertyConfig config,DataSource dataSource) {
@@ -43,8 +43,8 @@ public class PropertyProviderGuava extends PropertyProviderWriter {
 
     /**
      * Builds the SQL for retrieving values
-     * @param conf
-     * @return
+     * @param config Property configuration instance
+     * @return SQL string.
      */
     private String getFetchSql(PropertyConfig conf) {
         StringBuilder sql= new StringBuilder()
@@ -66,7 +66,7 @@ public class PropertyProviderGuava extends PropertyProviderWriter {
 
     /**
      * Creates the parameters cache
-     * @param config
+     * @param config Property configuration instance
      */
     protected final void buildCache(PropertyConfig config) {
         cache= CacheBuilder.newBuilder().

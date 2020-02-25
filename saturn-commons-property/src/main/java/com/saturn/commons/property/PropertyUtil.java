@@ -34,7 +34,7 @@ public class PropertyUtil {
 
     /**
      * Set parameter provider
-     * @param propertyProvider
+     * @param propertyProvider PropertyProvider instance
      */
     public final void setPropertyProvider(PropertyProvider propertyProvider) {
         this.propertyProvider = propertyProvider;
@@ -55,7 +55,7 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as String
-     * @param path
+     * @param path Additional path child for lookup
      * @param id Parameter ID
      * @return Parameter value or <b>NULL</b> if it doesn't exist
      */
@@ -67,7 +67,7 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as String
-     * @param path Property path
+     * @param path Additional path child for lookup
      * @param id Property id
      * @param defValue Default value
      * @return Parameter value or <b>defValue</b> if it doesn't exist
@@ -80,7 +80,7 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as Integer
-     * @param path Property path
+     * @param path Additional path child for lookup
      * @param id Property id
      * @return Parameter value or <b>NULL</b> if it doesn't exist
      */
@@ -92,7 +92,7 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as Integer
-     * @param path Property path
+     * @param path Additional path child for lookup
      * @param id Property id
      * @param defValue Default value
      * @return Parameter value or <b>defValue</b> if it doesn't exist
@@ -106,7 +106,7 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as Long
-     * @param path Property path
+     * @param path Additional path child for lookup
      * @param id Property id
      * @return Parameter value or <b>NULL</b> if it doesn't exist
      */
@@ -118,7 +118,7 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as Long
-     * @param path Property path
+     * @param path Additional path child for lookup
      * @param id Property id
      * @param defValue Default value
      * @return Parameter value or <b>defValue</b> if it doesn't exist
@@ -132,7 +132,7 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as Float
-     * @param path Property path
+     * @param path Additional path child for lookup
      * @param id Property id
      * @return Parameter value or <b>NULL</b> if it doesn't exist
      */
@@ -144,7 +144,7 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as Float
-     * @param path Property path
+     * @param path Additional path child for lookup
      * @param id Property id
      * @param defValue Default value
      * @return Parameter value or <b>defValue</b> if it doesn't exist
@@ -158,7 +158,7 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as Double
-     * @param path Property path
+     * @param path Additional path child for lookup
      * @param id Property id
      * @return Parameter value or <b>NULL</b> if it doesn't exist
      */
@@ -170,7 +170,7 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as Double
-     * @param path Property path
+     * @param path Additional path child for lookup
      * @param id Property id
      * @param defValue Default value
      * @return Parameter value or <b>defValue</b> if it doesn't exist
@@ -184,7 +184,7 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as Boolean
-     * @param path Property path
+     * @param path Additional path child for lookup
      * @param id Property id
      * @return Parameter value or <b>NULL</b> if it doesn't exist
      */
@@ -196,7 +196,7 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as Boolean
-     * @param path Property path
+     * @param path Additional path child for lookup
      * @param id Property id
      * @param defValue Default value
      * @return Parameter value or <b>defValue</b> if it doesn't exist
@@ -210,7 +210,7 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as TimeUnit
-     * @param path Property path
+     * @param path Additional path child for lookup
      * @param id Property id
      * @return Parameter value or <b>NULL</b> if it doesn't exist
      */
@@ -222,7 +222,7 @@ public class PropertyUtil {
 
     /**
      * Returns the parameter value as TimeUnit
-     * @param path Property path
+     * @param path Additional path child for lookup
      * @param id Property id
      * @param defValue Default value
      * @return Parameter value or <b>defValue</b> if it doesn't exist
@@ -236,7 +236,7 @@ public class PropertyUtil {
 
     /**
      * Persists the given key-value pair
-     * @param path Property path
+     * @param path Additional path child for lookup
      * @param id Property id
      * @param value Property value
      * @return Returns <b>true</b> if the operation succeeded.

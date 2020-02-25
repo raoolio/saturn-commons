@@ -21,8 +21,8 @@ public class Key {
 
     /**
      * Constructor
-     * @param path
-     * @param id
+     * @param path Property path
+     * @param id Property ID
      */
     public Key(String path, String id) {
         this.path = path;
@@ -78,6 +78,7 @@ public class Key {
         }
         return true;
     }
+
 
     @Override
     public String toString() {

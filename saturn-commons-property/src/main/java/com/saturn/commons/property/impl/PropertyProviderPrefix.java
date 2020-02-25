@@ -40,7 +40,7 @@ public class PropertyProviderPrefix extends PropertyProviderWriter {
 
     /**
      * Builds the SQL for retrieving values
-     * @param conf
+     * @param conf Property configuration instance
      * @return
      */
     private String getSqlGetAll(PropertyConfig conf) {
@@ -61,7 +61,6 @@ public class PropertyProviderPrefix extends PropertyProviderWriter {
 
     /**
      * Loads all parameters that match the prefix
-     * @param conf
      */
     private void loadCache() {
         try {

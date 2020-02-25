@@ -12,6 +12,7 @@ import org.apache.commons.lang3.Validate;
  */
 public class PropertyProviderFactory {
 
+
     // Private constructor
     private PropertyProviderFactory() {
     }
@@ -22,7 +23,7 @@ public class PropertyProviderFactory {
      * Returns a PropertyProvider instance
      * @param config Parameter configuration
      * @param dataSource Data source instance
-     * @return
+     * @return PropertyProvider instance
      */
     public static PropertyProvider getPropertyProvider(PropertyConfig config,DataSource dataSource) {
         Validate.notNull(config, "Configuration can't be null");

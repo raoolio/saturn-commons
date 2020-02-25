@@ -38,7 +38,7 @@ abstract class PropertyProviderWriter implements PropertyProvider {
 
     /**
      * Constructor
-     * @param config Parameter configuration object
+     * @param config Property configuration instance
      * @param dataSource Database connection
      */
     public PropertyProviderWriter(PropertyConfig config,DataSource dataSource) {
@@ -57,7 +57,7 @@ abstract class PropertyProviderWriter implements PropertyProvider {
 
     /**
      * Builds the SQL for storing values
-     * @param conf
+     * @param conf Property configuration instance
      * @return
      */
     private void buildSqls(PropertyConfig conf) {
@@ -112,17 +112,15 @@ abstract class PropertyProviderWriter implements PropertyProvider {
     /**
      * Retrieve a value from the cache
      * @param key Parameter key
-     * @return
+     * @return Value if found, <b>NULL</b> otherwise.
      */
     protected abstract String getCacheValue(Key key) throws Exception;
 
 
     /**
      * Updates a value in the cache
-     * @param path Property path
-     * @param id Parameter ID
+     * @param key Parameter ID
      * @param value New value
-     * @return
      */
     protected abstract void setCacheValue(Key key,String value);
 
@@ -197,7 +195,7 @@ abstract class PropertyProviderWriter implements PropertyProvider {
      * @param pathSuffix Path suffix
      * @param id Parameter ID
      * @param defaultValue Default parameter value
-     * @return
+     * @return Property value if found, <b>defaultValue</b> otherwise.
      */
     @Override
     public String getValue(String pathSuffix,String id, String defaultValue) {
@@ -224,7 +222,12 @@ abstract class PropertyProviderWriter implements PropertyProvider {
 
         } while (v==null && --c>=0);
 
-        return v==null? defaultValue: v;
+        if (v==null)
+            v= defaultValue;
+
+        LOG.trace("PATH[{}] ID[{}] -> [{}]",pathSuffix,id,v);
+
+        return v;
     }
 
 
@@ -234,7 +237,7 @@ abstract class PropertyProviderWriter implements PropertyProvider {
      * @param pathSuffix Path suffix
      * @param id Property id
      * @param value Property value
-     * @return
+     * @return <b>true</b> if operation succeeded, <b>false</b> otherwise.
      */
     @Override
     public boolean setValue(String pathSuffix,String id, String value) {
@@ -267,6 +270,8 @@ abstract class PropertyProviderWriter implements PropertyProvider {
             String sql=exists? sqlUpdate : sqlInsert;
 
             done= qr.update(sql, value, key.getPath(), key.getId()) > 0;
+            if (done)
+                LOG.trace("ID[{}] VAL[{}] -> [{}]",key,value,exists?"Updated":"Created");
 
         } catch(Exception ex) {
             LOG.error("Error storing parameter: ["+key+"="+value+"]", ex);

@@ -42,17 +42,15 @@ public class PropertyConfig {
 
     /**
      * ParamProvider constructor
-     * @return
      */
-    public PropertyConfig PropertyConfig() {
-        return this;
+    public PropertyConfig() {
     }
 
 
     /**
      * Set the database table name source for retrieving values.
      * @param tableName Table name
-     * @return
+     * @return PropertyConfig instance
      */
     public PropertyConfig setTableName(String tableName) {
         this.tableName = tableName;
@@ -62,7 +60,7 @@ public class PropertyConfig {
 
     /**
      * Set the table's path column name
-     * @param pathColumnName
+     * @param pathColumnName Path column name
      */
     public void setPathColumnName(String pathColumnName) {
         this.pathColumnName = pathColumnName;
@@ -72,7 +70,7 @@ public class PropertyConfig {
     /**
      * Set the table column name used for key matching
      * @param idColumnName Key column name
-     * @return
+     * @return PropertyConfig instance
      */
     public PropertyConfig setIdColumnName(String idColumnName) {
         this.idColumnName = idColumnName;
@@ -83,7 +81,7 @@ public class PropertyConfig {
     /**
      * Set the table column name used for value retrieval
      * @param valueColumnName Value column name
-     * @return
+     * @return PropertyConfig instance
      */
     public PropertyConfig setValueColumnName(String valueColumnName) {
         this.valueColumnName = valueColumnName;
@@ -94,7 +92,7 @@ public class PropertyConfig {
     /**
      * Sets the base path for retrieving property values
      * @param path Base property path
-     * @return
+     * @return PropertyConfig instance
      */
     public PropertyConfig setBasePath(String path) {
         this.basePath = path;
@@ -105,9 +103,9 @@ public class PropertyConfig {
     /**
      * Set the key/value pair retention time in the cache
      * @param duration Duration time value
-     * @param unit
-     * @see setDurationUnit
-     * @return
+     * @param unit Duration time unit
+     * @see setDuration
+     * @return PropertyConfig instance
      */
     public PropertyConfig setDuration(long duration,TimeUnit unit) {
         this.duration = duration;
@@ -119,8 +117,8 @@ public class PropertyConfig {
 
     /**
      * Sets the cache max size
-     * @param maxSize
-     * @return
+     * @param maxSize Maximum cache size
+     * @return PropertyConfig instance
      */
     public PropertyConfig setMaxSize(int maxSize) {
         this.maxSize = maxSize;
@@ -132,7 +130,7 @@ public class PropertyConfig {
     /**
      * Sets the number of recursive search retries for a given entry
      * @param searchRetries Number of retries
-     * @return
+     * @return PropertyConfig instance
      */
     public PropertyConfig setSearchRetries(int searchRetries) {
         this.searchRetries = searchRetries;

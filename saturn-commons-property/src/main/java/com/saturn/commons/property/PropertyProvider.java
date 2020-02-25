@@ -12,7 +12,7 @@ public interface PropertyProvider {
      * Retrieves the value associated with the given id
      * @param path Property path
      * @param id Property id
-     * @return
+     * @return Value if found, <b>NULL</b> otherwise.
      */
     public String getValue(String path,String id);
 
@@ -22,7 +22,7 @@ public interface PropertyProvider {
      * @param path Property path
      * @param id Property id
      * @param defaultValue Default value if parameter not found
-     * @return
+     * @return Value if found, <b>defaultValue</b> otherwise.
      */
     public String getValue(String path,String id,String defaultValue);
 
@@ -32,7 +32,7 @@ public interface PropertyProvider {
      * @param path Property path
      * @param id Property id
      * @param value Property value
-     * @return
+     * @return <b>True</b> if operation successful, <b>False</b> otherwise.
      */
     public boolean setValue(String path,String id,String value);
 
