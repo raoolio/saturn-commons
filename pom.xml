@@ -15,6 +15,7 @@
         <module>saturn-commons-data</module>
         <module>saturn-commons-spring</module>
         <module>saturn-commons-api</module>
+        <module>JavaApplication4/saturn-commons-redis</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
