@@ -1,6 +1,8 @@
 package com.saturn.commons.api;
 
-import org.apache.commons.lang3.StringUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.lang3.Validate;
 
 
@@ -10,41 +12,49 @@ import org.apache.commons.lang3.Validate;
  */
 public class ApiResponseBuilder {
 
+    /** HTTP Status code */
     private int status;
-    private String content;
 
-    /** Fields for building JSON content */
-    private String code;
-    private String message;
-    private String moreInfo;
+    /** HTTP content body (optional) */
+    private Object content;
+
+    /** JSON params */
+    private Map params;
 
 
 
     /**
-     * No instance
+     * Successful response
+     */
+    public ApiResponseBuilder() {
+        this(200);
+    }
+
+
+    /**
+     * Instance with given response code
+     * @param status HTTP status code
      */
     public ApiResponseBuilder(int status) {
         this.status = status;
     }
 
 
-    public ApiResponseBuilder setContent(String content) {
+    public ApiResponseBuilder setStatus(int status) {
+        this.status = status;
+        return this;
+    }
+
+    public ApiResponseBuilder setContent(Object content) {
         this.content = content;
         return this;
     }
 
-    public ApiResponseBuilder setCode(String code) {
-        this.code = code;
-        return this;
-    }
+    public ApiResponseBuilder addParam(String id,Object value) {
+        if (params==null)
+            params= new HashMap();
 
-    public ApiResponseBuilder setMessage(String message) {
-        this.message = message;
-        return this;
-    }
-
-    public ApiResponseBuilder setMoreInfo(String moreInfo) {
-        this.moreInfo = moreInfo;
+        params.put(id, value);
         return this;
     }
 
@@ -53,33 +63,21 @@ public class ApiResponseBuilder {
     public ApiResponse build() {
         ApiResponse ar= new ApiResponse();
         Validate.isTrue(status>=100 && status<600, "Invalid HTTP status code");
-        Validate.isTrue(!(StringUtils.isEmpty(content) && StringUtils.isEmpty(message)), "Invalid content");
+        Validate.isTrue(content!=null || params!=null, "Invalid content");
 
         ar.setStatus(status);
 
-        if (!StringUtils.isEmpty(content)) {
+        if (content!=null) {
             ar.setContent(content);
         } else {
-            StringBuilder json= new StringBuilder("{");
 
-            if ( !StringUtils.isEmpty(code) ) {
-                json.append("\"errorCode\":\"").append(code).append('"');
+            if (params!=null) {
+                try {
+                    ObjectMapper om= new ObjectMapper();
+                    ar.setContent(om.writeValueAsString(params));
+                } catch (Exception e) {
+                }
             }
-
-            if ( !StringUtils.isEmpty(message) ) {
-                if (json.length()>1)
-                    json.append(", ");
-                json.append("\"message\":\"").append(message).append('"');
-            }
-
-            if ( !StringUtils.isEmpty(moreInfo) ) {
-                if (json.length()>1)
-                    json.append(", ");
-                json.append("\"moreInfo\":\"").append(moreInfo).append('"');
-            }
-
-            json.append("}");
-            ar.setContent(json.toString());
         }
 
         return ar;

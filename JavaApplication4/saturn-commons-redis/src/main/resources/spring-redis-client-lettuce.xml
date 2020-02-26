@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+    <!-- JSON Object Mapper -->
+    <!--bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" /-->
+
+    <!-- Call Visibility method! -->
+        <!-- com.fasterxml.jackson.annotation.PropertyAccessor (GETTER, SETTER, CREATOR, FIELD, IS_GETTER, NONE, ALL) -->
+        <!-- com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility (ANY, NON_PRIVATE, PROTECTED_AND_PUBLIC, PUBLIC_ONLY, NONE, DEFAULT) -->
+    <!--bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="objectMapper"/>
+        <property name="targetMethod" value="setVisibility"/>
+        <property name="arguments">
+            <list>
+                <value>FIELD</value>
+                <value>ANY</value>
+            </list>
+        </property>
+    </bean-->
+    <!-- Call enableDefaultTyping method! -->
+    <!--bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="objectMapper"/>
+        <property name="targetMethod" value="enableDefaultTyping"/>
+        <property name="arguments" value="NON_FINAL" />
+    </bean-->
+
+    <!-- Lettuce Connection Factory -->
+    <bean id="lettuceConnectionFactory" primary="true"
+          class="org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory">
+        <constructor-arg ref="redisConfig"/>
+    </bean>
+
+    <!-- Redis Serializers -->
+    <!--bean id="stringSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer"/-->
+    <!--bean id="jsonSerializer" class="org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer" >
+        <constructor-arg value="#{ T(java.lang.Object) }" />
+    </bean-->
+
+    <!-- Redis Template
+          p:hashValueSerializer-ref="jsonSerializer"
+          p:valueSerializer-ref="jsonSerializer"
+          p:keySerializer-ref="stringSerializer"
+    -->
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate"
+          p:connection-factory-ref="lettuceConnectionFactory" p:enable-transaction-support="false" />
+
+    <!-- String Redis Template -->
+    <bean id="stringRedisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate"
+          p:connection-factory-ref="lettuceConnectionFactory" p:enable-transaction-support="false" />
+
+</beans>

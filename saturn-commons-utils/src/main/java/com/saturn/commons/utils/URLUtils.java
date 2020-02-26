@@ -20,6 +20,19 @@ public class URLUtils {
      * @return
      */
     public static String URLDecodeString(String s,int maxLength) throws Exception {
+        return URLDecodeString(s,maxLength,true);
+    }
+
+
+
+    /**
+     * Decodes the given string if it contains URL-encoded chars. Trims the string if it's length is greater than maxLength chars
+     * @param s String to decode
+     * @param maxLength Maximum string length
+     * @param trimOnParentheses Trim string on Parentheses close ?
+     * @return
+     */
+    public static String URLDecodeString(String s,int maxLength,boolean trimOnParentheses) throws Exception {
 
         StringBuilder sb= new StringBuilder(maxLength);
         boolean isEncode=false;
@@ -39,8 +52,10 @@ public class URLUtils {
                     break;
                 case ')':
                     if (--pars==0) {
-                        sb.append(c);
-                        break loop;
+                        if (trimOnParentheses) {
+                            sb.append(c);
+                            break loop;
+                        }
                     }
                     break;
 

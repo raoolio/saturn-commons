@@ -10,7 +10,7 @@ public class ApiResponse {
     private int status;
 
     /** HTTP response content */
-    private String content;
+    private Object content;
 
 
 
@@ -27,7 +27,7 @@ public class ApiResponse {
      * @param status
      * @param content
      */
-    public ApiResponse(int status, String content) {
+    public ApiResponse(int status, Object content) {
         this.status = status;
         this.content = content;
     }
@@ -37,7 +37,7 @@ public class ApiResponse {
         this.status = status;
     }
 
-    public void setContent(String content) {
+    public void setContent(Object content) {
         this.content = content;
     }
 
@@ -45,7 +45,7 @@ public class ApiResponse {
         return status;
     }
 
-    public String getContent() {
+    public Object getContent() {
         return content;
     }
 
