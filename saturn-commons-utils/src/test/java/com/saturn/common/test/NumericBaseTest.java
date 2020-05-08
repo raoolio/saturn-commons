@@ -14,7 +14,7 @@ public class NumericBaseTest {
     @Test
     public void runTest() {
 
-        String msisdn="50600119502";
+        String msisdn="5215510101010";
 
         // Test all numerica bases
         for (int b=2; b<=36; b++) {
