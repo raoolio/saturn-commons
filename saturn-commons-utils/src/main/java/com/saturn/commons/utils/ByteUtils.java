@@ -1,11 +1,9 @@
 package com.saturn.commons.utils;
 
-import java.text.DecimalFormat;
-
 
 
 /**
- * Algoritmo de conversion de Bytes a su representacion en String segun la unidad
+ * Converts the given bytes to Human-form representation.
  * @author raoolio
  */
 public class ByteUtils
@@ -31,15 +29,11 @@ public class ByteUtils
     /** Geopbytes */
     private static final float GEOP=KILO*BRONTO;
 
-    private static DecimalFormat fmt= new DecimalFormat("###.##");
-
 
 
     // Constructor
-    private ByteUtils()
-    {
+    private ByteUtils() {
     }
-
 
 
     /**
@@ -47,32 +41,44 @@ public class ByteUtils
      * @param bytes Cantidad de bytesa convertir
      * @return Cadena con representacion de los bytes
      */
-    public static String bytesToString(long bytes)
-    {
+    public static String bytesToString(long bytes) {
+        return bytesToString(bytes,0);
+    }
+
+
+
+    /**
+     * Convierte la cantidad de bytes dada a su representacion en String
+     * @param bytes Cantidad de bytesa convertir
+     * @param decimals
+     * @return Cadena con representacion de los bytes
+     */
+    public static String bytesToString(long bytes,int decimals) {
         String res=null;
+        String fmt= "%."+decimals+"f";
 
         if (bytes<KILO)
-            res= bytes+"B";
+            res= bytes+"B ";
         else if (bytes<MEGA)
-            res= floatToString(bytes/KILO)+"KB";
+            res= String.format(fmt,bytes/KILO)+"KB";    // Kilbytes
         else if (bytes<GIGA)
-            res= floatToString(bytes/MEGA)+"MB";
+            res= String.format(fmt,bytes/MEGA)+"MB";    // Megabytes
         else if (bytes<TERA)
-            res= floatToString(bytes/GIGA)+"GB";
+            res= String.format(fmt,bytes/GIGA)+"GB";    // Gigabytes
         else if (bytes<PETA)
-            res= floatToString(bytes/TERA)+"TB";
+            res= String.format(fmt,bytes/TERA)+"TB";    // Terabytes
         else if (bytes<EXA)
-            res= floatToString(bytes/PETA)+"PB";
+            res= String.format(fmt,bytes/PETA)+"PB";    // Petabytes
         else if (bytes<ZETTA)
-            res= floatToString(bytes/EXA)+"EB";
+            res= String.format(fmt,bytes/EXA)+"EB";     // Exabytes
         else if (bytes<YOTTA)
-            res= floatToString(bytes/ZETTA)+"ZB";
+            res= String.format(fmt,bytes/ZETTA)+"ZB";   // Zettabytes
         else if (bytes<BRONTO)
-            res= floatToString(bytes/YOTTA)+"YB";
+            res= String.format(fmt,bytes/YOTTA)+"YB";   // Yottabytes
         else if (bytes<GEOP)
-            res= floatToString(bytes/BRONTO)+"BB";
+            res= String.format(fmt,bytes/BRONTO)+"BB";  // Brontobyte
         else
-            res= floatToString(bytes/GEOP)+"GPB";
+            res= String.format(fmt,bytes/GEOP)+"GPB";   // Geopbyte
 
 //        System.out.println("bytesToString: BYTES["+bytes+"] -> ["+res+"]");
 
@@ -81,9 +87,17 @@ public class ByteUtils
 
 
 
-    private static synchronized String floatToString(float value)
-    {
-        return fmt.format(value);
+    /**
+     * ByteUtils conversion test
+     * @param args
+     */
+    public static void main(String[] args) {
+        long b=45;
+        System.out.println(bytesToString(b,1));
+        System.out.println(bytesToString(b*10,1));
+        System.out.println(bytesToString(b*45,1));
+        System.out.println(bytesToString(b*75,1));
+
     }
 
 

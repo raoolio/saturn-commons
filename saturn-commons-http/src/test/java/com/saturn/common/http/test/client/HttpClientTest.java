@@ -48,7 +48,6 @@ public abstract class HttpClientTest {
 
         HttpRequest req= new HttpRequestBuilder()
                 .setRequestMethod(HttpRequestMethod.GET)
-                .setContentType(HttpContentType.APPLICATION_JSON)
                 .setUrl(GET_URL)
                 .addParam("par1", "val1")
                 .build();

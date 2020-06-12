@@ -15,7 +15,28 @@ public class StringUtils
     }
 
 
+    
+    /**
+     * Realiza Right Fill
+     * @param cad Cadena
+     * @param length Longitud maxima
+     * @param c Caracter de relleno
+     * @return
+     */
+    public static final String leftFill(String cad,int length, char c) {
+        StringBuilder buff= new StringBuilder(cad==null?"null":cad);
+        int f= length - buff.length();
 
+        if (f>0) {
+            for (int i=f; --f>=0; )
+                buff.insert(0, c);
+        }
+
+        return buff.toString();
+    }    
+
+    
+    
     /**
      * Realiza Right Fill
      * @param cad Cadena

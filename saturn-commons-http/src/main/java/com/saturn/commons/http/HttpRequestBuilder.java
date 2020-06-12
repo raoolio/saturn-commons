@@ -286,12 +286,11 @@ public class HttpRequestBuilder {
         if (sendAllParams && method==HttpRequestMethod.POST && !params.isEmpty()) {
 
             // Already has content?
-            if (content!=null && content.indexOf('{')>0) {
+            if (content!=null && content.indexOf('{',0)>-1) {
 
                 // Replace content's variables with provided params
                 return HttpParamUtil.replaceAndCopy(content,params);
-            }
-            else {
+            } else {
                 // Encode all parameters as content
                 StringBuilder sb= new StringBuilder(paramsLength*2);
                 return HttpParamUtil.encodeParams(sb,params,contentType,contentCharset).toString();
