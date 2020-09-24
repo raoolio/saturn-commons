@@ -38,7 +38,7 @@ public abstract class BaseHttpClient implements HttpClient {
         HttpResponse res= sendRequest(req);
 
         t=System.nanoTime()-t;
-        LOG.info("{}[{}] HEADERS[{}] CONT[{}] -> RESP[{}] in {}",req.getMethod(),req.getUrl(),req.getHeaders(),req.getContent(),res,TimeUtils.nanoToString(t));
+        LOG.info("{}[{}] HEADERS{} CONT[{}] -> RESP[{}] in {}",req.getMethod(),req.getUrl(),req.getHeaders(),req.getContent(),res,TimeUtils.nanoToString(t));
 
         return res;
     }

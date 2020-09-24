@@ -4,12 +4,12 @@ import com.saturn.commons.http.impl.DefaultHttpHeader;
 import com.saturn.commons.http.impl.DefaultHttpRequest;
 import com.saturn.commons.http.util.HttpParamUtil;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 
@@ -57,8 +57,8 @@ public class HttpRequestBuilder {
      * Constructor
      */
     public HttpRequestBuilder() {
-        this.headers= Collections.EMPTY_LIST;
-        this.params= Collections.EMPTY_MAP;
+        this.headers= new LinkedList();
+        this.params= new LinkedHashMap();
         this.sendAllParams= true;
     }
 
@@ -97,15 +97,29 @@ public class HttpRequestBuilder {
     }
 
 
+
     /**
      * Set the content's type
      * @param contentType
      * @return
      */
     public HttpRequestBuilder setContentType(HttpContentType contentType) {
-        this.contentType = contentType;
-        return this;
+        return setContentType(contentType,contentType.getCharset());
     }
+
+
+
+    /**
+     * Set the content's type
+     * @param contentType
+     * @param charset Content charset
+     * @return
+     */
+    public HttpRequestBuilder setContentType(HttpContentType contentType,String charset) {
+        this.contentType = contentType;
+        return setContentCharset(charset);
+    }
+
 
 
     /**
@@ -190,10 +204,6 @@ public class HttpRequestBuilder {
      * @return
      */
     public HttpRequestBuilder addHeader(String id,String ... value) {
-        // Lazy initialization...
-        if (headers==Collections.EMPTY_LIST)
-            headers= new LinkedList();
-
         headers.add(new DefaultHttpHeader(id,value));
         return this;
     }
@@ -207,10 +217,6 @@ public class HttpRequestBuilder {
      * @return
      */
     public HttpRequestBuilder addParam(String id,Object value) {
-        // Lazy initialization...
-        if (params==Collections.EMPTY_MAP)
-            params= new LinkedHashMap();
-
         params.put(id,value);
         paramsLength+= id.length()+2;
         return this;
@@ -245,11 +251,12 @@ public class HttpRequestBuilder {
         // Request parameters?
         if (!params.isEmpty()) {
             StringBuilder $url= new StringBuilder(150);
+            String charset= contentCharset==null? "UTF-8" : contentCharset;
 
             // URL contains '{params}' ?
             if (url.indexOf('{')>0) {
                 // Replace param values!
-                HttpParamUtil.replaceAndCopy($url,url,params,contentCharset);
+                HttpParamUtil.replaceAndCopy($url,url,params,charset);
             } else {
                 $url.append(url);
             }
@@ -267,7 +274,7 @@ public class HttpRequestBuilder {
                     $url.append('?');
 
                 // Encode remaining params as GET
-                HttpParamUtil.params2UrlEncoded($url,params,contentCharset);
+                HttpParamUtil.params2UrlEncoded($url,params,charset);
             }
             return $url.toString();
         } else
@@ -282,21 +289,51 @@ public class HttpRequestBuilder {
      */
     private String buildContent() throws Exception {
 
-        // Build content!
-        if (sendAllParams && method==HttpRequestMethod.POST && !params.isEmpty()) {
+        String cont= content;
 
-            // Already has content?
-            if (content!=null && content.indexOf('{',0)>-1) {
+        // Already has content?
+        if (StringUtils.isNotBlank(cont)) {
 
+            Validate.notNull(contentType,"Invalid content type");
+
+            // Content has variables?
+            if (content.indexOf('{',0)>-1) {
                 // Replace content's variables with provided params
-                return HttpParamUtil.replaceAndCopy(content,params);
-            } else {
+                cont= HttpParamUtil.replaceAndCopy(content,params);
+            }
+        } else {
+
+            // Build content?
+            if (!params.isEmpty() && sendAllParams && (method==HttpRequestMethod.POST || method==HttpRequestMethod.PUT)) {
+                Validate.notNull(contentType,"Invalid content type");
+
                 // Encode all parameters as content
                 StringBuilder sb= new StringBuilder(paramsLength*2);
-                return HttpParamUtil.encodeParams(sb,params,contentType,contentCharset).toString();
+                cont= HttpParamUtil.encodeParams(sb,params,contentType,contentCharset).toString();
             }
-        } else
-            return content;
+        }
+
+        if (StringUtils.isNotBlank(cont)) {
+            addContentTypeHeader();
+        }
+
+        return cont;
+    }
+
+
+
+    /**
+     * Add Content-Type header
+     */
+    private void addContentTypeHeader() {
+
+        String $contType= contentType.getType();
+
+        if (StringUtils.isNotBlank(contentCharset)) {
+            $contType += "; charset="+contentCharset;
+        }
+
+        addHeader("Content-Type", $contType);
     }
 
 
@@ -311,13 +348,6 @@ public class HttpRequestBuilder {
         // Validate input parameters
         Validate.notBlank(url, "Invalid request URL");
         Validate.notNull(method,"Invalid request method");
-        if (method==HttpRequestMethod.POST)
-            Validate.notNull(contentType,"ContentType can't be null when method is POST");
-
-        // Content Charset...
-        if (contentCharset==null) {
-            contentCharset= contentType!=null? contentType.getCharset() : "UTF-8";
-        }
 
         // Create HttpRequest bean
         DefaultHttpRequest req= new DefaultHttpRequest();

@@ -2,7 +2,6 @@ package com.saturn.commons.http.impl;
 
 import com.saturn.commons.http.HttpHeader;
 import com.saturn.commons.utils.ArrayUtils;
-import java.util.LinkedList;
 import java.util.List;
 
 

@@ -126,8 +126,11 @@ public class NativeHttpClient extends BaseHttpClient
 
             //<editor-fold defaultstate="collapsed" desc=" Set Content ">
             if (StringUtils.isNotEmpty(req.getContent())) {
-                HttpContentType contentType= req.getContentType();
-                con.setRequestProperty("Content-Type", contentType.getType()); //+"; charset="+req.getContentCharset());
+
+                // Content header is added in HttpRequestBuilder (2020-09-21)
+//                HttpContentType contentType= req.getContentType();
+//                con.setRequestProperty("Content-Type", contentType.getType()+"; charset="+req.getContentCharset());
+
                 con.setDoOutput(true);
                 OutputStream os= con.getOutputStream();
 
