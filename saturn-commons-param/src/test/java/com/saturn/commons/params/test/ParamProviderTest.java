@@ -1,6 +1,7 @@
 package com.saturn.commons.params.test;
 
 import biz.televida.legacy.testing.DataSourceTest;
+import biz.televida.legacy.testing.script.SQLScript;
 import com.saturn.commons.param.ParamProvider;
 import com.saturn.commons.param.ParamConfig;
 import com.saturn.commons.param.ParamProviderFactory;
@@ -25,7 +26,7 @@ public class ParamProviderTest extends DataSourceTest {
 
     @BeforeClass
     public static void initTest() throws Exception {
-        dataSource= initDataSource("Zunil.properties");
+        dataSource= initDataSource();
     }
 
 
@@ -53,7 +54,7 @@ public class ParamProviderTest extends DataSourceTest {
         val= parUtil.getString(testId,"45");
         Assert.assertEquals("Default value failed", "45", val);
 
-        // Set value test
+        // Test value set
         String testVal= RandomStringUtils.randomAscii(10);
         parUtil.setValue(testId, testVal);
         String tval= parUtil.getString(testId);

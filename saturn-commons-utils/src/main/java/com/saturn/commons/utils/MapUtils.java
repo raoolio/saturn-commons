@@ -253,4 +253,21 @@ public class MapUtils extends BufferUtils {
 
 
 
+    /**
+     * Returns the first value found for the given list of ids
+     * @param m Map
+     * @param ids Ids to look
+     * @return
+     */
+    public static Object getFirstValue(Map m,String... ids) {
+        for (String id:ids) {
+            Object v= m.get(id);
+            if (v!=null) {
+                return v;
+            }
+        }
+        return null;
+    }
+
+
 }

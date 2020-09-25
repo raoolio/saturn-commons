@@ -25,7 +25,7 @@ public class PropertyProviderTest extends DataSourceTest {
 
     @BeforeClass
     public static void initTest() throws Exception {
-        dataSource= initDataSource("Zunil.properties");
+        dataSource= initDataSource();
     }
 
 

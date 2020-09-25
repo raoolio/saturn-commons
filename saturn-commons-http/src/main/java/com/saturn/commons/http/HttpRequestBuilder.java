@@ -128,6 +128,7 @@ public class HttpRequestBuilder {
      * @return
      */
     public HttpRequestBuilder setContentCharset(String contentCharset) {
+        Validate.notBlank(contentCharset,"Invalid content charset");
         this.contentCharset = contentCharset;
         return this;
     }

@@ -1,7 +1,6 @@
 package com.saturn.commons.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.lang3.Validate;
