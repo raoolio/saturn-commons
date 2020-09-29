@@ -25,7 +25,7 @@ public class RestApi {
     private Long startTime;
 
 
-    
+
     /**
      * Constructor
      * @param title Rest title
@@ -38,7 +38,7 @@ public class RestApi {
 
 
 
-    @RequestMapping(method=GET, value="/status")
+    @RequestMapping(method=GET, value="/status", produces="application/json; charset=UTF-8")
     @ResponseBody
     public Object status() throws Exception {
 
