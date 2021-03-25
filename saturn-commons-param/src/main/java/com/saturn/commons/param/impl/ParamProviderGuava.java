@@ -5,11 +5,11 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.CacheLoader.InvalidCacheLoadException;
 import com.google.common.cache.LoadingCache;
+import com.saturn.commons.database.StringHandler;
 import com.saturn.commons.param.ParamConfig;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.commons.lang3.StringUtils;
 
 
@@ -91,7 +91,7 @@ public class ParamProviderGuava extends ParamProviderWriter {
      */
     private String fetchValue(String id) throws SQLException {
         QueryRunner qr=new QueryRunner(dataSource);
-        String value= qr.query(sqlSelect, new ScalarHandler<String>(), id);
+        String value= qr.query(sqlSelect, new StringHandler(), id);
         return value;
     }
 
