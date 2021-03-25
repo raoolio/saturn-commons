@@ -100,16 +100,14 @@ public enum HttpContentType {
      * @return
      */
     public static HttpContentType parseContentType(String str) {
-        HttpContentType type=null;
 
         for (HttpContentType ct: HttpContentType.values()) {
             if (ct.getType().contains(str)) {
-                type= ct;
-                break;
+                return ct;
             }
         }
 
-        return type;
+        throw new IllegalArgumentException("Invalid content type '"+str+"'");
     }
 
 

@@ -1,8 +1,10 @@
 package com.saturn.commons.http;
 
+import com.google.common.net.UrlEscapers;
 import com.saturn.commons.http.impl.DefaultHttpHeader;
 import com.saturn.commons.http.impl.DefaultHttpRequest;
 import com.saturn.commons.http.util.HttpParamUtil;
+import com.saturn.commons.utils.time.TimeValue;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -50,6 +52,9 @@ public class HttpRequestBuilder {
 
     /** Fetch HTTP Response Headers? */
     private boolean fetchHeaders;
+
+    /** Skip SSL validation ? */
+    private boolean skipCertValidation;
 
 
 
@@ -137,6 +142,17 @@ public class HttpRequestBuilder {
 
     /**
      * Sets the TCP request timeout
+     * @param timeValue TimeValue instance
+     * @return
+     */
+    public HttpRequestBuilder setTimeout(TimeValue timeValue) {
+        return setTimeout((int)timeValue.toMinutes());
+    }
+
+
+
+    /**
+     * Sets the TCP request timeout
      * @param timeout Timeout in seconds
      * @return
      */
@@ -166,6 +182,28 @@ public class HttpRequestBuilder {
      */
     public HttpRequestBuilder setFetchHeaders(boolean fetchHeaders) {
         this.fetchHeaders = fetchHeaders;
+        return this;
+    }
+
+
+
+    /**
+     * Skip SSL validation?
+     * @return
+     */
+    public boolean isSkipCertValidation() {
+        return skipCertValidation;
+    }
+
+
+
+    /**
+     * Set skip SSL validation flag
+     * @param skipCertValidation
+     * @return
+     */
+    public HttpRequestBuilder setSkipCertValidation(boolean skipCertValidation) {
+        this.skipCertValidation = skipCertValidation;
         return this;
     }
 
@@ -218,8 +256,10 @@ public class HttpRequestBuilder {
      * @return
      */
     public HttpRequestBuilder addParam(String id,Object value) {
-        params.put(id,value);
-        paramsLength+= id.length()+2;
+        Object prev= params.put(id,value);
+        // Add length only if it's new parameter
+        if (prev==null)
+            paramsLength+= id.length()+2;
         return this;
     }
 
@@ -277,9 +317,26 @@ public class HttpRequestBuilder {
                 // Encode remaining params as GET
                 HttpParamUtil.params2UrlEncoded($url,params,charset);
             }
-            return $url.toString();
+            return UrlEscapers.urlFragmentEscaper().escape($url.toString());
+//            return $url.toString();
         } else
-            return url;
+            return UrlEscapers.urlFragmentEscaper().escape(url);
+    }
+
+
+
+    /**
+     * Add Content-Type header
+     */
+    private void addContentTypeHeader() {
+
+        String $contType= contentType.getType();
+
+        if (StringUtils.isNotBlank(contentCharset)) {
+            $contType += "; charset="+contentCharset;
+        }
+
+        addHeader("Content-Type", $contType);
     }
 
 
@@ -324,22 +381,6 @@ public class HttpRequestBuilder {
 
 
     /**
-     * Add Content-Type header
-     */
-    private void addContentTypeHeader() {
-
-        String $contType= contentType.getType();
-
-        if (StringUtils.isNotBlank(contentCharset)) {
-            $contType += "; charset="+contentCharset;
-        }
-
-        addHeader("Content-Type", $contType);
-    }
-
-
-
-    /**
      * Prepare the content
      * @return
      * @throws Exception
@@ -360,6 +401,7 @@ public class HttpRequestBuilder {
         req.setContentCharset(contentCharset);
         req.setTimeout(timeout);
         req.setFetchHeaders(fetchHeaders);
+        req.setSkipCertValidation(skipCertValidation);
 
         return req;
     }

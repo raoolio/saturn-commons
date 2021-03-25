@@ -6,12 +6,12 @@ import com.saturn.commons.http.HttpClientType;
 /**
  * Native HttpClientTest
  */
-public class NativeHttpClientTest extends HttpClientTest {
+public class HttpClientTest_Native extends HttpClientTest {
 
     /**
      * Constructor
      */
-    public NativeHttpClientTest() {
+    public HttpClientTest_Native() {
         super(HttpClientType.NATIVE);
     }
 

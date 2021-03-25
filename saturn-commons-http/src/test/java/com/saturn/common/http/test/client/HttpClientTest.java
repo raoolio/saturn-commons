@@ -12,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import com.saturn.commons.http.HttpClient;
 import com.saturn.commons.http.HttpClientType;
+import com.saturn.commons.utils.json.JsonUtils;
 
 
 /**
@@ -50,27 +51,43 @@ public abstract class HttpClientTest {
                 .setRequestMethod(HttpRequestMethod.GET)
                 .setUrl(GET_URL)
                 .addParam("par1", "val1")
+                .addParam("par2", "val2")
                 .build();
 
         HttpClient client= HttpClientFactory.getHttpClient(clientType);
         HttpResponse res=client.send(req);
         Assert.assertTrue("["+clientType+"] GET Request failed!",res.isSuccess());
+
+        String $json= res.getContent();
+        String $par1= JsonUtils.getIdValue($json, "par1");
+        String $par2= JsonUtils.getIdValue($json, "par2");
+
+        Assert.assertTrue("par1 value failed","val1".equals($par1));
+        Assert.assertTrue("par2 value failed","val2".equals($par2));
     }
 
 
     @Test
-    public void runPostTest() throws Exception {
+    public void runPostJsonTest() throws Exception {
 
         HttpRequest req= new HttpRequestBuilder()
                 .setRequestMethod(HttpRequestMethod.POST)
                 .setContentType(HttpContentType.APPLICATION_JSON)
                 .setUrl(POST_URL)
                 .addParam("par1", "val1")
+                .addParam("par2", "val2")
                 .build();
 
         HttpClient client= HttpClientFactory.getHttpClient(clientType);
         HttpResponse res=client.send(req);
         Assert.assertTrue("["+clientType+"] POST Request failed!",res.isSuccess());
+
+        String $json= res.getContent();
+        String $par1= JsonUtils.getIdValue($json, "par1");
+        String $par2= JsonUtils.getIdValue($json, "par2");
+
+        Assert.assertTrue("par1 value failed","val1".equals($par1));
+        Assert.assertTrue("par2 value failed","val2".equals($par2));
     }
 
 

@@ -131,7 +131,7 @@ public class ApacheHttpClient extends BaseHttpClient {
              * Retrieve path http[s]://<domain>:<port>/<path>
              */
             int pathPos = req.getUrl().indexOf('/', 8);
-            String path= req.getUrl().substring(pathPos);
+            String path= pathPos<0? "" : req.getUrl().substring(pathPos);
 
             BasicHttpRequest httpReq;
 

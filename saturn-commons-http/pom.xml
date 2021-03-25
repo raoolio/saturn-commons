@@ -8,19 +8,19 @@
     </parent>
     <artifactId>saturn-commons-http</artifactId>
     <packaging>jar</packaging>
-    <version>1.5</version>
-    
+    <version>1.6</version>
+
     <dependencies>
         <dependency>
             <groupId>com.saturn</groupId>
             <artifactId>saturn-commons-utils</artifactId>
-            <version>1.2</version>
+            <version>1.5</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.11.2</version>
+            <version>2.12.2</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -34,11 +34,11 @@
             <artifactId>junit</artifactId>
             <version>4.13</version>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>4.4.13</version>
+            <version>4.4.14</version>
             <type>jar</type>
         </dependency>
     </dependencies>

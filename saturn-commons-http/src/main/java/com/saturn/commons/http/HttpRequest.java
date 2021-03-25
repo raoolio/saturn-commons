@@ -65,4 +65,11 @@ public interface HttpRequest
      */
     public boolean isFetchHeaders();
 
+
+    /**
+     * Skip SSL validation?
+     * @return
+     */
+    public boolean isSkipCertValidation();
+
 }

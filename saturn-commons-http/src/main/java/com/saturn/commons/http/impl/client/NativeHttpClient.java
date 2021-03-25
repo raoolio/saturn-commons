@@ -1,7 +1,5 @@
 package com.saturn.commons.http.impl.client;
 
-
-import com.saturn.commons.http.HttpContentType;
 import com.saturn.commons.http.HttpException;
 import com.saturn.commons.http.HttpHeader;
 import com.saturn.commons.http.HttpRequest;
@@ -9,6 +7,7 @@ import com.saturn.commons.http.HttpResponse;
 import com.saturn.commons.http.impl.DefaultHttpHeader;
 import com.saturn.commons.http.impl.DefaultHttpResponse;
 import com.saturn.commons.http.util.HttpHeaderUtil;
+import com.saturn.commons.http.util.SSLUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,6 +31,9 @@ public class NativeHttpClient extends BaseHttpClient
 {
     /** Content buffer size */
     private static final int BUFFER_SIZE=2048;
+
+
+
 
 
 
@@ -101,6 +103,9 @@ public class NativeHttpClient extends BaseHttpClient
         InputStream in=null;
 
         try {
+            if (req.isSkipCertValidation())
+                SSLUtil.registerTrustingSSLManager();
+
             URL link= new URL(req.getUrl());
             con= (HttpURLConnection) link.openConnection();
             con.setRequestMethod(req.getMethod().name());

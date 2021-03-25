@@ -34,6 +34,9 @@ public class DefaultHttpRequest implements HttpRequest
     /** Fetch HTTP response headers? */
     private boolean fetchHeaders;
 
+    /** Skip SSL validation? */
+    private boolean skipCertValidation;
+
 
 
     /**
@@ -75,6 +78,11 @@ public class DefaultHttpRequest implements HttpRequest
         return fetchHeaders;
     }
 
+    @Override
+    public boolean isSkipCertValidation() {
+        return skipCertValidation;
+    }
+
     public void setUrl(String url) {
         this.url = url;
     }
@@ -105,6 +113,10 @@ public class DefaultHttpRequest implements HttpRequest
 
     public void setFetchHeaders(boolean fetchHeaders) {
         this.fetchHeaders = fetchHeaders;
+    }
+
+    public void setSkipCertValidation(boolean skipCertValidation) {
+        this.skipCertValidation = skipCertValidation;
     }
 
 

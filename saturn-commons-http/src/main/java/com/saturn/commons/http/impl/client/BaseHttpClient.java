@@ -3,7 +3,7 @@ package com.saturn.commons.http.impl.client;
 import com.saturn.commons.http.HttpClient;
 import com.saturn.commons.http.HttpRequest;
 import com.saturn.commons.http.HttpResponse;
-import com.saturn.commons.utils.TimeUtils;
+import com.saturn.commons.utils.time.TimeUtils;
 import java.io.Closeable;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -17,10 +17,10 @@ import org.apache.logging.log4j.Logger;
 public abstract class BaseHttpClient implements HttpClient {
 
     /** Logger */
-    protected static final Logger LOG=LogManager.getLogger(HttpClient.class);
+    public static final Logger LOG=LogManager.getLogger(HttpClient.class);
 
     /** Default User-Agent string */
-    protected static final String USER_AGENT_PREFIX="saturn-commons-http-1.1";
+    protected static final String USER_AGENT_PREFIX="saturn-commons-http-1.6";
 
 
 
