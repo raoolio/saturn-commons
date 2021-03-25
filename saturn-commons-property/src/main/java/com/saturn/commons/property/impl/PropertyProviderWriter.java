@@ -10,7 +10,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import com.saturn.commons.property.PropertyProvider;
-import com.saturn.commons.utils.StringUtils;
+import com.saturn.commons.utils.string.StringUtils;
 
 
 
@@ -209,7 +209,7 @@ abstract class PropertyProviderWriter implements PropertyProvider {
         do {
             if (c < n) {
                 // Get path parent
-                path= com.saturn.commons.utils.StringUtils.getParent(path, '/');
+                path= StringUtils.getParent(path, '/');
 
                 if (path.length()==0) {
                     break;

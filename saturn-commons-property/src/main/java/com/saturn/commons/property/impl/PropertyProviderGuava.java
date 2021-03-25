@@ -5,11 +5,11 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.CacheLoader.InvalidCacheLoadException;
 import com.google.common.cache.LoadingCache;
+import com.saturn.commons.database.StringHandler;
 import com.saturn.commons.property.PropertyConfig;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.commons.lang3.StringUtils;
 
 
@@ -92,7 +92,7 @@ public class PropertyProviderGuava extends PropertyProviderWriter {
      */
     private String fetchValue(Key k) throws SQLException {
         QueryRunner qr=new QueryRunner(dataSource);
-        String v= qr.query(sqlSelect, new ScalarHandler<>(),
+        String v= qr.query(sqlSelect, new StringHandler(),
                 k.getPath(), k.getId());
         return v;
     }
