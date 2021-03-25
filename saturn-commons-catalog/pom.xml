@@ -8,7 +8,7 @@
     </parent>
     <artifactId>saturn-commons-catalog</artifactId>
     <packaging>jar</packaging>
-    <version>1.2</version>
+    <version>1.3</version>
     <dependencies>
         <dependency>
             <groupId>commons-dbutils</groupId>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.saturn</groupId>
             <artifactId>saturn-commons-utils</artifactId>
-            <version>1.1</version>
+            <version>1.5</version>
             <type>jar</type>
         </dependency>
         <dependency>

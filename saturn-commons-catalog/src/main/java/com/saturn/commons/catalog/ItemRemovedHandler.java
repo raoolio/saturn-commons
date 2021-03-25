@@ -2,7 +2,7 @@ package com.saturn.commons.catalog;
 
 import com.saturn.commons.catalog.dao.CatalogDao;
 import com.saturn.commons.catalog.id.CachedId;
-import com.saturn.commons.utils.TimeUtils;
+import com.saturn.commons.utils.time.TimeUtils;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import java.sql.Timestamp;
