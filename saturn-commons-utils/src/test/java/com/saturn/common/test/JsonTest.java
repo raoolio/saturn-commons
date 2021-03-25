@@ -20,6 +20,7 @@ public class JsonTest {
     private static final String JSON_OBJECT1= "{ \"response\": { \"id\": \"00454541\", \"name\":\"Example object\" } }";
     private static final String JSON_OBJECT2= "{ \"id\": \"00454541\", \"name\":\"Example object\" }";
     private static final String JSON_OBJECT3= "{ \"id1\":\"001\", \"id2\": \"002\" }";
+    private static final String JSON_OBJECT4= "{ \"response\": { \"id\": \"00454541\", \"name\":\"Example object\", \"object\": { \"type\": 45, \"desc\": \"Just a value\" } } }";
 
 
     @Test
@@ -103,5 +104,13 @@ public class JsonTest {
 
     }
 
+    
+    @Test
+    public void getIdObjectValue() throws IOException {
+        String val= JsonUtils.getIdValue(JSON_OBJECT4,"response");
+        System.out.println("----------------> "+val);
+    }
+    
+    
 
 }

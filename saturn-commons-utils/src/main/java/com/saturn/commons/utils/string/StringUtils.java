@@ -1,4 +1,4 @@
-package com.saturn.commons.utils;
+package com.saturn.commons.utils.string;
 
 import java.security.MessageDigest;
 import java.util.Map;

@@ -76,17 +76,18 @@ public class JsonUtils {
     }
 
 
+
     /**
      * Parsea el arreglo de objetos JSON y genera una lista donde cada elemento
      * es un Map con los atributos solicitados.
      *
      * @param jsonArray Arreglo de objetos en formato JSON
-     * @param parentId Parent ID
+     * @param objectId Object ID
      * @return
      * @throws IOException
      */
-    public static final Map<String,String> getAllObjectAttributes(String jsonArray,String parentId) throws IOException {
-        return getObjectAsMap(jsonArray,parentId,null);
+    public static final Map<String,String> getAllObjectAttributes(String jsonArray,String objectId) throws IOException {
+        return getObjectAsMap(jsonArray,objectId,null);
     }
 
 
@@ -96,13 +97,13 @@ public class JsonUtils {
      * es un Map con los atributos solicitados.
      *
      * @param jsonArray Arreglo de objetos en formato JSON
-     * @param parentId Parent ID
+     * @param objectId Object ID
      * @param ids Attribute ids
      * @return
      * @throws IOException
      */
-    public static final Map<String,String> getObjectAttributes(String jsonArray,String parentId, String ids) throws IOException {
-        return getObjectAsMap(jsonArray,parentId,ids);
+    public static final Map<String,String> getObjectAttributes(String jsonArray,String objectId, String ids) throws IOException {
+        return getObjectAsMap(jsonArray,objectId,ids);
     }
 
 
@@ -402,11 +403,16 @@ public class JsonUtils {
 
                     // Get field name and advance pointer to value
                     String attName= jp.getCurrentName();
-                    jp.nextToken();
+                    token= jp.nextToken();
 
                     // Extraemos valor de atributo
                     if (attrId.equals(attName)) {
-                        return jp.getText();
+                        String val= jp.getText();
+
+                        if (token==JsonToken.START_OBJECT) {
+                            return readJsonObject(jp);
+                        } else
+                            return jp.getText();
                     }
                 }
             }
@@ -417,6 +423,52 @@ public class JsonUtils {
 
         return null;
     }
+
+
+
+    private static String readJsonObject(JsonParser parser) throws IOException {
+        StringBuilder ob= new StringBuilder();
+        ob.append("{ ");
+        int pars=0;
+        JsonToken token;
+        int atts=0;
+
+        while ((token=parser.nextToken()) != JsonToken.END_OBJECT && pars==0) {
+
+            switch (token) {
+                case VALUE_EMBEDDED_OBJECT:
+                    ob.append("{");
+                    pars++;
+                    break;
+
+                case END_OBJECT:
+                    ob.append(" }");
+                    pars--;
+
+                case FIELD_NAME:
+                    if (++atts > 1)
+                        ob.append(", ");
+                    ob.append('"').append(parser.getText()).append("\": ");
+                    break;
+
+                case VALUE_STRING:
+                    ob.append('"').append(parser.getText()).append('"');
+                    break;
+
+                case VALUE_NUMBER_INT:
+                case VALUE_NUMBER_FLOAT:
+                case VALUE_TRUE:
+                case VALUE_FALSE:
+                case VALUE_NULL:
+                    ob.append(parser.getText());
+            }
+
+        }
+        ob.append(" }");
+        return ob.toString();
+    }
+
+
 
 
 

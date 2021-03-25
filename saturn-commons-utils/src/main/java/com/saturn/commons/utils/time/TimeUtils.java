@@ -1,4 +1,4 @@
-package com.saturn.commons.utils;
+package com.saturn.commons.utils.time;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
@@ -156,21 +156,33 @@ public class TimeUtils
 
     /**
      * Suspende el Thread actual la cantidad de unidades de tiempo dada
-     * @param value Cantidad de tiempo a dormir
+     * @param time Cantidad de tiempo a dormir
      * @param unit Unidad de tiempo
      */
-    public static void sleep(long time,TimeUnit unit)
-    {
-        try
-        {
+    public static void sleep(long time,TimeUnit unit) {
+        try {
             Thread.sleep(unit.toMillis(time));
         }
-        catch (InterruptedException e)
-        {
+        catch (InterruptedException e) {
         }
     }
 
-    
+
+
+    /**
+     * Suspende el Thread actual la cantidad de unidades de tiempo dada
+     * @param value Valor de tiempo a esperar
+     */
+    public static void sleep(TimeValue value)
+    {
+        try {
+            Thread.sleep(value.toMillis());
+        }
+        catch (InterruptedException e) {
+        }
+    }
+
+
 
 //    public static void main(String[] a)
 //    {

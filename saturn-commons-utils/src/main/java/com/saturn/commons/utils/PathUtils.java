@@ -1,6 +1,6 @@
 package com.saturn.commons.utils;
 
-import static com.saturn.commons.utils.StringUtils.safeTrim;
+import static com.saturn.commons.utils.string.StringUtils.safeTrim;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;

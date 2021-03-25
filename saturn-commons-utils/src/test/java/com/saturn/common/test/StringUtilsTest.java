@@ -1,6 +1,6 @@
 package com.saturn.common.test;
 
-import com.saturn.commons.utils.StringUtils;
+import com.saturn.commons.utils.string.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

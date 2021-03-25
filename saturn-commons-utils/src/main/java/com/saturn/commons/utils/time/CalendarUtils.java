@@ -1,4 +1,4 @@
-package com.saturn.commons.utils;
+package com.saturn.commons.utils.time;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
