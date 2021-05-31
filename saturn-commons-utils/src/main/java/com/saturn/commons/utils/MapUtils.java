@@ -21,6 +21,29 @@ public class MapUtils extends BufferUtils {
 
 
 
+
+    /**
+     * Returns a new map with the "id" attribute used as key
+     * @param <T>
+     * @param m Map
+     * @param fieldId
+     * @return
+     */
+    public static final <T>Map<String,T> mapValuesToField(Map<String,T> m,String fieldId) {
+        Map<String,T> mapById= new HashMap<>();
+
+        Iterator<T> it= m.values().iterator();
+        while (it.hasNext()) {
+            T o= it.next();
+            String key= String.valueOf( ListUtils.getFieldValue(o, fieldId) );
+            mapById.put(key, o);
+        }
+
+        return mapById;
+    }
+
+
+
     /**
      * Extracts first value of array
      * @param source Source map

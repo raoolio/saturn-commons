@@ -58,7 +58,21 @@ public class ListUtils extends BufferUtils
      * @return
      */
     public static final <T>Map<String,T> list2Map(List<T> lista,String keyFieldId) {
-        Map<String,T> m= new LinkedHashMap<String,T>();
+        return list2Map(lista,keyFieldId,new LinkedHashMap());
+    }
+
+
+
+    /**
+     * Convierte una lista a su representacion en Map, respetando el tipo y utilizando
+     * el valor del campo dado como llave en el mapa.
+     * @param <T> Object type
+     * @param lista Lista a convertir
+     * @param keyFieldId Nombre del atributo de los objetos que servira como llave
+     * @param m Destination map of values
+     * @return
+     */
+    public static final <T>Map<String,T> list2Map(List<T> lista,String keyFieldId,Map m) {
 
         for (T o: lista) {
             String key=String.valueOf(getFieldValue(o,keyFieldId));
@@ -99,7 +113,7 @@ public class ListUtils extends BufferUtils
 
 
     /**
-     * Recupera el valor del atributo dado por reflexion...
+     * Recupera el valor del atributo dado por reflexion y de forma recursiva.
      * @param o Objeto origen
      * @param fieldId Nombre del atributo a recuperar
      * @return

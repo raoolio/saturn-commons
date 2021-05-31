@@ -1,5 +1,6 @@
 package com.saturn.commons.utils.string;
 
+import java.lang.reflect.Field;
 import java.security.MessageDigest;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ public class StringUtils
     }
 
 
-    
+
     /**
      * Realiza Right Fill
      * @param cad Cadena
@@ -33,10 +34,10 @@ public class StringUtils
         }
 
         return buff.toString();
-    }    
+    }
 
-    
-    
+
+
     /**
      * Realiza Right Fill
      * @param cad Cadena
@@ -252,6 +253,72 @@ public class StringUtils
     public static void appendIfMissing(StringBuilder s,char c) {
         if (s.charAt(s.length()-1) != c)
             s.append(c);
+    }
+
+
+
+    /**
+     * Converts the given objecto to it's string representation including only
+     * non null field values
+     * @param ob Object
+     * @return
+     */
+    public static String notNullFieldsToString(Object ob) {
+        StringBuilder sb= new StringBuilder(ob.getClass().getSimpleName())
+                .append(":");
+        Field[] fields = ob.getClass().getDeclaredFields();
+        int n=0;
+
+
+        for (Field f: fields) {
+            f.setAccessible(true);
+            Object val=null;
+
+            try {
+                val= f.get(ob);
+            } catch (Exception e) {
+            }
+
+            if (val!=null) {
+                sb.append(" ").append(f.getName()).append('=');
+
+                if (val instanceof CharSequence) {
+                    sb.append('"').append(val).append('"');
+                } else {
+                    sb.append(val);
+                }
+            }
+        }
+
+        return sb.toString();
+    }
+
+
+
+    /**
+     * Quotes the given CSV strings
+     * @param csv Comma separated values string
+     * @return
+     */
+    public static String quoteArrayStr(String csv) {
+        StringBuilder sb= new StringBuilder();
+        String[] arr= csv.split(",");
+        for (String s: arr) {
+            if (sb.length()>0) sb.append(',');
+            sb.append("'").append(s).append("'");
+        }
+        return sb.toString();
+    }
+
+
+
+    /**
+     * Tells if given string is blank
+     * @param s String to validate
+     * @return
+     */
+    public static boolean isBlank(String s) {
+        return s==null || s.matches("[ ]*");
     }
 
 }

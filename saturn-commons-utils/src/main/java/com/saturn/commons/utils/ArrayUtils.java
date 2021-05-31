@@ -42,7 +42,25 @@ public class ArrayUtils extends BufferUtils {
 
 
 
-
+    /**
+     * Convierte el arreglo dado a su representacion en String.
+     * @param sb StringBuilder instance
+     * @param arry Arreglo de datos
+     * @return
+     */
+    public static final void array2String(StringBuilder sb,Object[] arry) {
+        if (arry==null)
+            sb.append("null");
+        else {
+            sb.append("[");
+            for (int i=0; i<arry.length; i++) {
+                if (i>0)
+                    sb.append(",");
+                append(sb,arry[i]);
+            }
+            sb.append("]");
+        }
+    }
 
 
 
@@ -102,5 +120,5 @@ public class ArrayUtils extends BufferUtils {
         return l;
     }
 
-
+    
 }
