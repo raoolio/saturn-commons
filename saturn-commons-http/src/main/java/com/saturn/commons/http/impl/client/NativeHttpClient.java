@@ -94,6 +94,42 @@ public class NativeHttpClient extends BaseHttpClient
 
 
 
+    /**
+     * Reads content from given input stream
+     * @param in InputStream instance
+     * @return
+     */
+    private String readContent(InputStream in) {
+        return readContent(in,0);
+    }
+
+
+
+    /**
+     * Reads content from given input stream
+     * @param in InputStream instance
+     * @param size Content length
+     * @return
+     */
+    private String readContent(InputStream in,int size) {
+        StringBuilder bf=new StringBuilder(size>0? size : 100);
+        byte[] array=new byte[BUFFER_SIZE];
+        int bytes=-1;
+
+        try {
+            while ( (bytes=in.read(array)) > 0 ) {
+                for (int i=0;i<bytes;i++) {
+                    bf.append((char)array[i]);
+                }
+            }
+        } catch (IOException e) {
+            LOG.warn("Error reading InputStream -> "+e.getMessage());
+        }
+
+        return bf.toString();
+    }
+
+
 
     @Override
     public HttpResponse sendRequest(HttpRequest req) throws HttpException {
@@ -173,16 +209,8 @@ public class NativeHttpClient extends BaseHttpClient
                 }
 
                 if (in!=null) {
-                    StringBuilder bf=new StringBuilder(cntLen>0? cntLen : 100);
-                    byte[] array=new byte[BUFFER_SIZE];
-                    int bytes=-1;
-
-                    while ( (bytes=in.read(array)) > 0 ) {
-                        for (int i=0;i<bytes;i++) {
-                            bf.append((char)array[i]);
-                        }
-                    }
-                    res.setContent( bf.toString() );
+                    String resCont= readContent(in,cntLen);
+                    res.setContent( resCont );
                 }
                 //</editor-fold>
             } else
@@ -191,8 +219,10 @@ public class NativeHttpClient extends BaseHttpClient
         } catch (Exception ex) {
             // Consume error stream to reuse connection
             if (con!=null) {
-                InputStream es= con.getErrorStream();
-                close(es);
+                in= con.getErrorStream();
+                if (!res.hasContent()) {
+                    res.setContent( readContent(in) );
+                }
             }
             throw new HttpException(ex);
         } finally {

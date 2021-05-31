@@ -217,6 +217,31 @@ public class HttpParamUtil {
             n++;
         }
     }
+    
+    
+    
+    /**
+     * Encodes the parameters in URL format
+     * @param sb Destination buffer
+     * @param pars Parameter map
+     */
+    public static void params2Url(StringBuilder sb,Map pars) {
+        Iterator<String> keys= pars.keySet().iterator();
+        int n=0;
+
+        // Append parameters
+        while (keys.hasNext()) {
+            String id = keys.next();
+            Object ob= pars.get(id);
+
+            if (n>0)
+                sb.append('&');
+            sb.append(id);
+            sb.append('=');
+            sb.append(String.valueOf(ob));
+            n++;
+        }
+    }    
 
     // TODO: Implement FormData param encoding
     static void pars2FormData(StringBuilder sb,HttpRequest req) {

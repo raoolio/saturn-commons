@@ -56,6 +56,9 @@ public class HttpRequestBuilder {
     /** Skip SSL validation ? */
     private boolean skipCertValidation;
 
+    /** Send params in URL? */
+    private boolean sendPostParamsAsGet;
+
 
 
     /**
@@ -65,6 +68,7 @@ public class HttpRequestBuilder {
         this.headers= new LinkedList();
         this.params= new LinkedHashMap();
         this.sendAllParams= true;
+        this.timeout=30;
     }
 
 
@@ -146,6 +150,7 @@ public class HttpRequestBuilder {
      * @return
      */
     public HttpRequestBuilder setTimeout(TimeValue timeValue) {
+        Validate.notNull(timeValue,"Invalid TimeValue");
         return setTimeout((int)timeValue.toMinutes());
     }
 
@@ -157,6 +162,7 @@ public class HttpRequestBuilder {
      * @return
      */
     public HttpRequestBuilder setTimeout(int timeout) {
+        Validate.isTrue(timeout>0,"Invalid timeout value");
         this.timeout = timeout;
         return this;
     }
@@ -182,6 +188,18 @@ public class HttpRequestBuilder {
      */
     public HttpRequestBuilder setFetchHeaders(boolean fetchHeaders) {
         this.fetchHeaders = fetchHeaders;
+        return this;
+    }
+
+
+
+    /**
+     * Send POST parameters as GET in the URL ?
+     * @param sendPostParamsAsGet
+     * @return
+     */
+    public HttpRequestBuilder setSendPostParamsAsGet(boolean sendPostParamsAsGet) {
+        this.sendPostParamsAsGet = sendPostParamsAsGet;
         return this;
     }
 
@@ -216,6 +234,8 @@ public class HttpRequestBuilder {
      * @return
      */
     public HttpRequestBuilder setBasicCredentials(String user,String pass) {
+        Validate.notBlank(user,"Invalid user");
+        Validate.notBlank(pass,"Invalid password");
         String auth= (user+":"+pass);
         String base64$= Base64.getEncoder().encodeToString(auth.getBytes());
         setBasicAuth("Basic ".concat(base64$));
@@ -243,6 +263,8 @@ public class HttpRequestBuilder {
      * @return
      */
     public HttpRequestBuilder addHeader(String id,String ... value) {
+        Validate.notBlank(id,"Invalid header id");
+        Validate.notNull(value,"Invalid header values");
         headers.add(new DefaultHttpHeader(id,value));
         return this;
     }
@@ -256,6 +278,7 @@ public class HttpRequestBuilder {
      * @return
      */
     public HttpRequestBuilder addParam(String id,Object value) {
+        Validate.notBlank(id,"Invalid parameter id");
         Object prev= params.put(id,value);
         // Add length only if it's new parameter
         if (prev==null)
@@ -271,6 +294,7 @@ public class HttpRequestBuilder {
      * @return
      */
     public HttpRequestBuilder addParamAll(Map pars) {
+        Validate.notNull(pars,"Invalid parameter map");
         Iterator it= pars.keySet().iterator();
         while (it.hasNext()) {
             Object id= it.next();
@@ -303,7 +327,7 @@ public class HttpRequestBuilder {
             }
 
             // Add params to URL ?
-            if (sendAllParams && method==HttpRequestMethod.GET && !params.isEmpty()) {
+            if (sendAllParams && (sendPostParamsAsGet || method==HttpRequestMethod.GET) && !params.isEmpty()) {
                 int p=$url.indexOf("?");
                 // url contains '?' char?
                 if (p>0) {
@@ -315,11 +339,12 @@ public class HttpRequestBuilder {
                     $url.append('?');
 
                 // Encode remaining params as GET
-                HttpParamUtil.params2UrlEncoded($url,params,charset);
+                HttpParamUtil.params2Url($url,params);
             }
-            return UrlEscapers.urlFragmentEscaper().escape($url.toString());
 //            return $url.toString();
+            return UrlEscapers.urlFragmentEscaper().escape($url.toString());
         } else
+//            return url;
             return UrlEscapers.urlFragmentEscaper().escape(url);
     }
 
@@ -359,7 +384,7 @@ public class HttpRequestBuilder {
                 // Replace content's variables with provided params
                 cont= HttpParamUtil.replaceAndCopy(content,params);
             }
-        } else {
+        } else if (!sendPostParamsAsGet) {
 
             // Build content?
             if (!params.isEmpty() && sendAllParams && (method==HttpRequestMethod.POST || method==HttpRequestMethod.PUT)) {

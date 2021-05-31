@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
@@ -50,9 +51,10 @@ public class ApacheHttpClient extends BaseHttpClient {
     // Init connection pool
     static {
         pool= new BasicConnPool(new BasicConnFactory());
-        pool.setDefaultMaxPerRoute(2);
-        pool.setMaxTotal(20);
-        pool.setValidateAfterInactivity(60);
+        pool.setDefaultMaxPerRoute(60);
+        pool.setMaxTotal(120);
+        pool.setValidateAfterInactivity(15000);
+        pool.closeIdle(2, TimeUnit.MINUTES);
     }
 
 
