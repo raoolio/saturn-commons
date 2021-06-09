@@ -2,6 +2,9 @@ package com.saturn.commons.utils.string;
 
 import java.lang.reflect.Field;
 import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 
@@ -319,6 +322,29 @@ public class StringUtils
      */
     public static boolean isBlank(String s) {
         return s==null || s.matches("[ ]*");
+    }
+
+
+
+    /**
+     * Shuffle the characters of the given string
+     * @param s String to shuffle
+     * @return
+     */
+    public static String shuffle(String s) {
+        StringBuilder out= new StringBuilder(s.length());
+
+        List<Character> chars= new ArrayList(s.length());
+        for (int i=0; i<s.length(); i++) {
+            chars.add(s.charAt(i));
+        }
+
+        while(!chars.isEmpty()){
+            int randPos = (int)(Math.random()*chars.size());
+            out.append(chars.remove(randPos));
+        }
+
+        return out.toString();
     }
 
 }
