@@ -29,20 +29,17 @@ public class NumericBaseUtils {
      * @return
      */
     public static String convert(String num, int inRadix, int outRadix) {
-        String cnv= "";
+        String out= "";
 
         if (inRadix <= 36 && outRadix <= 36) {
-            try {
-                BigInteger bi = new BigInteger(num, inRadix);
-                cnv= bi.toString(outRadix);
-            } catch (Exception e) {
-            }
+            BigInteger bi = new BigInteger(num, inRadix);
+            out= bi.toString(outRadix);
         } else {
-            String decimal= toDecimal(num,inRadix);
-            cnv= toBaseN(decimal,outRadix);
+            String dec= toDecimal(num,inRadix);
+            out= toBaseN(dec,outRadix);
         }
 
-        return cnv;
+        return out;
     }
 
 
@@ -70,6 +67,10 @@ public class NumericBaseUtils {
      */
     public static final String toBaseN(String charset, String decimalNumber, int radix) {
 
+        // Charset present
+        if (charset==null || charset.trim().length()==0)
+            throw new IllegalArgumentException("Invalid charset");
+
         // Valid decimal number?
         if (!decimalNumber.matches("[0-9]+"))
             throw new NumberFormatException("Invalid decimal number");
@@ -78,46 +79,45 @@ public class NumericBaseUtils {
         if (radix<2 || radix>charset.length())
             throw new NumberFormatException("Radix out of range");
 
-        StringBuilder num= new StringBuilder();
+        StringBuilder out= new StringBuilder();
         BigInteger quotient = new BigInteger(decimalNumber);
         BigInteger bigRadix= new BigInteger(String.valueOf(radix));
 
         while (quotient.intValue() != 0) {
             BigInteger remainder = quotient.mod(bigRadix);
             int pos=  remainder.intValue();
-            num.insert(0, charset.charAt(pos) );
+            out.insert(0, charset.charAt(pos) );
             quotient= quotient.subtract(remainder).divide(bigRadix);
         }
 
-        return num.toString();
+        return out.toString();
     }
 
 
 
     /**
      * Returns the given char's position
+     * @param s String where to look
      * @param c Character to look
      * @return
      */
-    private static int getCharPos(String charset,char c) {
-        for (int i=0; i< charset.length(); i++) {
-            if (c== (char)charset.charAt(i)) {
-                return i;
-            }
-        }
-        throw new IllegalArgumentException("Invalid character");
+    private static int getCharPos(String s,char c) {
+        int p= s.indexOf(c);
+        if (c==-1)
+            throw new IllegalArgumentException("Invalid character");
+        return p;
     }
 
 
 
     /**
      * Converts the number in given radix to it's decimal representation
-     * @param baseNumber Source number
+     * @param number Source number
      * @param radix Numerical base of number
      * @return
      */
-    public static final String toDecimal(String baseNumber,int radix) {
-        return toDecimal(DEFAULT_CHARSET,baseNumber,radix);
+    public static final String toDecimal(String number,int radix) {
+        return toDecimal(DEFAULT_CHARSET,number,radix);
     }
 
 
@@ -125,28 +125,37 @@ public class NumericBaseUtils {
     /**
      * Converts the number in given radix to it's decimal representation
      * @param charset
-     * @param baseNumber Source number
+     * @param number Source number
      * @param radix Numerical base of number
      * @return
      */
-    public static final String toDecimal(String charset, String baseNumber,int radix) {
+    public static final String toDecimal(String charset, String number,int radix) {
+        // Charset present?
+        if (charset==null || charset.trim().length()==0)
+            throw new IllegalArgumentException("Invalid charset");
+
+        // Number present?
+        if (number==null || number.trim().length()==0)
+            throw new NumberFormatException("Invalid number");
+
+        // Radix ok?
+        if (radix<2 || radix>charset.length())
+            throw new NumberFormatException("Radix out of range");
+
         BigInteger bigRadix= new BigInteger(String.valueOf(radix));
         BigInteger res= new BigInteger("0");
-        int digitPos=0;
+        int digit=0;
 
-        for (int i=baseNumber.length(); --i>=0 ;) {
-            char c= baseNumber.charAt(i);
+        for (int i=number.length(); --i>=0 ;) {
+            char c= number.charAt(i);
             int charPos= getCharPos(charset,c);
             BigInteger decimalVal= BigInteger.valueOf(charPos);
-            decimalVal= decimalVal.multiply( bigRadix.pow(digitPos) );
+            decimalVal= decimalVal.multiply( bigRadix.pow(digit++) );
             res= res.add(decimalVal);
-            digitPos++;
         }
 
         return res.toString();
     }
-
-
 
 
 }
