@@ -52,7 +52,7 @@ public class NumericBaseUtils {
      * @return
      */
     public static final String toBaseN(String decimalNumber,int radix) {
-        return toBaseN(DEFAULT_CHARSET,decimalNumber,radix);
+        return toBaseN(decimalNumber,radix,DEFAULT_CHARSET);
     }
 
 
@@ -65,7 +65,7 @@ public class NumericBaseUtils {
      * @param radix Target numeric base
      * @return
      */
-    public static final String toBaseN(String charset, String decimalNumber, int radix) {
+    public static final String toBaseN(String decimalNumber, int radix,String charset) {
 
         // Charset present
         if (charset==null || charset.trim().length()==0)

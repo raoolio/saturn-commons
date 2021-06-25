@@ -67,7 +67,7 @@ public class NumericBaseTest {
 
         // Test all numeric bases
         for (int radix=2; radix<=62; radix++) {
-            String hashed=  NumericBaseUtils.toBaseN(customCharset, msisdn, radix);
+            String hashed=  NumericBaseUtils.toBaseN(msisdn, radix, customCharset);
             String rollback= NumericBaseUtils.toDecimal(customCharset,hashed, radix);
             System.out.println("CstBase["+radix+"] -> "+hashed);
             Assert.assertEquals("CstBase["+radix+"] conversion failed", new BigInteger(msisdn), new BigInteger(rollback));
