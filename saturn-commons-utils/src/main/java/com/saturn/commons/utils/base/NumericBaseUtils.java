@@ -1,4 +1,4 @@
-package com.saturn.commons.utils;
+package com.saturn.commons.utils.base;
 
 import java.math.BigInteger;
 
@@ -117,7 +117,7 @@ public class NumericBaseUtils {
      * @return
      */
     public static final String toDecimal(String number,int radix) {
-        return toDecimal(DEFAULT_CHARSET,number,radix);
+        return toDecimal(number,radix,DEFAULT_CHARSET);
     }
 
 
@@ -129,7 +129,7 @@ public class NumericBaseUtils {
      * @param radix Numerical base of number
      * @return
      */
-    public static final String toDecimal(String charset, String number,int radix) {
+    public static final String toDecimal(String number,int radix,String charset) {
         // Charset present?
         if (charset==null || charset.trim().length()==0)
             throw new IllegalArgumentException("Invalid charset");

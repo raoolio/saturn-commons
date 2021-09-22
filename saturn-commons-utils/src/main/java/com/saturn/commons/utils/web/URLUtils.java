@@ -1,4 +1,13 @@
-package com.saturn.commons.utils;
+package com.saturn.commons.utils.web;
+
+import static com.saturn.commons.utils.io.InputStreamUtils.LOG;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 
 
 /**
@@ -85,4 +94,21 @@ public class URLUtils {
         return sb.toString();
     }
 
+
+
+    /**
+     * Downloads given URL file using Java's NIO Channels
+     * @param url
+     * @param destFile
+     * @throws IOException
+     */
+    public static void downloadFile(URL url, File destFile) throws IOException {
+        try (InputStream in = url.openStream();
+            ReadableByteChannel rbc = Channels.newChannel(in);
+            FileOutputStream fos = new FileOutputStream(destFile)) {
+            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+        } catch(Exception ex) {
+            LOG.error("Error downloading["+url+"]",ex);
+        }
+    }
 }

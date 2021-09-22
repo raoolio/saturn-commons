@@ -327,6 +327,17 @@ public class StringUtils
 
 
     /**
+     * Tells if given string is blank
+     * @param s String to validate
+     * @return
+     */
+    public static boolean isNotBlank(String s) {
+        return s!=null && !s.matches("[ ]*");
+    }
+
+
+
+    /**
      * Shuffle the characters of the given string
      * @param s String to shuffle
      * @return

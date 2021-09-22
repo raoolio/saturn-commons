@@ -1,6 +1,6 @@
 package com.saturn.common.test;
 
-import com.saturn.commons.utils.NumericBaseUtils;
+import com.saturn.commons.utils.base.NumericBaseUtils;
 import java.math.BigInteger;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Assert;
@@ -68,7 +68,7 @@ public class NumericBaseTest {
         // Test all numeric bases
         for (int radix=2; radix<=62; radix++) {
             String hashed=  NumericBaseUtils.toBaseN(msisdn, radix, customCharset);
-            String rollback= NumericBaseUtils.toDecimal(customCharset,hashed, radix);
+            String rollback= NumericBaseUtils.toDecimal(hashed, radix,customCharset);
             System.out.println("CstBase["+radix+"] -> "+hashed);
             Assert.assertEquals("CstBase["+radix+"] conversion failed", new BigInteger(msisdn), new BigInteger(rollback));
         }
@@ -76,17 +76,45 @@ public class NumericBaseTest {
 
 
 
+//    public static void main(String[] args) {
+//
+//        String susc= "404";
+//        int len= susc.length();
+//        String msisdn= RandomStringUtils.randomNumeric(11);
+//        String usrInfo= len+susc+msisdn;
+//        String hash= NumericBaseUtils.convert(usrInfo, 10, 36);
+//        System.out.println("SUSC["+susc+"] MSISDN["+msisdn+"] -> ["+hash+"]");
+//
+//        String decode= NumericBaseUtils.convert(hash, 36, 10);
+//        System.out.println("Decoded -> ["+decode+"]");
+//
+//    }
+    
     public static void main(String[] args) {
+        String charset="fsCPY5yQdvXK1icAtI4SbhoLpwq3VUa0zrlxMT76kRn9eZjGBFEmJWHDgNu8O2";
+        String msisdn= "50587176533";
+        String hash= "sVonIVW";
 
-        String susc= "404";
-        int len= susc.length();
-        String msisdn= RandomStringUtils.randomNumeric(11);
-        String usrInfo= len+susc+msisdn;
-        String hash= NumericBaseUtils.convert(usrInfo, 10, 36);
-        System.out.println("SUSC["+susc+"] MSISDN["+msisdn+"] -> ["+hash+"]");
+//        System.out.println("WITH CHARSET: "+charset);
+//        for (int radix=2; radix<=62; radix++) {
+//            String hex= NumericReplacer.replaceVars("{celMDRadix"+radix+"}", msisdn, charset);
+//            System.out.println("RADIX["+radix+"] -> "+hex);
+//        }
+//
+//        System.out.println("\n\nWITHOUT CHARSET");
+//        for (int radix=2; radix<=62; radix++) {
+//            String hex=  NumericBaseUtils.toBaseN(msisdn, radix);
+//            System.out.println("RADIX["+radix+"] -> "+hex);
+//        }
+        
+        
+        
+        System.out.println("HASH["+hash+"] -> "+NumericBaseUtils.toDecimal(hash, 62, charset));
+        System.out.println("HASH["+hash+"] -> "+NumericBaseUtils.toDecimal(hash, 36, charset));
+        System.out.println("HASH["+hash+"] -> "+NumericBaseUtils.toDecimal(hash, 62));
+        System.out.println("HASH["+hash+"] -> "+NumericBaseUtils.toDecimal(hash, 36));
 
-        String decode= NumericBaseUtils.convert(hash, 36, 10);
-        System.out.println("Decoded -> ["+decode+"]");
 
-    }
+
+    }    
 }
