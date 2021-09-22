@@ -6,7 +6,7 @@ import com.saturn.commons.http.HttpRequest;
 import com.saturn.commons.http.HttpResponse;
 import com.saturn.commons.http.impl.DefaultHttpHeader;
 import com.saturn.commons.http.impl.DefaultHttpResponse;
-import com.saturn.commons.http.util.HttpHeaderUtil;
+import com.saturn.commons.utils.io.InputStreamUtils;
 import com.saturn.commons.http.util.SSLUtil;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,11 +14,12 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
 import org.apache.commons.lang3.StringUtils;
 
 
@@ -29,12 +30,6 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class NativeHttpClient extends BaseHttpClient
 {
-    /** Content buffer size */
-    private static final int BUFFER_SIZE=2048;
-
-
-
-
 
 
     /**
@@ -67,8 +62,8 @@ public class NativeHttpClient extends BaseHttpClient
 
     /**
      * Retrieve response headers
-     * @param con
-     * @param res
+     * @param req Request instance
+     * @param con Connection instance
      */
     private List fetchHeaders(HttpRequest req,HttpURLConnection con) {
         List hl= Collections.EMPTY_LIST;
@@ -83,8 +78,10 @@ public class NativeHttpClient extends BaseHttpClient
                 Iterator<String> it= m.keySet().iterator();
                 while (it.hasNext()) {
                     String id= it.next();
-                    List<String> values= m.get(id);
-                    hl.add(new DefaultHttpHeader(id,values) );
+                    if (!"set-cookie".equalsIgnoreCase(id)) {
+                        List<String> values= m.get(id);
+                        hl.add(new DefaultHttpHeader(id,values) );
+                    }
                 }
             }
         }
@@ -95,38 +92,34 @@ public class NativeHttpClient extends BaseHttpClient
 
 
     /**
-     * Reads content from given input stream
-     * @param in InputStream instance
+     * Retrieve the cookies from the http response
+     * @param con Connection instance
      * @return
      */
-    private String readContent(InputStream in) {
-        return readContent(in,0);
-    }
+    private Map<String, String> fetchCookies(HttpURLConnection con) {
+        Map cm= Collections.EMPTY_MAP;
 
+        // Retrieve HTTP response headers
+        Map<String,List<String>> m= con.getHeaderFields();
 
+        // Has headers?
+        if (m!=null && !m.isEmpty()) {
+            List<String> l= m.get("Set-Cookie");
 
-    /**
-     * Reads content from given input stream
-     * @param in InputStream instance
-     * @param size Content length
-     * @return
-     */
-    private String readContent(InputStream in,int size) {
-        StringBuilder bf=new StringBuilder(size>0? size : 100);
-        byte[] array=new byte[BUFFER_SIZE];
-        int bytes=-1;
+            if (l!=null && !l.isEmpty()) {
+                cm= new LinkedHashMap();
 
-        try {
-            while ( (bytes=in.read(array)) > 0 ) {
-                for (int i=0;i<bytes;i++) {
-                    bf.append((char)array[i]);
+                for (String c:l) {
+                    String[] cArry= c.split(";");
+                    String[] idVal= cArry.length>0? cArry[0].split("=") : new String[0];
+                    if (idVal.length==2) {
+                       cm.put(idVal[0], idVal[1]);
+                    }
                 }
             }
-        } catch (IOException e) {
-            LOG.warn("Error reading InputStream -> "+e.getMessage());
         }
 
-        return bf.toString();
+        return cm;
     }
 
 
@@ -146,6 +139,7 @@ public class NativeHttpClient extends BaseHttpClient
             con= (HttpURLConnection) link.openConnection();
             con.setRequestMethod(req.getMethod().name());
             con.setUseCaches(false);
+            con.setInstanceFollowRedirects(false);
 
             // Set TCP timeouts
             int milis=1000*req.getTimeout();
@@ -157,10 +151,10 @@ public class NativeHttpClient extends BaseHttpClient
             con.setRequestProperty("Accept-Encoding", "gzip");
 
             // Set additional headers ?
-            List<HttpHeader> reqHeaders= req.getHeaders();
+            Collection<HttpHeader> reqHeaders= req.getHeaders();
             if (!reqHeaders.isEmpty()) {
                 for (HttpHeader h: reqHeaders) {
-                    con.setRequestProperty(h.getId(), HttpHeaderUtil.valuesToString(h));
+                    con.setRequestProperty(h.getId(), String.join(", ", h.getValues()) );
                 }
             }
             //</editor-fold>
@@ -189,39 +183,35 @@ public class NativeHttpClient extends BaseHttpClient
             // Fetch response headers?
             res.setHeaders( fetchHeaders(req,con) );
 
+            // Fetch cookies
+            res.setCookies( fetchCookies(con) );
+
             // Retrieve response code & message
             boolean retrieved= fetchResponse(con,res);
-            int cntLen=con.getContentLength();
-            res.setContentLength(cntLen);
 
-            if (cntLen!=0) {
-                //<editor-fold defaultstate="collapsed" desc=" Read response content ">
+            // Fetch redirect location?
+            if (res.isRedirect()) {
+                String loc=con.getHeaderField("Location");
+//                if (loc==null)
+//                    loc=con.getHeaderField("Location");
 
-                // GZip content?
-                String encode= con.getHeaderField("Content-Encoding");
-                res.setContentEncoding(encode);
-                res.setContentType(con.getHeaderField("Content-Type"));
+                res.setLocation(loc);
+            }
 
-                if (retrieved && res.isSuccess()) {
-                    in= "gzip".equalsIgnoreCase(encode) ? new GZIPInputStream(con.getInputStream()) : con.getInputStream();
-                } else {
-                    in= con.getErrorStream();
-                }
+            res.setContentLength(con.getContentLength());
+            res.setContentType(con.getHeaderField("Content-Type"));
+            res.setContentEncoding(con.getHeaderField("Content-Encoding"));
 
-                if (in!=null) {
-                    String resCont= readContent(in,cntLen);
-                    res.setContent( resCont );
-                }
-                //</editor-fold>
-            } else
-                res.setContent("");
+            if (res.getContentLength() != 0) {
+                res.setConnection(con);
+            }
 
         } catch (Exception ex) {
             // Consume error stream to reuse connection
             if (con!=null) {
                 in= con.getErrorStream();
                 if (!res.hasContent()) {
-                    res.setContent( readContent(in) );
+                    res.setContent(InputStreamUtils.readAsString(in) );
                 }
             }
             throw new HttpException(ex);
@@ -231,6 +221,7 @@ public class NativeHttpClient extends BaseHttpClient
 
         return res;
     }
+
 
 
 }

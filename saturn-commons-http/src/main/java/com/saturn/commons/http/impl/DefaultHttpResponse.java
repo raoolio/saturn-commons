@@ -1,8 +1,18 @@
 package com.saturn.commons.http.impl;
 
+import com.saturn.commons.http.HttpException;
 import com.saturn.commons.http.HttpHeader;
 import com.saturn.commons.http.HttpResponse;
+import com.saturn.commons.utils.io.InputStreamUtils;
+import com.saturn.commons.utils.io.CloseUtil;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.List;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**
@@ -10,6 +20,9 @@ import java.util.List;
  */
 public class DefaultHttpResponse implements HttpResponse
 {
+    /** Logger */
+    public static final Logger LOG=LogManager.getLogger(DefaultHttpResponse.class);
+
     /** HTTP response status */
     private int status;
 
@@ -30,6 +43,15 @@ public class DefaultHttpResponse implements HttpResponse
 
     /** Response Headers */
     private List<HttpHeader> headers;
+
+    /** Response cookies */
+    private Map<String,String> cookies;
+
+    /** Underlying HTTP connection (for retrieving content) */
+    private HttpURLConnection con;
+
+    /** Redirect location */
+    private String location;
 
 
 
@@ -58,7 +80,9 @@ public class DefaultHttpResponse implements HttpResponse
      * @return
      */
     @Override
-    public String getContent() {
+    public synchronized String getContent() {
+        if (content==null)
+            content=readContent();
         return content;
     }
 
@@ -69,7 +93,7 @@ public class DefaultHttpResponse implements HttpResponse
      */
     @Override
     public boolean hasContent() {
-        return content!=null && content.length()>0;
+        return contentLength !=0;
     }
 
 
@@ -165,10 +189,97 @@ public class DefaultHttpResponse implements HttpResponse
         this.headers = headers;
     }
 
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public void setCookies(Map<String, String> cookies) {
+        this.cookies = cookies;
+    }
+
+    @Override
+    public Map<String, String> getCookies() {
+        return cookies;
+    }
+
+
+
+    /**
+     * Sets the connection instance
+     * @param con
+     */
+    public void setConnection(HttpURLConnection con) {
+        this.con = con;
+    }
+
+
+
+    @Override
+    public InputStream getContentStream() throws IOException {
+        InputStream in=null;
+
+        if (con!=null) {
+            // GZip content?
+            if (isSuccess()) {
+                in= "gzip".equalsIgnoreCase(getContentEncoding()) ? new GZIPInputStream(con.getInputStream()) : con.getInputStream();
+            } else {
+                in= con.getErrorStream();
+            }
+        }
+
+        return in;
+    }
+
+
+
+    /**
+     * Returns the HTTP content response
+     * @return
+     * @throws HttpException
+     */
+    private String readContent() {
+        String body="";
+
+        if (con!=null) {
+            InputStream in=null;
+            try {
+                in= getContentStream();
+                if (in!=null) {
+                    body= InputStreamUtils.readAsString(in,getContentLength());
+                }
+            } catch (Exception e) {
+                // Consume error stream to reuse connection
+                in= con.getErrorStream();
+                if (!hasContent()) {
+                    body= InputStreamUtils.readAsString(in);
+                }
+
+            } finally {
+                CloseUtil.close(in);
+            }
+        }
+        return body;
+    }
+
+
+    @Override
+    public boolean isRedirect() {
+        return status >= 300 && status <= 308;
+    }
+
+    @Override
+    public String getLocation() {
+        return location;
+    }
+
+
 
     @Override
     public String toString() {
         return "HTTP[" + status + "," + message + "] TYPE["+ contentType +"] LENGHT["+contentLength+"] CONTENT["+content+"] ENCODING["+contentEncoding+']';
     }
+
+
+
 
 }

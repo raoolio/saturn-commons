@@ -5,9 +5,9 @@ import com.saturn.commons.http.HttpRequest;
 import com.saturn.commons.http.HttpResponse;
 import com.saturn.commons.http.impl.DefaultHttpHeader;
 import com.saturn.commons.http.impl.DefaultHttpResponse;
-import com.saturn.commons.http.util.HttpHeaderUtil;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -148,9 +148,9 @@ public class ApacheHttpClient extends BaseHttpClient {
             }
 
             // Add Headers?
-            List<HttpHeader> headers=req.getHeaders();
+            Collection<HttpHeader> headers=req.getHeaders();
             for (HttpHeader h: headers) {
-                httpReq.addHeader(h.getId(), HttpHeaderUtil.valuesToString(h));
+                httpReq.addHeader(h.getId(), String.join(",",h.getValues()));
             }
 
             // Execute request!

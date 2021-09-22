@@ -5,6 +5,7 @@ import com.saturn.commons.http.HttpRequest;
 import com.saturn.commons.http.HttpResponse;
 import com.saturn.commons.utils.time.TimeUtils;
 import java.io.Closeable;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +26,24 @@ public abstract class BaseHttpClient implements HttpClient {
 
 
     /**
+     * Relocate to given destination URL ?
+     * @param req Http request instance
+     * @param url Destination URL
+     * @return <b>True</b> if URL was relocated. <b>False</b> otherwise.
+     */
+    private boolean relocate(HttpRequest req,String url) {
+        boolean done=false;
+        if (StringUtils.isNotBlank(url)) {
+            LOG.warn("Target moved TO["+url+"]! requesting...");
+            req.setUrl(url);
+            done=true;
+        }
+        return done;
+    }
+
+
+
+    /**
      * Perform the HTTP send
      * @param req HTTP send bean
      * @return
@@ -32,10 +51,14 @@ public abstract class BaseHttpClient implements HttpClient {
      */
     @Override
     public HttpResponse send(HttpRequest req) throws Exception {
+        HttpResponse res=null;
         long t=System.nanoTime();
-
         Validate.notNull(req, "Request can't be null");
-        HttpResponse res= sendRequest(req);
+        int redirects=5;
+
+        do {
+            res= sendRequest(req);
+        } while (req.isFollowRedirects() && res.isRedirect() && --redirects>=0 && relocate(req,res.getLocation()) );
 
         t=System.nanoTime()-t;
         LOG.info("{}[{}] HEADERS{} CONT[{}] -> RESP[{}] in {}",req.getMethod(),req.getUrl(),req.getHeaders(),req.getContent(),res,TimeUtils.nanoToString(t));

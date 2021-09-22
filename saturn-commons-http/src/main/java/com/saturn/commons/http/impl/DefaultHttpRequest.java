@@ -1,7 +1,7 @@
 package com.saturn.commons.http.impl;
 
 import com.saturn.commons.http.*;
-import java.util.List;
+import java.util.Collection;
 
 
 /**
@@ -29,13 +29,16 @@ public class DefaultHttpRequest implements HttpRequest
     private int timeout;
 
     /** HttpHeader list */
-    private List<HttpHeader> headers;
+    private Collection<HttpHeader> headers;
 
     /** Fetch HTTP response headers? */
     private boolean fetchHeaders;
 
     /** Skip SSL validation? */
     private boolean skipCertValidation;
+
+    /** Follow redirects */
+    private boolean followRedirects;
 
 
 
@@ -70,7 +73,7 @@ public class DefaultHttpRequest implements HttpRequest
         return method;
     }
 
-    public List<HttpHeader> getHeaders() {
+    public Collection<HttpHeader> getHeaders() {
         return headers;
     }
 
@@ -81,6 +84,10 @@ public class DefaultHttpRequest implements HttpRequest
     @Override
     public boolean isSkipCertValidation() {
         return skipCertValidation;
+    }
+
+    public boolean isFollowRedirects() {
+        return followRedirects;
     }
 
     public void setUrl(String url) {
@@ -107,7 +114,7 @@ public class DefaultHttpRequest implements HttpRequest
         this.timeout = timeout;
     }
 
-    public void setHeaders(List<HttpHeader> headers) {
+    public void setHeaders(Collection<HttpHeader> headers) {
         this.headers = headers;
     }
 
@@ -117,6 +124,10 @@ public class DefaultHttpRequest implements HttpRequest
 
     public void setSkipCertValidation(boolean skipCertValidation) {
         this.skipCertValidation = skipCertValidation;
+    }
+
+    public void setFollowRedirects(boolean followRedirects) {
+        this.followRedirects = followRedirects;
     }
 
 

@@ -73,5 +73,15 @@ public class DefaultHttpHeader implements HttpHeader
     }
 
 
+    @Override
+    public void addValue(String... val) {
+        for (String v:val) {
+            if (!values.contains(v)) {
+                addValue(v);
+            }
+        }
+    }
+
+
 
 }

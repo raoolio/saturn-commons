@@ -31,4 +31,10 @@ public interface HttpHeader
     public List<String> getValues();
 
 
+    /**
+     * Adds header value
+     * @param val
+     */
+    public void addValue(String... val);
+
 }

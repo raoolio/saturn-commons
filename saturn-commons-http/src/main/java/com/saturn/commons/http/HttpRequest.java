@@ -1,6 +1,6 @@
 package com.saturn.commons.http;
 
-import java.util.List;
+import java.util.Collection;
 
 
 /**
@@ -15,6 +15,13 @@ public interface HttpRequest
      * @return
      */
     public String getUrl();
+
+
+    /**
+     * Sets the request URL
+     * @param url
+     */
+    public void setUrl(String url);
 
 
     /**
@@ -56,7 +63,7 @@ public interface HttpRequest
      * Returns the list of HTTP Headers
      * @return
      */
-    public List<HttpHeader> getHeaders();
+    public Collection<HttpHeader> getHeaders();
 
 
     /**
@@ -71,5 +78,12 @@ public interface HttpRequest
      * @return
      */
     public boolean isSkipCertValidation();
+
+
+    /**
+     * Follow redirect responses ?
+     * @return
+     */
+    public boolean isFollowRedirects();
 
 }

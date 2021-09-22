@@ -8,9 +8,8 @@ import com.saturn.commons.utils.time.TimeValue;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
@@ -39,10 +38,13 @@ public class HttpRequestBuilder {
     private int timeout;
 
     /** HttpHeader list */
-    private List<HttpHeader> headers;
+    private Map<String,HttpHeader> headers;
 
     /** HttpHeader list */
     private Map<String,Object> params;
+
+    /** Cookies */
+    private Map<String,String> cookies;
 
     /** Parameters name's total length */
     private int paramsLength;
@@ -59,15 +61,21 @@ public class HttpRequestBuilder {
     /** Send params in URL? */
     private boolean sendPostParamsAsGet;
 
+    /** Follow redirects */
+    private boolean followRedirects;
+
 
 
     /**
      * Constructor
      */
     public HttpRequestBuilder() {
-        this.headers= new LinkedList();
+        this.method= HttpRequestMethod.GET;
+        this.headers= new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        this.cookies= new LinkedHashMap();
         this.params= new LinkedHashMap();
         this.sendAllParams= true;
+        this.followRedirects=true;
         this.timeout=30;
     }
 
@@ -79,9 +87,11 @@ public class HttpRequestBuilder {
      * @return
      */
     public HttpRequestBuilder setUrl(String url) {
+        Validate.notNull(url,"Invalid URL");
         this.url = url;
         return this;
     }
+
 
 
     /**
@@ -90,9 +100,14 @@ public class HttpRequestBuilder {
      * @return
      */
     public HttpRequestBuilder setRequestMethod(HttpRequestMethod method) {
+        Validate.notNull(method,"Invalid request method");
         this.method = method;
+        if (method==HttpRequestMethod.HEAD) {
+            this.fetchHeaders=true;
+        }
         return this;
     }
+
 
 
     /**
@@ -151,7 +166,7 @@ public class HttpRequestBuilder {
      */
     public HttpRequestBuilder setTimeout(TimeValue timeValue) {
         Validate.notNull(timeValue,"Invalid TimeValue");
-        return setTimeout((int)timeValue.toMinutes());
+        return setTimeout((int)timeValue.toSeconds());
     }
 
 
@@ -200,6 +215,17 @@ public class HttpRequestBuilder {
      */
     public HttpRequestBuilder setSendPostParamsAsGet(boolean sendPostParamsAsGet) {
         this.sendPostParamsAsGet = sendPostParamsAsGet;
+        return this;
+    }
+
+
+    /**
+     * Automatically follow redirects?
+     * @param followRedirects
+     * @return
+     */
+    public HttpRequestBuilder setFollowRedirects(boolean followRedirects) {
+        this.followRedirects = followRedirects;
         return this;
     }
 
@@ -265,7 +291,82 @@ public class HttpRequestBuilder {
     public HttpRequestBuilder addHeader(String id,String ... value) {
         Validate.notBlank(id,"Invalid header id");
         Validate.notNull(value,"Invalid header values");
-        headers.add(new DefaultHttpHeader(id,value));
+
+        HttpHeader header= headers.get(id);
+        if (header!=null) {
+            header.addValue(value);
+        } else {
+            headers.put(id,new DefaultHttpHeader(id,value));
+        }
+
+        return this;
+    }
+
+
+
+    /**
+     * Adds given header value to the request only if it's NOT already present.
+     * @param id HttpHeader ID
+     * @param value HttpHeader value
+     * @return
+     */
+    public HttpRequestBuilder addHeaderIfMissing(String id,String ... value) {
+        Validate.notBlank(id,"Invalid header id");
+        Validate.notNull(value,"Invalid header values");
+
+        if (!headers.containsKey(id)) {
+            headers.put(id,new DefaultHttpHeader(id,value));
+        }
+
+        return this;
+    }
+
+
+
+    /**
+     * Add User-Agent header string value
+     * @param value
+     * @return
+     */
+    public HttpRequestBuilder setUserAgent(String value) {
+        return addHeader("User-Agent",value);
+    }
+
+
+    /**
+     * Add referer header string value
+     * value Referer string value
+     * @return
+     */
+    public HttpRequestBuilder setReferer(String value) {
+        return addHeader("Referer",value);
+    }
+
+
+
+    /**
+     * Add given cookie to the request
+     * @param id Cookie name
+     * @param value Cookie value
+     * @return
+     */
+    public HttpRequestBuilder addCookie(String id,String value) {
+        Validate.notBlank(id,"Invalid cookie name");
+        Validate.notBlank(value,"Invalid cookie value");
+        this.cookies.put(id, value);
+        return this;
+    }
+
+
+
+    /**
+     * Adds all cookie entries to this request
+     * @param cookies Collection of cookies
+     * @return
+     */
+    public HttpRequestBuilder setCookies(Map cookies) {
+        Validate.notNull(cookies,"Invalid cookie collection");
+        this.cookies.putAll(cookies);
         return this;
     }
 
@@ -293,7 +394,7 @@ public class HttpRequestBuilder {
      * @param pars List of parameters
      * @return
      */
-    public HttpRequestBuilder addParamAll(Map pars) {
+    public HttpRequestBuilder addParams(Map pars) {
         Validate.notNull(pars,"Invalid parameter map");
         Iterator it= pars.keySet().iterator();
         while (it.hasNext()) {
@@ -351,22 +452,6 @@ public class HttpRequestBuilder {
 
 
     /**
-     * Add Content-Type header
-     */
-    private void addContentTypeHeader() {
-
-        String $contType= contentType.getType();
-
-        if (StringUtils.isNotBlank(contentCharset)) {
-            $contType += "; charset="+contentCharset;
-        }
-
-        addHeader("Content-Type", $contType);
-    }
-
-
-
-    /**
      * Builds the HTTP Content
      * @return
      */
@@ -396,11 +481,41 @@ public class HttpRequestBuilder {
             }
         }
 
-        if (StringUtils.isNotBlank(cont)) {
-            addContentTypeHeader();
+        // Add Content-Type header if missing
+        if (!headers.containsKey("Content-Type") && StringUtils.isNotBlank(cont)) {
+            String $contType= contentType.getType();
+
+            if (StringUtils.isNotBlank(contentCharset)) {
+                $contType += "; charset="+contentCharset;
+            }
+
+            addHeader("Content-Type", $contType);
         }
 
         return cont;
+    }
+
+
+
+    /**
+     * Build request Cookie header field
+     * @return
+     */
+    private void buildCookies() {
+        if (cookies!=null && !cookies.isEmpty()) {
+            StringBuilder sb= new StringBuilder();
+            Iterator<String> it= cookies.keySet().iterator();
+            while (it.hasNext()) {
+                String id= it.next();
+                String val= cookies.get(id);
+
+                if (sb.length()>0)
+                    sb.append("; ");
+
+                sb.append(id).append('=').append(val);
+            }
+            addHeader("Cookie",sb.toString());
+        }
     }
 
 
@@ -414,19 +529,20 @@ public class HttpRequestBuilder {
 
         // Validate input parameters
         Validate.notBlank(url, "Invalid request URL");
-        Validate.notNull(method,"Invalid request method");
 
         // Create HttpRequest bean
         DefaultHttpRequest req= new DefaultHttpRequest();
         req.setMethod(method);
         req.setUrl(buildURL());
-        req.setHeaders(headers);
+        buildCookies();
+        req.setHeaders(headers.values());
         req.setContent(buildContent());
         req.setContentType(contentType);
         req.setContentCharset(contentCharset);
         req.setTimeout(timeout);
         req.setFetchHeaders(fetchHeaders);
         req.setSkipCertValidation(skipCertValidation);
+        req.setFollowRedirects(followRedirects);
 
         return req;
     }

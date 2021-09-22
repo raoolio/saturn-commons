@@ -84,23 +84,31 @@ CONTENT: { "client":"26VRI86ECD", "id":"10" }
 
 `HttpRequestBuilder` Explained
 -----------------------------
-This fluent builder allows you to perform any type of request, you can use the following methods:
+This fluent builder allows you to perform many types of requests, you can use the following methods:
 
 |Method     |Description    |
 |---        |---            |
 |`setUrl`|Sets the request's URL endpoint (with parameter placeholder support)|
-|`setRequestMethod`|Sets the HTTP request method. (see `HttpRequestMethod`) |
+|`setRequestMethod`|Sets the HTTP request method. (see `HttpRequestMethod`). Default: **GET** |
 |`setContent`|Sets the request content (with parameter placeholder support).|
 |`setContentType`|Sets the request content type (see `HttpContentType`)|
 |`setContentCharset`|Sets the content charset.|
-|`setTimeout`|Sets the request timeout in seconds.|
+|`setTimeout`|Sets the request timeout in seconds (default is 30).|
 |`addHeader`|Adds a HTTP header name/value pair to the request.|
+|`addHeaderIfMissing`|Adds given header value only if it's not already set.|
 |`addParam`|Adds a parameter name/value pair for placeholder replacement or content building.|
 |`addParamAll`|Adds a Map of name/value pairs to the request.|
-|`setSendAllParams`|Sets the parameter building mode. If **true** all unused parameters are sent in the request. For GET all remaining parameters are appended in the endpoint URL. For POST all remaining parameters are built in the content (if no content was specified)|
-|`setFetchHeaders`|If set to **true**, it retrieves the HTTP response headers.|
+|`setSendAllParams`|Sets the parameter building mode. If **true** all unused parameters are sent in the request. For GET all remaining parameters are appended in the endpoint URL. For POST all remaining parameters are built in the content (if no content was specified). Default value: **true**|
+|`setFetchHeaders`|Retrieve the HTTP response headers? Default: **false**|
 |`setBasicCredentials`|Sets user/password for BASIC authentication method.|
 |`setBasicAuth`|Sets the string for BASIC authentication method.|
+|`setFollowRedirects`|Follow redirect responses? (HTTP status codes 300-308). Default: **true**|
+|`setUserAgent`|Sets the **User-Agent** header value.|
+|`setReferer`|Sets the **Referer** header value.|
+|`addCookie`|Adds the given cookie value to the request headers.|
+|`setCookies`|Adds all the given cookies map to the request headers.|
+
+
 
 
 
@@ -125,11 +133,15 @@ The HttpClientResponse object allows you to obtain everything you need from the 
 |`getStatus`|Returns the HTTP response code of the request.|
 |`getMessage`|Returns the HTTP response code message.|
 |`hasContent`|Indicates if the response has content.|
-|`getContent`|Returns the HTTP response content.|
+|`getContent`|Returns the response content as a String.|
+|`getContentStream`|Returns the response content as an InputStream|
 |`getContentType`|Returns the HTTP response content type.|
 |`getContentEncoding`|Returns the HTTP response content encoding.|
 |`getContentLength`|Returns the HTTP response content length.|
 |`getHeaders`|Returns the HTTP response headers.|
+|`getCookies`|Returns the response cookies as a key-value map.|
+|`isRedirect`|Tells if the given response is a redirect (HTTP status codes 300-308)|
+|`getLocation`|Returns the **location** response header value.|
 
 
 
