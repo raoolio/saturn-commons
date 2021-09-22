@@ -5,34 +5,26 @@
         <groupId>com.saturn</groupId>
         <artifactId>saturn-commons</artifactId>
         <version>1.0</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
-    <artifactId>saturn-commons-redis</artifactId>
-    <version>1.2</version>
+    <artifactId>saturn-commons-google</artifactId>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-redis</artifactId>
-            <version>2.3.8.RELEASE</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.13.1</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>com.saturn</groupId>
-            <artifactId>saturn-commons-utils</artifactId>
-            <version>1.8</version>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client</artifactId>
+            <version>1.25.0</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.9</version>
+            <version>3.11</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.saturn</groupId>
+            <artifactId>saturn-commons-utils</artifactId>
+            <version>1.5</version>
             <type>jar</type>
         </dependency>
     </dependencies>

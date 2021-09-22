@@ -17,6 +17,7 @@
         <module>saturn-commons-spring</module>
         <module>saturn-commons-api</module>
         <module>saturn-commons-redis</module>
+        <module>saturn-commons-google</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
